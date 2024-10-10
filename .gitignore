@@ -72,3 +72,7 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Ignore Unreal Engine external object and actor metadata
+__ExternalObjects__/
+__ExternalActors__/
