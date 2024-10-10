@@ -12,6 +12,9 @@ public class ShootThemUp : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
+        // Allow includes without full path, just by the name of the file. However, I prefer full path
+        // PublicIncludePaths.AddRange(new string[] { "ShootThemUp/Public/Player" });
+
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
