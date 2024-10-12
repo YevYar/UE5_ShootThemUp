@@ -8,9 +8,7 @@
 
 class UCameraComponent;
 
-UCLASS()
-
-class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
+UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 {
         GENERATED_BODY()
 

@@ -9,9 +9,7 @@
 /**
  *
  */
-UCLASS()
-
-class SHOOTTHEMUP_API ASTUPlayerController : public APlayerController
+UCLASS() class SHOOTTHEMUP_API ASTUPlayerController : public APlayerController
 {
         GENERATED_BODY()
 };
