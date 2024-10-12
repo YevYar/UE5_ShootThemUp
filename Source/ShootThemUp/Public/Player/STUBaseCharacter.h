@@ -28,6 +28,10 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     protected:
+        void MoveForward(float Amount);
+        void MoveRight(float Amount);
+
+    protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UCameraComponent* CameraComponent;
 };
