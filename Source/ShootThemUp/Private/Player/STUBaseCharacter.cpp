@@ -4,6 +4,14 @@
 #include "Player/STUBaseCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+
+namespace
+{
+constexpr inline float NORMAL_WALK_SPEED = 600.0f;  // Normal walking speed (in Unreal units per second)
+constexpr inline float SPRINTING_SPEED   = 3000.0f;  // Sprinting speed
+}  // namespace
 
 // Sets default values
 ASTUBaseCharacter::ASTUBaseCharacter()
@@ -11,11 +19,19 @@ ASTUBaseCharacter::ASTUBaseCharacter()
     // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
-    CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
+    SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
+    if (!SpringArmComponent)
+    {
+        return;
+    }
 
+    SpringArmComponent->bUsePawnControlRotation = true;
+    SpringArmComponent->SetupAttachment(GetRootComponent());
+
+    CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     if (CameraComponent)
     {
-        CameraComponent->SetupAttachment(GetRootComponent());
+        CameraComponent->SetupAttachment(SpringArmComponent);
     }
 }
 
@@ -40,6 +56,10 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     {
         PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
         PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
+        PlayerInputComponent->BindAxis("LookUp", this, &ASTUBaseCharacter::AddControllerPitchInput);
+        PlayerInputComponent->BindAxis("TurnAround", this, &ASTUBaseCharacter::AddControllerYawInput);
+        PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASTUBaseCharacter::StartSprint);
+        PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::StopSprint);
     }
 }
 
@@ -51,4 +71,24 @@ void ASTUBaseCharacter::MoveForward(float Amount)
 void ASTUBaseCharacter::MoveRight(float Amount)
 {
     AddMovementInput(GetActorRightVector(), Amount);
+}
+
+void ASTUBaseCharacter::StartSprint()
+{
+    if (GetCharacterMovement())
+    {
+        GetCharacterMovement()->MaxWalkSpeed = SPRINTING_SPEED;
+    }
+
+    bIsSprinting = true;
+}
+
+void ASTUBaseCharacter::StopSprint()
+{
+    if (GetCharacterMovement())
+    {
+        GetCharacterMovement()->MaxWalkSpeed = NORMAL_WALK_SPEED;
+    }
+
+    bIsSprinting = false;
 }
