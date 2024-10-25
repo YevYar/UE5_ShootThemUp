@@ -60,12 +60,18 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
         PlayerInputComponent->BindAxis("TurnAround", this, &ASTUBaseCharacter::AddControllerYawInput);
         PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASTUBaseCharacter::StartSprint);
         PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASTUBaseCharacter::StopSprint);
+        PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::Jump);
     }
 }
 
 void ASTUBaseCharacter::MoveForward(float Amount)
 {
     AddMovementInput(GetActorForwardVector(), Amount);
+
+    if (GetCharacterMovement())
+    {
+        GetCharacterMovement()->MaxWalkSpeed = bWantsToRun && Amount > 0.0f ? SPRINTING_SPEED : NORMAL_WALK_SPEED;
+    }
 }
 
 void ASTUBaseCharacter::MoveRight(float Amount)
@@ -75,20 +81,10 @@ void ASTUBaseCharacter::MoveRight(float Amount)
 
 void ASTUBaseCharacter::StartSprint()
 {
-    if (GetCharacterMovement())
-    {
-        GetCharacterMovement()->MaxWalkSpeed = SPRINTING_SPEED;
-    }
-
-    bIsSprinting = true;
+    bWantsToRun = true;
 }
 
 void ASTUBaseCharacter::StopSprint()
 {
-    if (GetCharacterMovement())
-    {
-        GetCharacterMovement()->MaxWalkSpeed = NORMAL_WALK_SPEED;
-    }
-
-    bIsSprinting = false;
+    bWantsToRun = false;
 }

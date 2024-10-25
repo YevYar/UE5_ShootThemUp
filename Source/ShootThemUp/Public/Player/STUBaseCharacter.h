@@ -39,5 +39,5 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         UCameraComponent* CameraComponent;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USpringArmComponent* SpringArmComponent;
-        bool                 bIsSprinting = false;
+        bool                 bWantsToRun = false;
 };
