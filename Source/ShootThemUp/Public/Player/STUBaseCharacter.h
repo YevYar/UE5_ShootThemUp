@@ -15,7 +15,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 
     public:
         // Sets default values for this character's properties
-        ASTUBaseCharacter();
+        ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
     protected:
         // Called when the game starts or when spawned
@@ -28,11 +28,30 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         // Called to bind functionality to input
         virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+        UFUNCTION(BlueprintCallable, Category = "Movement")
+        bool IsJumping() const;
+        UFUNCTION(BlueprintCallable, Category = "Movement")
+        bool IsIdle() const;
+        UFUNCTION(BlueprintCallable, Category = "Movement")
+        bool IsMovingBackward() const;
+        UFUNCTION(BlueprintCallable, Category = "Movement")
+        bool IsMovingForward() const;
+        UFUNCTION(BlueprintCallable, Category = "Movement")
+        bool IsMovingLeft() const;
+        UFUNCTION(BlueprintCallable, Category = "Movement")
+        bool IsMovingRight() const;
+        UFUNCTION(BlueprintCallable, Category = "Movement")
+        bool IsRunning() const;
+
     protected:
         void MoveForward(float Amount);
         void MoveRight(float Amount);
-        void StartSprint();
-        void StopSprint();
+        void StartRun();
+        void StopRun();
+        void TryToJump();
+
+    private:
+        void PrintVectors() const;
 
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -40,4 +59,10 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USpringArmComponent* SpringArmComponent;
         bool                 bWantsToRun = false;
+
+    private:
+        bool bIsIdleForward   = true;
+        bool bIsIdleRight     = true;
+        bool bIsMovingForward = false;  // true - move forward, false - move backward
+        bool bIsMovingRight   = false;  // true - move right, false - move left
 };
