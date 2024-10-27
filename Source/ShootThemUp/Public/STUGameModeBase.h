@@ -17,4 +17,7 @@ class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
 
     public:
         ASTUGameModeBase();
+
+        UFUNCTION(BlueprintCallable, Category = "Development")
+        bool IsDebug() const noexcept;
 };

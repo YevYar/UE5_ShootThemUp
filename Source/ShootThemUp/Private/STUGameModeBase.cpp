@@ -11,3 +11,12 @@ ASTUGameModeBase::ASTUGameModeBase()
     DefaultPawnClass      = ASTUBaseCharacter::StaticClass();
     PlayerControllerClass = ASTUPlayerController::StaticClass();
 }
+
+bool ASTUGameModeBase::IsDebug() const noexcept
+{
+#if STU_DEBUG
+    return true;
+#else
+    return false;
+#endif
+}
