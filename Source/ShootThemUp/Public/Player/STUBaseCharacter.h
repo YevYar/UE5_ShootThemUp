@@ -63,8 +63,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         bool                 bWantsToRun = false;
 
     private:
-        bool bIsIdleForward   = true;
-        bool bIsIdleRight     = true;
-        bool bIsMovingForward = false;  // true - move forward, false - move backward
-        bool bIsMovingRight   = false;  // true - move right, false - move left
+        bool     bIsIdleForward   = true;
+        bool     bIsIdleRight     = true;
+        bool     bIsMovingForward = false;  // true - move forward, false - move backward
+        bool     bIsMovingRight   = false;  // true - move right, false - move left
+        FRotator InitialMeshRotation;
 };

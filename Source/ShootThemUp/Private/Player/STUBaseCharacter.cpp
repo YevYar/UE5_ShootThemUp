@@ -41,6 +41,11 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer
 void ASTUBaseCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (GetMesh())
+    {
+        InitialMeshRotation = GetMesh()->GetRelativeRotation();
+    }
 }
 
 // Called every frame
@@ -144,6 +149,20 @@ void ASTUBaseCharacter::MoveRight(float Amount)
 
     bIsIdleRight   = Amount == 0.0f;
     bIsMovingRight = Amount > NULL_EPSILON;
+
+    const auto Direction        = GetMovementDirection();
+    const auto AbsolutDirection = FMath::Abs(Direction);
+
+    if (IsRunning() && GetMesh() && (AbsolutDirection > 0.0f && AbsolutDirection < 90.0f))
+    {
+        auto NewRotation = GetMesh()->GetRelativeRotation();
+        NewRotation.Yaw  = InitialMeshRotation.Yaw + Direction;
+        GetMesh()->SetRelativeRotation(NewRotation);
+    }
+    else if (GetMesh())
+    {
+        GetMesh()->SetRelativeRotation(InitialMeshRotation);
+    }
 
     // bIsMovingRight = Amount > NULL_EPSILON;
 }
