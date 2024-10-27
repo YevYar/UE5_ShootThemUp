@@ -66,6 +66,22 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     }
 }
 
+float ASTUBaseCharacter::GetMovementDirection() const
+{
+    if (GetVelocity().IsZero())
+    {
+        return 0.0f;
+    }
+
+    const auto NormalizedVelocity = GetVelocity().GetSafeNormal();
+    const auto AngleBetween       = FMath::Acos(FVector::DotProduct(GetActorForwardVector(), NormalizedVelocity));
+    const auto CrossProduct       = FVector::CrossProduct(GetActorForwardVector(), NormalizedVelocity);
+    const auto Direction          = FMath::Sign(CrossProduct.Z);
+    const auto Degrees            = FMath::RadiansToDegrees(AngleBetween);
+
+    return CrossProduct.IsZero() ? Degrees : Direction * Degrees;
+}
+
 bool ASTUBaseCharacter::IsJumping() const
 {
     return GetCharacterMovement() && GetCharacterMovement()->IsFalling();

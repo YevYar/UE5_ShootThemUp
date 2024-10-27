@@ -29,6 +29,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
         UFUNCTION(BlueprintCallable, Category = "Movement")
+        float GetMovementDirection() const;
+        UFUNCTION(BlueprintCallable, Category = "Movement")
         bool IsJumping() const;
         UFUNCTION(BlueprintCallable, Category = "Movement")
         bool IsIdle() const;
