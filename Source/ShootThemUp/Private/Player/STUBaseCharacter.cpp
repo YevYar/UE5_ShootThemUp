@@ -94,32 +94,26 @@ bool ASTUBaseCharacter::IsJumping() const
 
 bool ASTUBaseCharacter::IsIdle() const
 {
-    // return GetVelocity().IsNearlyZero(NULL_EPSILON);  // !bIsMovingForward && !bIsMovingRight;
     return bIsIdleForward && bIsIdleRight && GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingBackward() const
 {
-    // return /*bIsMovingForward && */ FVector::DotProduct(GetActorForwardVector(), GetVelocity()) < -1.0f;
     return !bIsIdleForward && !bIsMovingForward && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingForward() const
 {
-    PrintVectors();
-    // return /*bIsMovingForward && */ FVector::DotProduct(GetActorForwardVector(), GetVelocity()) > 1.0f;
     return !bIsIdleForward && bIsMovingForward && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingLeft() const
 {
-    // return /*bIsMovingRight && */ FVector::DotProduct(GetActorRightVector(), GetVelocity()) < -1.0f;
     return !bIsIdleRight && !bIsMovingRight && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingRight() const
 {
-    // return /*bIsMovingRight && */ FVector::DotProduct(GetActorRightVector(), GetVelocity()) > 1.0f;
     return !bIsIdleRight && bIsMovingRight && !GetVelocity().IsZero();
 }
 
@@ -134,13 +128,6 @@ void ASTUBaseCharacter::MoveForward(float Amount)
 
     bIsIdleForward   = Amount == 0.0f;
     bIsMovingForward = Amount > NULL_EPSILON;
-
-    // bIsMovingForward = Amount > NULL_EPSILON;
-
-    // if (GetCharacterMovement())
-    //{
-    //     GetCharacterMovement()->MaxWalkSpeed = IsRunning() ? SPRINTING_SPEED : NORMAL_WALK_SPEED;
-    // }
 }
 
 void ASTUBaseCharacter::MoveRight(float Amount)
@@ -163,8 +150,6 @@ void ASTUBaseCharacter::MoveRight(float Amount)
     {
         GetMesh()->SetRelativeRotation(InitialMeshRotation);
     }
-
-    // bIsMovingRight = Amount > NULL_EPSILON;
 }
 
 void ASTUBaseCharacter::StartRun()
@@ -182,20 +167,5 @@ void ASTUBaseCharacter::TryToJump()
     if (IsIdle() || IsMovingForward())
     {
         Jump();
-    }
-}
-
-void ASTUBaseCharacter::PrintVectors() const
-{
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue,
-                                         FString::Printf(TEXT("Forward vector: %s"),
-                                                         *GetActorForwardVector().ToString()));
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,
-                                         FString::Printf(TEXT("Velocity vector: %s"), *GetVelocity().ToString()));
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,
-                                         FString::Printf(TEXT("Dot product: %f"),
-                                                         FVector::DotProduct(GetActorForwardVector(), GetVelocity())));
     }
 }

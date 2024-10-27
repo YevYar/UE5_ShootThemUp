@@ -52,9 +52,6 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         void StopRun();
         void TryToJump();
 
-    private:
-        void PrintVectors() const;
-
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UCameraComponent* CameraComponent;
@@ -65,7 +62,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
     private:
         bool     bIsIdleForward   = true;
         bool     bIsIdleRight     = true;
-        bool     bIsMovingForward = false;  // true - move forward, false - move backward
-        bool     bIsMovingRight   = false;  // true - move right, false - move left
+        // true - move forward, false - move backward, doesn't define if the Character is idle in the forward direction
+        bool     bIsMovingForward = false;
+        // true - move right, false - move left, doesn't define if the Character is idle in the right direction
+        bool     bIsMovingRight   = false;
         FRotator InitialMeshRotation;
 };
