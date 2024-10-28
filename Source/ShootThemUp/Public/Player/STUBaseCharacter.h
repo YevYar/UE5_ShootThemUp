@@ -7,7 +7,9 @@
 #include "STUBaseCharacter.generated.h"
 
 class UCameraComponent;
+class USTUHealthComponent;
 class USpringArmComponent;
+class UTextRenderComponent;
 
 UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 {
@@ -55,6 +57,10 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UCameraComponent* CameraComponent;
+        UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+        USTUHealthComponent* HealthComponent;
+        UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+        UTextRenderComponent* HealthTextComponent;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USpringArmComponent* SpringArmComponent;
         bool                 bWantsToRun = false;
