@@ -55,6 +55,9 @@ void ASTUBaseCharacter::BeginPlay()
     {
         InitialMeshRotation = GetMesh()->GetRelativeRotation();
     }
+
+    check(HealthComponent);
+    check(HealthTextComponent);
 }
 
 // Called every frame
