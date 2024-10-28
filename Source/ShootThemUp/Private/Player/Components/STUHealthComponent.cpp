@@ -3,6 +3,8 @@
 
 #include "Player/Components/STUHealthComponent.h"
 
+#include "Player/STUBaseCharacter.h"
+
 // Sets default values for this component's properties
 USTUHealthComponent::USTUHealthComponent()
 {
@@ -28,4 +30,16 @@ void USTUHealthComponent::BeginPlay()
     Super::BeginPlay();
 
     Health = MaxHealth;
+
+    const auto Owner = GetOwner();
+    if (Owner)
+    {
+        Owner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
+    }
+}
+
+void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+                                          AController* InstigatedBy, AActor* DamageCauser)
+{
+    SetHealth(Health - Damage);
 }

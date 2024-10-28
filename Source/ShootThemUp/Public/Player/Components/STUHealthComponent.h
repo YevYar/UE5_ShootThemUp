@@ -22,6 +22,11 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         // Called when the game starts
         virtual void BeginPlay() override;
 
+    private:
+        UFUNCTION()
+        void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
+                             class AController* InstigatedBy, AActor* DamageCauser);
+
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health", meta = (ClampMin = "0.0"))
         float MaxHealth = 100.0f;
