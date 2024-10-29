@@ -5,6 +5,8 @@
 
 #include "Player/STUBaseCharacter.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogHealth, All, All)
+
 // Sets default values for this component's properties
 USTUHealthComponent::USTUHealthComponent()
 {
@@ -41,5 +43,6 @@ void USTUHealthComponent::BeginPlay()
 void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                           AController* InstigatedBy, AActor* DamageCauser)
 {
+    UE_LOG(LogHealth, Display, TEXT("Received damage: %f"), Damage);
     SetHealth(Health - Damage);
 }
