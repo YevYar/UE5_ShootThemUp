@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "STUDevDamageActor.generated.h"
 
+class UDamageType;
+
 UCLASS() class SHOOTTHEMUP_API ASTUDevDamageActor : public AActor
 {
         GENERATED_BODY()
@@ -30,6 +32,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUDevDamageActor : public AActor
         FColor Color = FColor::Red;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Impact")
         float Damage = 0.1f;
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Impact")
+        TSubclassOf<UDamageType> DamageType;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Impact")
         bool DoFullDamage = false;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Appearance")

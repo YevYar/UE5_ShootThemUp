@@ -3,6 +3,8 @@
 
 #include "Player/Components/STUHealthComponent.h"
 
+#include "Dev/STUFireDamageType.h"
+#include "Dev/STUIceDamageType.h"
 #include "Player/STUBaseCharacter.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealth, All, All)
@@ -45,4 +47,22 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
 {
     UE_LOG(LogHealth, Display, TEXT("Received damage: %f"), Damage);
     SetHealth(Health - Damage);
+
+    if (!DamageType)
+    {
+        return;
+    }
+
+    if (DamageType->IsA<USTUIceDamageType>())
+    {
+        UE_LOG(LogHealth, Display, TEXT("Sooooo cooooooold!"));
+    }
+    else if (DamageType->IsA<USTUFireDamageType>())
+    {
+        UE_LOG(LogHealth, Display, TEXT("Sooooo hooooooot!"));
+    }
+    else
+    {
+        UE_LOG(LogHealth, Display, TEXT("Wow, unknown damage type!"));
+    }
 }

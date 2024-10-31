@@ -34,6 +34,6 @@ void ASTUDevDamageActor::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    UGameplayStatics::ApplyRadialDamage(GetWorld(), Damage, GetActorLocation(), Radius, nullptr, {}, this, nullptr,
+    UGameplayStatics::ApplyRadialDamage(GetWorld(), Damage, GetActorLocation(), Radius, DamageType, {}, this, nullptr,
                                         DoFullDamage);
 }
