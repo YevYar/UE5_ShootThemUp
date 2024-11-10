@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/DamageEvents.h"
+#include "GameFramework/SpectatorPawn.h"
 #include "GameFramework/SpringArmComponent.h"
 
 #include "Player/Components/STUCharacterMovementComponent.h"
@@ -202,6 +203,10 @@ void ASTUBaseCharacter::OnDeath()
     PlayAnimMontage(DeathMontage);
     SetLifeSpan(10.0f);  // 10s
 
+    if (Controller)
+    {
+        Controller->ChangeState(NAME_Spectating);
+    }
 }
 
 void ASTUBaseCharacter::OnHealthChanged(float NewHealth)
