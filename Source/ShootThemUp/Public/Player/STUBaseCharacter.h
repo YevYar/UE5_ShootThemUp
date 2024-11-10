@@ -62,9 +62,6 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         void StopRun();
         void TryToJump();
 
-    private:
-        void RemoveInputBindings();
-
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UCameraComponent* CameraComponent;

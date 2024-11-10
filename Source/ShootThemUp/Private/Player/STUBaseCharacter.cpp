@@ -100,7 +100,7 @@ bool ASTUBaseCharacter::IsDead() const
 
 float ASTUBaseCharacter::GetMovementDirection() const
 {
-    if (IsDead() || GetVelocity().IsZero())
+    if (GetVelocity().IsZero())
     {
         return 0.0f;
     }
@@ -116,32 +116,32 @@ float ASTUBaseCharacter::GetMovementDirection() const
 
 bool ASTUBaseCharacter::IsJumping() const
 {
-    return !IsDead() && GetCharacterMovement() && GetCharacterMovement()->IsFalling();
+    return GetCharacterMovement() && GetCharacterMovement()->IsFalling();
 }
 
 bool ASTUBaseCharacter::IsIdle() const
 {
-    return IsDead() || (bIsIdleForward && bIsIdleRight && GetVelocity().IsZero());
+    return bIsIdleForward && bIsIdleRight && GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingBackward() const
 {
-    return !IsDead() && !bIsIdleForward && !bIsMovingForward && !GetVelocity().IsZero();
+    return !bIsIdleForward && !bIsMovingForward && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingForward() const
 {
-    return !IsDead() && !bIsIdleForward && bIsMovingForward && !GetVelocity().IsZero();
+    return !bIsIdleForward && bIsMovingForward && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingLeft() const
 {
-    return !IsDead() && !bIsIdleRight && !bIsMovingRight && !GetVelocity().IsZero();
+    return !bIsIdleRight && !bIsMovingRight && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingRight() const
 {
-    return !IsDead() && !bIsIdleRight && bIsMovingRight && !GetVelocity().IsZero();
+    return !bIsIdleRight && bIsMovingRight && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsRunning() const
@@ -198,7 +198,6 @@ void ASTUBaseCharacter::OnDeath()
     bWantsToRun      = false;
 
     HealthTextComponent->SetVisibility(false, true);
-    RemoveInputBindings();
     GetCharacterMovement()->DisableMovement();
     PlayAnimMontage(DeathMontage);
     SetLifeSpan(10.0f);  // 10s
@@ -235,21 +234,5 @@ void ASTUBaseCharacter::TryToJump()
     if (IsIdle() || IsMovingForward())
     {
         Jump();
-    }
-}
-
-void ASTUBaseCharacter::RemoveInputBindings()
-{
-    auto PlayerInputComponent = GetComponentByClass<UInputComponent>();
-
-    if (PlayerInputComponent)
-    {
-        PlayerInputComponent->RemoveAxisBinding("MoveForward");
-        PlayerInputComponent->RemoveAxisBinding("MoveRight");
-        PlayerInputComponent->RemoveAxisBinding("LookUp");
-        PlayerInputComponent->RemoveAxisBinding("TurnAround");
-        PlayerInputComponent->RemoveActionBinding("Run", IE_Pressed);
-        PlayerInputComponent->RemoveActionBinding("Run", IE_Released);
-        PlayerInputComponent->RemoveActionBinding("Jump", IE_Pressed);
     }
 }
