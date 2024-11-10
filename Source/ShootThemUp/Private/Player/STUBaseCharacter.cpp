@@ -100,7 +100,7 @@ bool ASTUBaseCharacter::IsDead() const
 
 float ASTUBaseCharacter::GetMovementDirection() const
 {
-    if (GetVelocity().IsZero())
+    if (IsDead() || GetVelocity().IsZero())
     {
         return 0.0f;
     }
@@ -116,32 +116,32 @@ float ASTUBaseCharacter::GetMovementDirection() const
 
 bool ASTUBaseCharacter::IsJumping() const
 {
-    return GetCharacterMovement() && GetCharacterMovement()->IsFalling();
+    return !IsDead() && GetCharacterMovement() && GetCharacterMovement()->IsFalling();
 }
 
 bool ASTUBaseCharacter::IsIdle() const
 {
-    return bIsIdleForward && bIsIdleRight && GetVelocity().IsZero();
+    return IsDead() || (bIsIdleForward && bIsIdleRight && GetVelocity().IsZero());
 }
 
 bool ASTUBaseCharacter::IsMovingBackward() const
 {
-    return !bIsIdleForward && !bIsMovingForward && !GetVelocity().IsZero();
+    return !IsDead() && !bIsIdleForward && !bIsMovingForward && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingForward() const
 {
-    return !bIsIdleForward && bIsMovingForward && !GetVelocity().IsZero();
+    return !IsDead() && !bIsIdleForward && bIsMovingForward && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingLeft() const
 {
-    return !bIsIdleRight && !bIsMovingRight && !GetVelocity().IsZero();
+    return !IsDead() && !bIsIdleRight && !bIsMovingRight && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsMovingRight() const
 {
-    return !bIsIdleRight && bIsMovingRight && !GetVelocity().IsZero();
+    return !IsDead() && !bIsIdleRight && bIsMovingRight && !GetVelocity().IsZero();
 }
 
 bool ASTUBaseCharacter::IsRunning() const
@@ -151,6 +151,11 @@ bool ASTUBaseCharacter::IsRunning() const
 
 void ASTUBaseCharacter::MoveForward(float Amount)
 {
+    if (IsDead())
+    {
+        return;
+    }
+
     AddMovementInput(GetActorForwardVector(), Amount);
 
     bIsIdleForward   = Amount == 0.0f;
@@ -159,6 +164,11 @@ void ASTUBaseCharacter::MoveForward(float Amount)
 
 void ASTUBaseCharacter::MoveRight(float Amount)
 {
+    if (IsDead())
+    {
+        return;
+    }
+
     AddMovementInput(GetActorRightVector(), Amount);
 
     bIsIdleRight   = Amount == 0.0f;
@@ -188,6 +198,7 @@ void ASTUBaseCharacter::OnDeath()
     bWantsToRun      = false;
 
     HealthTextComponent->SetVisibility(false, true);
+    RemoveInputBindings();
     GetCharacterMovement()->DisableMovement();
     PlayAnimMontage(DeathMontage);
     SetLifeSpan(10.0f);  // 10s
@@ -201,11 +212,21 @@ void ASTUBaseCharacter::OnHealthChanged(float NewHealth)
 
 void ASTUBaseCharacter::StartRun()
 {
+    if (IsDead())
+    {
+        return;
+    }
+
     bWantsToRun = true;
 }
 
 void ASTUBaseCharacter::StopRun()
 {
+    if (IsDead())
+    {
+        return;
+    }
+
     bWantsToRun = false;
 }
 
@@ -214,5 +235,21 @@ void ASTUBaseCharacter::TryToJump()
     if (IsIdle() || IsMovingForward())
     {
         Jump();
+    }
+}
+
+void ASTUBaseCharacter::RemoveInputBindings()
+{
+    auto PlayerInputComponent = GetComponentByClass<UInputComponent>();
+
+    if (PlayerInputComponent)
+    {
+        PlayerInputComponent->RemoveAxisBinding("MoveForward");
+        PlayerInputComponent->RemoveAxisBinding("MoveRight");
+        PlayerInputComponent->RemoveAxisBinding("LookUp");
+        PlayerInputComponent->RemoveAxisBinding("TurnAround");
+        PlayerInputComponent->RemoveActionBinding("Run", IE_Pressed);
+        PlayerInputComponent->RemoveActionBinding("Run", IE_Released);
+        PlayerInputComponent->RemoveActionBinding("Jump", IE_Pressed);
     }
 }
