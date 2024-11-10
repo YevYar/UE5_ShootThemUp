@@ -3,6 +3,7 @@
 
 #include "Player/STUBaseCharacter.h"
 
+#include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/DamageEvents.h"
@@ -59,14 +60,20 @@ void ASTUBaseCharacter::BeginPlay()
 
     check(HealthComponent);
     check(HealthTextComponent);
+    check(GetCharacterMovement());
+
+    HealthComponent->Died.AddDynamic(this, &ASTUBaseCharacter::OnDeath);
+    HealthComponent->HealthChanged.AddDynamic(this, &ASTUBaseCharacter::OnHealthChanged);
+
+    // First time HealthChanged is called by HealthComponent in its BeginPlay(), what called before
+    // ASTUBaseCharacter::BeginPlay(). So here we must call it manually to init the displayed value by HealthTextComponent
+    OnHealthChanged(HealthComponent->GetHealth());
 }
 
 // Called every frame
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), HealthComponent->GetHealth())));
 }
 
 // Called to bind functionality to input
@@ -84,6 +91,11 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
         PlayerInputComponent->BindAction("Run", IE_Released, this, &ASTUBaseCharacter::StopRun);
         PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::TryToJump);
     }
+}
+
+bool ASTUBaseCharacter::IsDead() const
+{
+    return HealthComponent->IsDead();
 }
 
 float ASTUBaseCharacter::GetMovementDirection() const
@@ -165,6 +177,26 @@ void ASTUBaseCharacter::MoveRight(float Amount)
     {
         GetMesh()->SetRelativeRotation(InitialMeshRotation);
     }
+}
+
+void ASTUBaseCharacter::OnDeath()
+{
+    bIsIdleForward   = true;
+    bIsIdleRight     = true;
+    bIsMovingForward = false;
+    bIsMovingRight   = false;
+    bWantsToRun      = false;
+
+    HealthTextComponent->SetVisibility(false, true);
+    GetCharacterMovement()->DisableMovement();
+    PlayAnimMontage(DeathMontage);
+    SetLifeSpan(10.0f);  // 10s
+
+}
+
+void ASTUBaseCharacter::OnHealthChanged(float NewHealth)
+{
+    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), HealthComponent->GetHealth())));
 }
 
 void ASTUBaseCharacter::StartRun()

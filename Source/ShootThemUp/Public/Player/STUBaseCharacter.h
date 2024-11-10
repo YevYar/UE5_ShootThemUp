@@ -7,6 +7,7 @@
 #include "STUBaseCharacter.generated.h"
 
 class UCameraComponent;
+class UAnimMontage;
 class USTUHealthComponent;
 class USpringArmComponent;
 class UTextRenderComponent;
@@ -30,6 +31,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         // Called to bind functionality to input
         virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+        UFUNCTION(BlueprintCallable, Category = "Life State")
+        bool IsDead() const;
+
         UFUNCTION(BlueprintCallable, Category = "Movement")
         float GetMovementDirection() const;
         UFUNCTION(BlueprintCallable, Category = "Movement")
@@ -50,6 +54,10 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
     protected:
         void MoveForward(float Amount);
         void MoveRight(float Amount);
+        UFUNCTION()
+        void OnDeath();
+        UFUNCTION()
+        void OnHealthChanged(float NewHealth);
         void StartRun();
         void StopRun();
         void TryToJump();
@@ -57,13 +65,14 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UCameraComponent* CameraComponent;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
+        UAnimMontage* DeathMontage;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USTUHealthComponent* HealthComponent;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UTextRenderComponent* HealthTextComponent;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USpringArmComponent* SpringArmComponent;
-        bool                 bWantsToRun = false;
 
     private:
         bool     bIsIdleForward   = true;
@@ -72,5 +81,6 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         bool     bIsMovingForward = false;
         // true - move right, false - move left, doesn't define if the Character is idle in the right direction
         bool     bIsMovingRight   = false;
+        bool     bWantsToRun      = false;
         FRotator InitialMeshRotation;
 };

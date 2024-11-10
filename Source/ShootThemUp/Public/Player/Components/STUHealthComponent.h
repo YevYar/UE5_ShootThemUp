@@ -6,6 +6,9 @@
 #include "CoreMinimal.h"
 #include "STUHealthComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDied);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChanged, float, Health);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 {
@@ -16,6 +19,7 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         USTUHealthComponent();
 
         float GetHealth() const noexcept;
+        bool  IsDead() const noexcept;
         void  SetHealth(float NewHealth) noexcept;
 
     protected:
@@ -27,10 +31,17 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
                              class AController* InstigatedBy, AActor* DamageCauser);
 
+    public:
+        UPROPERTY(BlueprintAssignable, Category = "Health")
+        FDied Died;
+        UPROPERTY(BlueprintAssignable, Category = "Health")
+        FHealthChanged HealthChanged;
+
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health", meta = (ClampMin = "0.0"))
         float MaxHealth = 100.0f;
 
     private:
-        float Health = 0.0f;
+        bool  bIsDead = false;
+        float Health  = 0.0f;
 };

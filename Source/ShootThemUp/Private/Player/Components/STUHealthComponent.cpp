@@ -9,6 +9,11 @@
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealth, All, All)
 
+namespace
+{
+constexpr inline float MIN_HEALTH = 0.0f;
+}
+
 // Sets default values for this component's properties
 USTUHealthComponent::USTUHealthComponent()
 {
@@ -20,11 +25,25 @@ float USTUHealthComponent::GetHealth() const noexcept
     return Health;
 }
 
+bool USTUHealthComponent::IsDead() const noexcept
+{
+    return bIsDead;
+}
+
 void USTUHealthComponent::SetHealth(float NewHealth) noexcept
 {
-    if (NewHealth >= 0.0f && NewHealth <= MaxHealth)
+    const auto LastHealth = Health;
+    Health                = FMath::Clamp(NewHealth, MIN_HEALTH, MaxHealth);
+
+    if (Health != LastHealth)
     {
-        Health = NewHealth;
+        HealthChanged.Broadcast(Health);
+
+        if (Health == MIN_HEALTH)
+        {
+            bIsDead = true;
+            Died.Broadcast();
+        }
     }
 }
 
@@ -33,7 +52,9 @@ void USTUHealthComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    Health = MaxHealth;
+    bIsDead = false;
+    Health  = MaxHealth;
+    HealthChanged.Broadcast(Health);
 
     const auto Owner = GetOwner();
     if (Owner)
@@ -46,6 +67,12 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
                                           AController* InstigatedBy, AActor* DamageCauser)
 {
     UE_LOG(LogHealth, Display, TEXT("Received damage: %f"), Damage);
+
+    if (Damage <= 0.0f || IsDead())
+    {
+        return;
+    }
+
     SetHealth(Health - Damage);
 
     if (!DamageType)
