@@ -43,11 +43,14 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal")
         bool AutoHealEnabled = true;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (ClampMin = "0.1"))
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal",
+                  meta = (ClampMin = "0.1", EditCondition = "AutoHealEnabled"))
         float HealAmount = 0.1f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (ClampMin = "0.1"))
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal",
+                  meta = (ClampMin = "0.1", EditCondition = "AutoHealEnabled"))
         float HealDelay = 0.1f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal", meta = (ClampMin = "0.1"))
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal",
+                  meta = (ClampMin = "0.1", EditCondition = "AutoHealEnabled"))
         float HealInterval = 1.0f;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health", meta = (ClampMin = "0.0"))
         float MaxHealth = 100.0f;
