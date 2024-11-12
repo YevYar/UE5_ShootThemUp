@@ -3,6 +3,8 @@
 
 #include "Player/Components/STUHealthComponent.h"
 
+#include "Engine/TimerHandle.h"
+
 #include "Dev/STUFireDamageType.h"
 #include "Dev/STUIceDamageType.h"
 #include "Player/STUBaseCharacter.h"
@@ -43,6 +45,21 @@ void USTUHealthComponent::SetHealth(float NewHealth) noexcept
         {
             bIsDead = true;
             Died.Broadcast();
+            StopHealing();
+            return;
+        }
+
+        // If we received any damage and auto healing is enabled
+        if (LastHealth > Health && AutoHealEnabled)
+        {
+            StopHealing();
+
+            auto World = GetWorld();
+            if (World)
+            {
+                World->GetTimerManager().SetTimer(HealTimer, this, &USTUHealthComponent::AutoHeal, HealInterval, true,
+                                                  HealDelay);
+            }
         }
     }
 }
@@ -60,6 +77,16 @@ void USTUHealthComponent::BeginPlay()
     if (Owner)
     {
         Owner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
+    }
+}
+
+void USTUHealthComponent::AutoHeal()
+{
+    SetHealth(Health + HealAmount);
+
+    if (Health == MaxHealth)
+    {
+        StopHealing();
     }
 }
 
@@ -91,5 +118,17 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
     else
     {
         UE_LOG(LogHealth, Display, TEXT("Wow, unknown damage type!"));
+    }
+}
+
+void USTUHealthComponent::StopHealing()
+{
+    if (AutoHealEnabled)
+    {
+        auto World = GetWorld();
+        if (World)
+        {
+            World->GetTimerManager().ClearTimer(HealTimer);
+        }
     }
 }
