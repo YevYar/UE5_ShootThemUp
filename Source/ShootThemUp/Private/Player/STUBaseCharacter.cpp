@@ -69,6 +69,8 @@ void ASTUBaseCharacter::BeginPlay()
     // First time HealthChanged is called by HealthComponent in its BeginPlay(), what called before
     // ASTUBaseCharacter::BeginPlay(). So here we must call it manually to init the displayed value by HealthTextComponent
     OnHealthChanged(HealthComponent->GetHealth());
+
+    LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnLanding);
 }
 
 // Called every frame
@@ -212,6 +214,21 @@ void ASTUBaseCharacter::OnDeath()
 void ASTUBaseCharacter::OnHealthChanged(float NewHealth)
 {
     HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), HealthComponent->GetHealth())));
+}
+
+void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
+{
+    const auto LandingVelocityZ = -GetVelocity().Z;
+
+    if (LandingVelocityZ < LandingDamageVelocity.X)
+    {
+        return;
+    }
+
+    const auto ReceivedLandingDamage =
+      FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
+
+    HealthComponent->SetHealth(HealthComponent->GetHealth() - ReceivedLandingDamage);
 }
 
 void ASTUBaseCharacter::StartRun()
