@@ -52,14 +52,15 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         bool IsRunning() const;
 
     protected:
-        void MoveForward(float Amount);
-        void MoveRight(float Amount);
         UFUNCTION()
         void OnDeath();
         UFUNCTION()
         void OnHealthChanged(float NewHealth);
         UFUNCTION()
         void OnLanding(const FHitResult& LandingHit);
+
+        void MoveForward(float Amount);
+        void MoveRight(float Amount);
         void StartRun();
         void StopRun();
         void TryToJump();
@@ -76,9 +77,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USpringArmComponent* SpringArmComponent;
 
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
         FVector2D LandingDamage = FVector2D{10.0f, 100.0f};
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
         FVector2D LandingDamageVelocity = FVector2D{900.0f, 1200.0f};
 
     private:

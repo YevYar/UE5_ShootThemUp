@@ -6,8 +6,8 @@
 #include "CoreMinimal.h"
 #include "STUHealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDied);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChanged, float, Health);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDiedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChangedSignature, float, Health);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
@@ -32,13 +32,14 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         UFUNCTION()
         void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
                              class AController* InstigatedBy, AActor* DamageCauser);
+
         void StopHealing();
 
     public:
         UPROPERTY(BlueprintAssignable, Category = "Health")
-        FDied Died;
+        FDiedSignature Died;
         UPROPERTY(BlueprintAssignable, Category = "Health")
-        FHealthChanged HealthChanged;
+        FHealthChangedSignature HealthChanged;
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal")
