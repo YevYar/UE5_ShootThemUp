@@ -16,7 +16,6 @@ namespace
 constexpr inline float MIN_HEALTH = 0.0f;
 }
 
-// Sets default values for this component's properties
 USTUHealthComponent::USTUHealthComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
@@ -64,7 +63,6 @@ void USTUHealthComponent::SetHealth(float NewHealth) noexcept
     }
 }
 
-// Called when the game starts
 void USTUHealthComponent::BeginPlay()
 {
     Super::BeginPlay();
@@ -77,6 +75,18 @@ void USTUHealthComponent::BeginPlay()
     if (Owner)
     {
         Owner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
+    }
+}
+
+void USTUHealthComponent::StopHealing()
+{
+    if (AutoHealEnabled)
+    {
+        auto World = GetWorld();
+        if (World)
+        {
+            World->GetTimerManager().ClearTimer(HealTimer);
+        }
     }
 }
 
@@ -118,17 +128,5 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
     else
     {
         UE_LOG(LogHealth, Display, TEXT("Wow, unknown damage type!"));
-    }
-}
-
-void USTUHealthComponent::StopHealing()
-{
-    if (AutoHealEnabled)
-    {
-        auto World = GetWorld();
-        if (World)
-        {
-            World->GetTimerManager().ClearTimer(HealTimer);
-        }
     }
 }

@@ -15,7 +15,6 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         GENERATED_BODY()
 
     public:
-        // Sets default values for this component's properties
         USTUHealthComponent();
 
         float GetHealth() const noexcept;
@@ -23,17 +22,16 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         void  SetHealth(float NewHealth) noexcept;
 
     protected:
-        // Called when the game starts
         virtual void BeginPlay() override;
 
     private:
+        void StopHealing();
+
         UFUNCTION()
         void AutoHeal();
         UFUNCTION()
         void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
                              class AController* InstigatedBy, AActor* DamageCauser);
-
-        void StopHealing();
 
     public:
         UPROPERTY(BlueprintAssignable, Category = "Health")

@@ -6,8 +6,8 @@
 #include "GameFramework/Character.h"
 #include "STUBaseCharacter.generated.h"
 
-class UCameraComponent;
 class UAnimMontage;
+class UCameraComponent;
 class USTUHealthComponent;
 class USpringArmComponent;
 class UTextRenderComponent;
@@ -17,19 +17,11 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         GENERATED_BODY()
 
     public:
-        // Sets default values for this character's properties
         ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
-    protected:
-        // Called when the game starts or when spawned
-        virtual void BeginPlay() override;
-
     public:
-        // Called every frame
-        virtual void Tick(float DeltaTime) override;
-
-        // Called to bind functionality to input
         virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+        virtual void Tick(float DeltaTime) override;
 
         UFUNCTION(BlueprintCallable, Category = "Life State")
         bool IsDead() const;
@@ -52,6 +44,13 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         bool IsRunning() const;
 
     protected:
+        virtual void BeginPlay() override;
+        void         MoveForward(float Amount);
+        void         MoveRight(float Amount);
+        void         StartRun();
+        void         StopRun();
+        void         TryToJump();
+
         UFUNCTION()
         void OnDeath();
         UFUNCTION()
@@ -59,13 +58,10 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         UFUNCTION()
         void OnLanding(const FHitResult& LandingHit);
 
-        void MoveForward(float Amount);
-        void MoveRight(float Amount);
-        void StartRun();
-        void StopRun();
-        void TryToJump();
-
     protected:
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Appearance", meta = (ToolTip = "Time in seconds."))
+        float LifeSpanAfterDeath = 10.0f;
+
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UCameraComponent* CameraComponent;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")

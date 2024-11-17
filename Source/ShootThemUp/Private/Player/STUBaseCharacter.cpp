@@ -18,12 +18,10 @@ namespace
 constexpr inline float NULL_EPSILON = 0.0001f;
 }  // namespace
 
-// Sets default values
 ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer) :
     Super(ObjectInitializer
             .SetDefaultSubobjectClass<USTUCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
-    // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
     HealthComponent     = CreateDefaultSubobject<USTUHealthComponent>("HealthComponent");
@@ -49,37 +47,6 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer
     }
 }
 
-// Called when the game starts or when spawned
-void ASTUBaseCharacter::BeginPlay()
-{
-    Super::BeginPlay();
-
-    if (GetMesh())
-    {
-        InitialMeshRotation = GetMesh()->GetRelativeRotation();
-    }
-
-    check(HealthComponent);
-    check(HealthTextComponent);
-    check(GetCharacterMovement());
-
-    HealthComponent->Died.AddDynamic(this, &ASTUBaseCharacter::OnDeath);
-    HealthComponent->HealthChanged.AddDynamic(this, &ASTUBaseCharacter::OnHealthChanged);
-
-    // First time HealthChanged is called by HealthComponent in its BeginPlay(), what called before
-    // ASTUBaseCharacter::BeginPlay(). So here we must call it manually to init the displayed value by HealthTextComponent
-    OnHealthChanged(HealthComponent->GetHealth());
-
-    LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnLanding);
-}
-
-// Called every frame
-void ASTUBaseCharacter::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-}
-
-// Called to bind functionality to input
 void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -94,6 +61,11 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
         PlayerInputComponent->BindAction("Run", IE_Released, this, &ASTUBaseCharacter::StopRun);
         PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::TryToJump);
     }
+}
+
+void ASTUBaseCharacter::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
 }
 
 bool ASTUBaseCharacter::IsDead() const
@@ -152,6 +124,29 @@ bool ASTUBaseCharacter::IsRunning() const
     return bWantsToRun && IsMovingForward();
 }
 
+void ASTUBaseCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (GetMesh())
+    {
+        InitialMeshRotation = GetMesh()->GetRelativeRotation();
+    }
+
+    check(HealthComponent);
+    check(HealthTextComponent);
+    check(GetCharacterMovement());
+
+    HealthComponent->Died.AddDynamic(this, &ASTUBaseCharacter::OnDeath);
+    HealthComponent->HealthChanged.AddDynamic(this, &ASTUBaseCharacter::OnHealthChanged);
+
+    // First time HealthChanged is called by HealthComponent in its BeginPlay(), what called before
+    // ASTUBaseCharacter::BeginPlay(). So here we must call it manually to init the displayed value by HealthTextComponent
+    OnHealthChanged(HealthComponent->GetHealth());
+
+    LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnLanding);
+}
+
 void ASTUBaseCharacter::MoveForward(float Amount)
 {
     if (IsDead())
@@ -192,45 +187,6 @@ void ASTUBaseCharacter::MoveRight(float Amount)
     }
 }
 
-void ASTUBaseCharacter::OnDeath()
-{
-    bIsIdleForward   = true;
-    bIsIdleRight     = true;
-    bIsMovingForward = false;
-    bIsMovingRight   = false;
-    bWantsToRun      = false;
-
-    HealthTextComponent->SetVisibility(false, true);
-    GetCharacterMovement()->DisableMovement();
-    PlayAnimMontage(DeathMontage);
-    SetLifeSpan(10.0f);  // 10s
-
-    if (Controller)
-    {
-        Controller->ChangeState(NAME_Spectating);
-    }
-}
-
-void ASTUBaseCharacter::OnHealthChanged(float NewHealth)
-{
-    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), HealthComponent->GetHealth())));
-}
-
-void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
-{
-    const auto LandingVelocityZ = -GetVelocity().Z;
-
-    if (LandingVelocityZ < LandingDamageVelocity.X)
-    {
-        return;
-    }
-
-    const auto ReceivedLandingDamage =
-      FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
-
-    HealthComponent->SetHealth(HealthComponent->GetHealth() - ReceivedLandingDamage);
-}
-
 void ASTUBaseCharacter::StartRun()
 {
     if (IsDead())
@@ -257,4 +213,43 @@ void ASTUBaseCharacter::TryToJump()
     {
         Jump();
     }
+}
+
+void ASTUBaseCharacter::OnDeath()
+{
+    bIsIdleForward   = true;
+    bIsIdleRight     = true;
+    bIsMovingForward = false;
+    bIsMovingRight   = false;
+    bWantsToRun      = false;
+
+    HealthTextComponent->SetVisibility(false, true);
+    GetCharacterMovement()->DisableMovement();
+    PlayAnimMontage(DeathMontage);
+    SetLifeSpan(LifeSpanAfterDeath);
+
+    if (Controller)
+    {
+        Controller->ChangeState(NAME_Spectating);
+    }
+}
+
+void ASTUBaseCharacter::OnHealthChanged(float NewHealth)
+{
+    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), HealthComponent->GetHealth())));
+}
+
+void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
+{
+    const auto LandingVelocityZ = -GetVelocity().Z;
+
+    if (LandingVelocityZ < LandingDamageVelocity.X)
+    {
+        return;
+    }
+
+    const auto ReceivedLandingDamage =
+      FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
+
+    HealthComponent->SetHealth(HealthComponent->GetHealth() - ReceivedLandingDamage);
 }
