@@ -12,6 +12,7 @@
 
 #include "Player/Components/STUCharacterMovementComponent.h"
 #include "Player/Components/STUHealthComponent.h"
+#include "Weapons/STUBaseWeapon.h"
 
 namespace
 {
@@ -145,6 +146,8 @@ void ASTUBaseCharacter::BeginPlay()
     OnHealthChanged(HealthComponent->GetHealth());
 
     LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnLanding);
+
+    SpawnWeapon();
 }
 
 void ASTUBaseCharacter::MoveForward(float Amount)
@@ -226,7 +229,12 @@ void ASTUBaseCharacter::OnDeath()
     HealthTextComponent->SetVisibility(false, true);
     GetCharacterMovement()->DisableMovement();
     PlayAnimMontage(DeathMontage);
+
     SetLifeSpan(LifeSpanAfterDeath);
+    if (SpawnedWeapon)
+    {
+        SpawnedWeapon->SetLifeSpan(LifeSpanAfterDeath);
+    }
 
     if (Controller)
     {
@@ -252,4 +260,19 @@ void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
       FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
 
     HealthComponent->SetHealth(HealthComponent->GetHealth() - ReceivedLandingDamage);
+}
+
+void ASTUBaseCharacter::SpawnWeapon()
+{
+    if (!GetWorld())
+    {
+        return;
+    }
+
+    SpawnedWeapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
+    if (SpawnedWeapon)
+    {
+        SpawnedWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules{EAttachmentRule::SnapToTarget, false},
+                                         "WeaponPoint");
+    }
 }

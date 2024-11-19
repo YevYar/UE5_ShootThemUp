@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "STUBaseCharacter.generated.h"
 
+class ASTUBaseWeapon;
 class UAnimMontage;
 class UCameraComponent;
 class USTUHealthComponent;
@@ -58,6 +59,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         UFUNCTION()
         void OnLanding(const FHitResult& LandingHit);
 
+    private:
+        void SpawnWeapon();
+
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Appearance", meta = (ToolTip = "Time in seconds."))
         float LifeSpanAfterDeath = 10.0f;
@@ -77,6 +81,11 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         FVector2D LandingDamage = FVector2D{10.0f, 100.0f};
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
         FVector2D LandingDamageVelocity = FVector2D{900.0f, 1200.0f};
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+        TSubclassOf<ASTUBaseWeapon> WeaponClass;
+
+        ASTUBaseWeapon* SpawnedWeapon;
 
     private:
         bool     bIsIdleForward   = true;
