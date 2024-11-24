@@ -1,0 +1,23 @@
+// "Shoot Them Up" Game by YevYar, All rights reserved
+
+
+#include "UI/STUGameHUD.h"
+
+#include "Engine/Canvas.h"
+
+void ASTUGameHUD::DrawHUD()
+{
+    DrawCrossline();
+}
+
+void ASTUGameHUD::DrawCrossline()
+{
+    const auto Width  = Canvas->SizeX;
+    const auto Height = Canvas->SizeY;
+
+    const auto CenterX = Width / 2.0f;
+    const auto CenterY = Height / 2.0f;
+
+    DrawLine(CenterX - 7.5f, CenterY - 7.5f, CenterX + 7.5f, CenterY + 7.5f, FLinearColor::Green, 1.5f);
+    DrawLine(CenterX - 7.5f, CenterY + 7.5f, CenterX + 7.5f, CenterY - 7.5f, FLinearColor::Green, 1.5f);
+}
