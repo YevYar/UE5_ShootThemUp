@@ -30,6 +30,7 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer
     if (HealthTextComponent)
     {
         HealthTextComponent->SetupAttachment(GetRootComponent());
+        HealthTextComponent->SetOwnerNoSee(true);
     }
 
     SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
