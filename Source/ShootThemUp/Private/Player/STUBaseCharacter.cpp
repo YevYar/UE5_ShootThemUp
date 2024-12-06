@@ -12,7 +12,7 @@
 
 #include "Player/Components/STUCharacterMovementComponent.h"
 #include "Player/Components/STUHealthComponent.h"
-#include "Weapons/STUBaseWeapon.h"
+#include "Weapons/Components/STUWeaponComponent.h"
 
 namespace
 {
@@ -48,6 +48,8 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer
     {
         CameraComponent->SetupAttachment(SpringArmComponent);
     }
+
+    WeaponComponent = CreateDefaultSubobject<USTUWeaponComponent>("WeaponComponent");
 }
 
 void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -63,6 +65,7 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
         PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ASTUBaseCharacter::StartRun);
         PlayerInputComponent->BindAction("Run", IE_Released, this, &ASTUBaseCharacter::StopRun);
         PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::TryToJump);
+        PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::Fire);
     }
 }
 
@@ -139,6 +142,7 @@ void ASTUBaseCharacter::BeginPlay()
     check(HealthComponent);
     check(HealthTextComponent);
     check(GetCharacterMovement());
+    check(WeaponComponent);
 
     HealthComponent->Died.AddDynamic(this, &ASTUBaseCharacter::OnDeath);
     HealthComponent->HealthChanged.AddDynamic(this, &ASTUBaseCharacter::OnHealthChanged);
@@ -148,8 +152,6 @@ void ASTUBaseCharacter::BeginPlay()
     OnHealthChanged(HealthComponent->GetHealth());
 
     LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnLanding);
-
-    SpawnWeapon();
 }
 
 void ASTUBaseCharacter::MoveForward(float Amount)
@@ -233,9 +235,9 @@ void ASTUBaseCharacter::OnDeath()
     PlayAnimMontage(DeathMontage);
 
     SetLifeSpan(LifeSpanAfterDeath);
-    if (SpawnedWeapon)
+    if (WeaponComponent)
     {
-        SpawnedWeapon->SetLifeSpan(LifeSpanAfterDeath);
+        WeaponComponent->SetLifeSpan(LifeSpanAfterDeath);
     }
 
     if (Controller)
@@ -262,19 +264,4 @@ void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
       FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
 
     HealthComponent->SetHealth(HealthComponent->GetHealth() - ReceivedLandingDamage);
-}
-
-void ASTUBaseCharacter::SpawnWeapon()
-{
-    if (!GetWorld())
-    {
-        return;
-    }
-
-    SpawnedWeapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
-    if (SpawnedWeapon)
-    {
-        SpawnedWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules{EAttachmentRule::SnapToTarget, false},
-                                         "WeaponPoint");
-    }
 }

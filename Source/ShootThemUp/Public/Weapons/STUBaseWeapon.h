@@ -15,6 +15,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
     public:
         ASTUBaseWeapon();
 
+        UFUNCTION(BlueprintCallable, Category = "Actions")
+        virtual void Fire();
+
     protected:
         virtual void BeginPlay() override;
 
