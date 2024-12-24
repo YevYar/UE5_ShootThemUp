@@ -23,4 +23,11 @@ void ASTUBaseWeapon::Fire()
 void ASTUBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();
+
+    check(WeaponMesh);
+}
+
+bool ASTUBaseWeapon::isTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target) const
+{
+    return FVector::DotProduct(MuzzleForwardVector, Target) > 0.0f;
 }

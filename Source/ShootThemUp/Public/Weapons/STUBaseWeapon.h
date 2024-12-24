@@ -21,7 +21,14 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
     protected:
         virtual void BeginPlay() override;
 
+        bool isTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target) const;
+
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USkeletalMeshComponent* WeaponMesh;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        FName MuzzleSocketName = "MuzzleSocket";
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        float ShootingDistance = 1500.0f;
 };
