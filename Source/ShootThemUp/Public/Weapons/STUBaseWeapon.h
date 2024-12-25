@@ -21,12 +21,19 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
     protected:
         virtual void BeginPlay() override;
 
-        bool isTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target) const;
+        virtual void  ApplyDamageToTheHitActor(const FHitResult& HitResult, const FVector& MuzzleLocation) const;
+        virtual float CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const;
+        FVector       GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation) const;
+        bool          IsTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target) const;
 
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USkeletalMeshComponent* WeaponMesh;
 
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        float MaxDamage = 30.0f;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        float MinDamage = 2.0f;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         FName MuzzleSocketName = "MuzzleSocket";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")

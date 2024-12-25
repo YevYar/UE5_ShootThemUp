@@ -14,5 +14,4 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
 
     public:
         void Fire() override;
-
 };

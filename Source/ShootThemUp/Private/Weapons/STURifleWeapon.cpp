@@ -31,22 +31,28 @@ void ASTURifleWeapon::Fire()
     const auto MuzzleTransform     = WeaponMesh->GetSocketTransform(MuzzleSocketName);
     const auto MuzzleForwardVector = MuzzleTransform.GetRotation().GetForwardVector();
 
-    auto HitResult = FHitResult{};
+    auto HitResult       = FHitResult{};
     auto CollisionParams = FCollisionQueryParams{};
     CollisionParams.AddIgnoredActor(Player);
 
-    if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStartLocation, TraceEndLocation, ECC_Visibility, CollisionParams))
+    if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStartLocation, TraceEndLocation, ECC_Visibility,
+                                             CollisionParams))
     {
-        if (isTargetAhead(MuzzleForwardVector, HitResult.ImpactPoint - MuzzleTransform.GetLocation()))
+        if (IsTargetAhead(MuzzleForwardVector, HitResult.ImpactPoint - MuzzleTransform.GetLocation()))
         {
             DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), HitResult.ImpactPoint, FColor::Red, false, 2.0f,
                           0.0f, 3.0f);
             DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 10.0f, FColor::Red, false, 2.0f, 0.0f, 3.0f);
-        }        
+
+            if (HitResult.GetActor())
+            {
+                ApplyDamageToTheHitActor(HitResult, MuzzleTransform.GetLocation());
+            }
+        }
     }
     else
     {
-        if (isTargetAhead(MuzzleForwardVector, TraceEndLocation - MuzzleTransform.GetLocation()))
+        if (IsTargetAhead(MuzzleForwardVector, TraceEndLocation - MuzzleTransform.GetLocation()))
         {
             DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), TraceEndLocation, FColor::Green, false, 2.0f, 0.0f,
                           3.0f);
