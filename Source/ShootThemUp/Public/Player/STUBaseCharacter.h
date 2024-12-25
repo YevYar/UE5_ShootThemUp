@@ -46,16 +46,17 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 
     protected:
         virtual void BeginPlay() override;
-        void         MoveForward(float Amount);
-        void         MoveRight(float Amount);
-        void         StartRun();
-        void         StopRun();
-        void         TryToJump();
+
+        void MoveForward(float Amount);
+        void MoveRight(float Amount);
+        void StartRun();
+        void StopRun();
+        void TryToJump();
 
         UFUNCTION()
         void OnDeath();
         UFUNCTION()
-        void OnHealthChanged(float NewHealth);
+        void OnHealthChanged(float NewHealth, bool IsCausedByDamage = false, float LastDamage = 0.0f);
         UFUNCTION()
         void OnLanding(const FHitResult& LandingHit);
 
@@ -65,6 +66,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UCameraComponent* CameraComponent;
+        UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+        UTextRenderComponent* DamageTextComponent;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
         UAnimMontage* DeathMontage;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -82,12 +85,13 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         FVector2D LandingDamageVelocity = FVector2D{900.0f, 1200.0f};
 
     private:
-        bool     bIsIdleForward   = true;
-        bool     bIsIdleRight     = true;
+        bool         bIsIdleForward   = true;
+        bool         bIsIdleRight     = true;
         // true - move forward, false - move backward, doesn't define if the Character is idle in the forward direction
-        bool     bIsMovingForward = false;
+        bool         bIsMovingForward = false;
         // true - move right, false - move left, doesn't define if the Character is idle in the right direction
-        bool     bIsMovingRight   = false;
-        bool     bWantsToRun      = false;
-        FRotator InitialMeshRotation;
+        bool         bIsMovingRight   = false;
+        bool         bWantsToRun      = false;
+        FTimerHandle DamageDisplayTimer;
+        FRotator     InitialMeshRotation;
 };

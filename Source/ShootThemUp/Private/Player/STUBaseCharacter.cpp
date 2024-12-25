@@ -5,8 +5,10 @@
 
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/DamageEvents.h"
+#include "Engine/TimerHandle.h"
 #include "GameFramework/SpectatorPawn.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -26,11 +28,17 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer
     PrimaryActorTick.bCanEverTick = true;
 
     HealthComponent     = CreateDefaultSubobject<USTUHealthComponent>("HealthComponent");
+    DamageTextComponent = CreateDefaultSubobject<UTextRenderComponent>("DamageTextComponent");
     HealthTextComponent = CreateDefaultSubobject<UTextRenderComponent>("HealthTextComponent");
     if (HealthTextComponent)
     {
         HealthTextComponent->SetupAttachment(GetRootComponent());
         HealthTextComponent->SetOwnerNoSee(true);
+    }
+    if (DamageTextComponent)
+    {
+        DamageTextComponent->SetupAttachment(HealthTextComponent);
+        DamageTextComponent->SetOwnerNoSee(true);
     }
 
     SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
@@ -141,6 +149,7 @@ void ASTUBaseCharacter::BeginPlay()
 
     check(HealthComponent);
     check(HealthTextComponent);
+    check(DamageTextComponent);
     check(GetCharacterMovement());
     check(WeaponComponent);
 
@@ -150,6 +159,8 @@ void ASTUBaseCharacter::BeginPlay()
     // First time HealthChanged is called by HealthComponent in its BeginPlay(), what called before
     // ASTUBaseCharacter::BeginPlay(). So here we must call it manually to init the displayed value by HealthTextComponent
     OnHealthChanged(HealthComponent->GetHealth());
+
+    DamageTextComponent->SetVisibility(false, true);
 
     LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnLanding);
 }
@@ -246,9 +257,28 @@ void ASTUBaseCharacter::OnDeath()
     }
 }
 
-void ASTUBaseCharacter::OnHealthChanged(float NewHealth)
+void ASTUBaseCharacter::OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage)
 {
-    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), HealthComponent->GetHealth())));
+    HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), NewHealth)));
+
+    if (IsCausedByDamage && LastDamage > 0.0f)
+    {
+        DamageTextComponent->SetVisibility(true, true);
+        DamageTextComponent->SetText(FText::FromString(FString::Printf(TEXT("-%.2f"), LastDamage)));
+
+        auto World = GetWorld();
+        if (World)
+        {
+            World->GetTimerManager().ClearTimer(DamageDisplayTimer);
+            World->GetTimerManager().SetTimer(
+              DamageDisplayTimer,
+              [this]()
+              {
+                  DamageTextComponent->SetVisibility(false, true);
+              },
+              3.0f, false);
+        }
+    }
 }
 
 void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
@@ -263,5 +293,5 @@ void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
     const auto ReceivedLandingDamage =
       FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
 
-    HealthComponent->SetHealth(HealthComponent->GetHealth() - ReceivedLandingDamage);
+    HealthComponent->SetHealth(HealthComponent->GetHealth() - ReceivedLandingDamage, true, ReceivedLandingDamage);
 }

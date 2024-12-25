@@ -31,14 +31,14 @@ bool USTUHealthComponent::IsDead() const noexcept
     return bIsDead;
 }
 
-void USTUHealthComponent::SetHealth(float NewHealth) noexcept
+void USTUHealthComponent::SetHealth(float NewHealth, bool IsCausedByDamage, float LastDamage) noexcept
 {
     const auto LastHealth = Health;
     Health                = FMath::Clamp(NewHealth, MIN_HEALTH, MaxHealth);
 
     if (Health != LastHealth)
     {
-        HealthChanged.Broadcast(Health);
+        HealthChanged.Broadcast(Health, IsCausedByDamage, LastDamage);
 
         if (Health == MIN_HEALTH)
         {
@@ -69,7 +69,7 @@ void USTUHealthComponent::BeginPlay()
 
     bIsDead = false;
     Health  = MaxHealth;
-    HealthChanged.Broadcast(Health);
+    HealthChanged.Broadcast(Health, false, 0.0f);
 
     const auto Owner = GetOwner();
     if (Owner)
@@ -110,7 +110,7 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
         return;
     }
 
-    SetHealth(Health - Damage);
+    SetHealth(Health - Damage, true, Damage);
 
     if (!DamageType)
     {
