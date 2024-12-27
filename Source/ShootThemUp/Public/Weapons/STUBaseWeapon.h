@@ -21,12 +21,13 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         virtual void StopFire();
 
     protected:
-        virtual void BeginPlay() override;
+        static FVector GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation);
+        static bool    IsTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target);
+
+        void BeginPlay() override;
 
         virtual void  ApplyDamageToTheHitActor(const FHitResult& HitResult, const FVector& MuzzleLocation) const;
         virtual float CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const;
-        FVector       GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation) const;
-        bool          IsTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target) const;
 
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

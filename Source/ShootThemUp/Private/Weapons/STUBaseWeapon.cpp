@@ -27,6 +27,16 @@ void ASTUBaseWeapon::StopFire()
     UE_LOG(LogBaseWeapon, All, TEXT("Stop Fire!"));
 }
 
+bool ASTUBaseWeapon::IsTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target)
+{
+    return FVector::DotProduct(MuzzleForwardVector, Target) > 0.0f;
+}
+
+FVector ASTUBaseWeapon::GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation)
+{
+    return (ImpactPoint - MuzzleLocation).GetSafeNormal();
+}
+
 void ASTUBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();
@@ -66,14 +76,4 @@ float ASTUBaseWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceFr
 {
     return FMath::GetMappedRangeValueClamped(FVector2D{100.0f, ShootingDistance - DistanceFromTraceStartToMuzzle},
                                              FVector2D{MaxDamage, MinDamage}, DistanceFromMuzzle);
-}
-
-bool ASTUBaseWeapon::IsTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target) const
-{
-    return FVector::DotProduct(MuzzleForwardVector, Target) > 0.0f;
-}
-
-FVector ASTUBaseWeapon::GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation) const
-{
-    return (ImpactPoint - MuzzleLocation).GetSafeNormal();
 }
