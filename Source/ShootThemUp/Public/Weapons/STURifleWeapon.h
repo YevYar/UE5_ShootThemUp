@@ -20,8 +20,8 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         virtual void MakeShot();
 
     protected:
-        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponSettings", meta = (ToolTip = "In Radians. The default is 9 degrees."))
-        float ShootingSpreadConeAngle = 0.157;
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponSettings", meta = (ToolTip = "In Degrees."))
+        float ShootingSpreadConeAngle = 9.0f;
 
         FTimerHandle BurstShootingTimer;
         float        TimeFromFireStart = 0.0f;

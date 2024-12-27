@@ -40,9 +40,10 @@ void ASTURifleWeapon::MakeShot()
     auto ViewPointRotation = FRotator{};
     Controller->GetPlayerViewPoint(ViewPointLocation, ViewPointRotation);
 
-    const auto TraceStartLocation = ViewPointLocation;
-    const auto TraceDirection   = FMath::VRandCone(ViewPointRotation.Vector(), FMath::Clamp(TimeFromFireStart / 4, 0.0f,
-                                                                                            ShootingSpreadConeAngle / 2));
+    const auto TraceStartLocation  = ViewPointLocation;
+    const auto ShootingConeHalfRad = FMath::DegreesToRadians(ShootingSpreadConeAngle) / 2.0f;
+    const auto TraceDirection =
+      FMath::VRandCone(ViewPointRotation.Vector(), FMath::Clamp(TimeFromFireStart / 4, 0.0f, ShootingConeHalfRad));
     const auto TraceEndLocation = TraceStartLocation + TraceDirection * ShootingDistance;
 
     const auto MuzzleTransform     = WeaponMesh->GetSocketTransform(MuzzleSocketName);
