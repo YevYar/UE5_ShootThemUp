@@ -166,6 +166,13 @@ void ASTUBaseCharacter::BeginPlay()
     LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnLanding);
 }
 
+void ASTUBaseCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+
+    ResetFields();
+}
+
 void ASTUBaseCharacter::MoveForward(float Amount)
 {
     if (IsDead())
@@ -234,13 +241,26 @@ void ASTUBaseCharacter::TryToJump()
     }
 }
 
+void ASTUBaseCharacter::ResetFields()
+{
+    bIsIdleForward      = true;
+    bIsIdleRight        = true;
+    bIsMovingForward    = false;
+    bIsMovingRight      = false;
+    bWantsToRun         = false;
+    InitialMeshRotation = FRotator{};
+
+    WeaponComponent->StopFire();
+
+    if (DamageDisplayTimer.IsValid())
+    {
+        GetWorldTimerManager().ClearTimer(DamageDisplayTimer);
+    }
+}
+
 void ASTUBaseCharacter::OnDeath()
 {
-    bIsIdleForward   = true;
-    bIsIdleRight     = true;
-    bIsMovingForward = false;
-    bIsMovingRight   = false;
-    bWantsToRun      = false;
+    ResetFields();
 
     HealthTextComponent->SetVisibility(false, true);
     GetCharacterMovement()->DisableMovement();

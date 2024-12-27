@@ -45,13 +45,16 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         bool IsRunning() const;
 
     protected:
-        virtual void BeginPlay() override;
+        void BeginPlay() override;
+        void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
         void MoveForward(float Amount);
         void MoveRight(float Amount);
         void StartRun();
         void StopRun();
         void TryToJump();
+
+        virtual void ResetFields();
 
         UFUNCTION()
         void OnDeath();
