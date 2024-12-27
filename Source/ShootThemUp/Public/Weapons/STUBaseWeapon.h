@@ -16,7 +16,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         ASTUBaseWeapon();
 
         UFUNCTION(BlueprintCallable, Category = "Actions")
-        virtual void Fire();
+        virtual void StartFire();
+        UFUNCTION(BlueprintCallable, Category = "Actions")
+        virtual void StopFire();
 
     protected:
         virtual void BeginPlay() override;
@@ -38,4 +40,6 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         FName MuzzleSocketName = "MuzzleSocket";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         float ShootingDistance = 1500.0f;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        float ShootingInterval = 0.1f;
 };

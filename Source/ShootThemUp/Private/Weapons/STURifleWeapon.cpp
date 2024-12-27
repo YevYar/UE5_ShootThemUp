@@ -6,7 +6,23 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 
-void ASTURifleWeapon::Fire()
+void ASTURifleWeapon::StartFire()
+{
+    TimeFromFireStart = 0.0f;
+    MakeShot();
+    GetWorldTimerManager().SetTimer(BurstShootingTimer, this, &ASTURifleWeapon::MakeShot, ShootingInterval, true);
+}
+
+void ASTURifleWeapon::StopFire()
+{
+    if (BurstShootingTimer.IsValid())
+    {
+        TimeFromFireStart = 0.0f;
+        GetWorldTimerManager().ClearTimer(BurstShootingTimer);
+    }
+}
+
+void ASTURifleWeapon::MakeShot()
 {
     const auto Player = Cast<ACharacter>(GetOwner());
     if (!GetWorld() || !Player)
@@ -25,8 +41,9 @@ void ASTURifleWeapon::Fire()
     Controller->GetPlayerViewPoint(ViewPointLocation, ViewPointRotation);
 
     const auto TraceStartLocation = ViewPointLocation;
-    const auto TraceDirection     = ViewPointRotation.Vector();
-    const auto TraceEndLocation   = TraceStartLocation + TraceDirection * ShootingDistance;
+    const auto TraceDirection   = FMath::VRandCone(ViewPointRotation.Vector(), FMath::Clamp(TimeFromFireStart / 4, 0.0f,
+                                                                                            ShootingSpreadConeAngle / 2));
+    const auto TraceEndLocation = TraceStartLocation + TraceDirection * ShootingDistance;
 
     const auto MuzzleTransform     = WeaponMesh->GetSocketTransform(MuzzleSocketName);
     const auto MuzzleForwardVector = MuzzleTransform.GetRotation().GetForwardVector();
@@ -58,4 +75,6 @@ void ASTURifleWeapon::Fire()
                           3.0f);
         }
     }
+
+    TimeFromFireStart += ShootingInterval;
 }

@@ -17,9 +17,14 @@ ASTUBaseWeapon::ASTUBaseWeapon()
     SetRootComponent(WeaponMesh);
 }
 
-void ASTUBaseWeapon::Fire()
+void ASTUBaseWeapon::StartFire()
 {
-    UE_LOG(LogBaseWeapon, All, TEXT("Fire!"));
+    UE_LOG(LogBaseWeapon, All, TEXT("Start Fire!"));
+}
+
+void ASTUBaseWeapon::StopFire()
+{
+    UE_LOG(LogBaseWeapon, All, TEXT("Stop Fire!"));
 }
 
 void ASTUBaseWeapon::BeginPlay()

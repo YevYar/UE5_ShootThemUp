@@ -12,11 +12,19 @@ USTUWeaponComponent::USTUWeaponComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
-void USTUWeaponComponent::Fire()
+void USTUWeaponComponent::StartFire()
 {
     if (SpawnedWeapon)
     {
-        SpawnedWeapon->Fire();
+        SpawnedWeapon->StartFire();
+    }
+}
+
+void USTUWeaponComponent::StopFire()
+{
+    if (SpawnedWeapon)
+    {
+        SpawnedWeapon->StopFire();
     }
 }
 

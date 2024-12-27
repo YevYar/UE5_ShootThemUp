@@ -17,7 +17,9 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         USTUWeaponComponent();
 
         UFUNCTION(BlueprintCallable, Category = "Damage")
-        void Fire();
+        void StartFire();
+        UFUNCTION(BlueprintCallable, Category = "Damage")
+        void StopFire();
 
         void SetLifeSpan(float LifeSpan);
 
