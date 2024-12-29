@@ -56,6 +56,26 @@ void ASTULauncherProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
 {
     UE_LOG(LogTemp, Error, TEXT("Hit something!"));
 
+    if (!GetWorld())
+    {
+        return;
+    }
+
+    MovementComponent->StopMovementImmediately();
+
+    auto IgnoreActors = TArray<AActor*>{};
+    IgnoreActors.Add(this);
+
+    USTUUtilities::ApplyRadialDamage(GetWorld(), MinDamage, MaxDamage, Hit.ImpactPoint, DamageRadius, IgnoreActors,
+                                     GetOwner(), GetController(), DoFullDamage);
+
+    DrawDebugSphere(GetWorld(), Hit.ImpactPoint, DamageRadius, 20, FColor::Red, false, 1.0f, 0.0f, 3.0f);
+
     Destroy();
 }
 
+AController* ASTULauncherProjectile::GetController() const
+{
+    const auto Pawn = Cast<APawn>(GetOwner());
+    return Pawn ? Pawn->GetController() : nullptr;
+}
