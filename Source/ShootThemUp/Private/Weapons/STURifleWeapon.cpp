@@ -24,6 +24,7 @@ void ASTURifleWeapon::StopFire()
 
 void ASTURifleWeapon::MakeShot()
 {
+    UE_LOG(LogTemp, Error, TEXT("Rifle shot!"));
     const auto Player = Cast<ACharacter>(GetOwner());
     if (!GetWorld() || !Player)
     {
@@ -78,4 +79,10 @@ void ASTURifleWeapon::MakeShot()
     }
 
     TimeFromFireStart += ShootingInterval;
+}
+
+float ASTURifleWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const
+{
+    return FMath::GetMappedRangeValueClamped(FVector2D{100.0f, ShootingDistance - DistanceFromTraceStartToMuzzle},
+                                             FVector2D{MaxDamage, MinDamage}, DistanceFromMuzzle);
 }

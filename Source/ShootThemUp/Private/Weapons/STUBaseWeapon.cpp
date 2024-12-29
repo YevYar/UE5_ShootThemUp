@@ -60,9 +60,8 @@ void ASTUBaseWeapon::ApplyDamageToTheHitActor(const FHitResult& HitResult, const
 
     if (HitResult.GetActor())
     {
-        const auto DamageAmount =
-          CalculateDamage((HitResult.ImpactPoint - MuzzleLocation).Length(),
-                          (HitResult.TraceStart - MuzzleLocation).Length());
+        const auto DamageAmount  = CalculateDamage((HitResult.ImpactPoint - MuzzleLocation).Length(),
+                                                   (HitResult.TraceStart - MuzzleLocation).Length());
         const auto ShotDirection = GetShotDirection(HitResult.ImpactPoint, MuzzleLocation);
         const auto PointDamageEvent =
           FPointDamageEvent{DamageAmount, HitResult, ShotDirection, UDamageType::StaticClass()};
@@ -74,6 +73,5 @@ void ASTUBaseWeapon::ApplyDamageToTheHitActor(const FHitResult& HitResult, const
 
 float ASTUBaseWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const
 {
-    return FMath::GetMappedRangeValueClamped(FVector2D{100.0f, ShootingDistance - DistanceFromTraceStartToMuzzle},
-                                             FVector2D{MaxDamage, MinDamage}, DistanceFromMuzzle);
+    return 0.0f;
 }

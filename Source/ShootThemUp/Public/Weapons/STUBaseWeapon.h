@@ -34,13 +34,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         USkeletalMeshComponent* WeaponMesh;
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
-        float MaxDamage = 30.0f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
-        float MinDamage = 2.0f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         FName MuzzleSocketName = "MuzzleSocket";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         float ShootingDistance = 1500.0f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
-        float ShootingInterval = 0.1f;
 };
