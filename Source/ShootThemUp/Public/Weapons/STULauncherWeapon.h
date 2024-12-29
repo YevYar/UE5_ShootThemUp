@@ -8,6 +8,8 @@
 
 #include "STULauncherWeapon.generated.h"
 
+class ASTULauncherProjectile;
+
 UCLASS() class SHOOTTHEMUP_API ASTULauncherWeapon : public ASTUBaseWeapon
 {
         GENERATED_BODY()
@@ -20,6 +22,8 @@ UCLASS() class SHOOTTHEMUP_API ASTULauncherWeapon : public ASTUBaseWeapon
         virtual void MakeShot();
 
     protected:
-        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "WeaponSettings", meta = (ToolTip = "In Degrees."))
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        TSubclassOf<ASTULauncherProjectile> ProjectileType;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ToolTip = "In Degrees."))
         float ShootingSpreadConeAngle = 12.0f;
 };
