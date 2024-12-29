@@ -32,6 +32,25 @@ bool ASTUBaseWeapon::IsTargetAhead(const FVector& MuzzleForwardVector, const FVe
     return FVector::DotProduct(MuzzleForwardVector, Target) > 0.0f;
 }
 
+bool ASTUBaseWeapon::GetPlayerAndController(ACharacter*& OutPlayer, AController*& OutController) const
+{
+    const auto Player = Cast<ACharacter>(GetOwner());
+    if (!GetWorld() || !Player)
+    {
+        return false;
+    }
+
+    const auto Controller = Player->GetController();
+    if (!Controller)
+    {
+        return false;
+    }
+
+    OutPlayer     = Player;
+    OutController = Controller;
+    return true;
+}
+
 FVector ASTUBaseWeapon::GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation)
 {
     return (ImpactPoint - MuzzleLocation).GetSafeNormal();
@@ -46,14 +65,9 @@ void ASTUBaseWeapon::BeginPlay()
 
 void ASTUBaseWeapon::ApplyDamageToTheHitActor(const FHitResult& HitResult, const FVector& MuzzleLocation) const
 {
-    const auto Player = Cast<ACharacter>(GetOwner());
-    if (!GetWorld() || !Player)
-    {
-        return;
-    }
-
-    const auto Controller = Player->GetController();
-    if (!Controller)
+    ACharacter*  Player     = nullptr;
+    AController* Controller = nullptr;
+    if (!GetPlayerAndController(Player, Controller))
     {
         return;
     }
@@ -74,4 +88,29 @@ void ASTUBaseWeapon::ApplyDamageToTheHitActor(const FHitResult& HitResult, const
 float ASTUBaseWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const
 {
     return 0.0f;
+}
+
+bool ASTUBaseWeapon::GetTraceData(FVector& OutTraceStartLocation, FVector& OutTraceEndLocation) const
+{
+    ACharacter*  Player     = nullptr;
+    AController* Controller = nullptr;
+    if (!GetPlayerAndController(Player, Controller))
+    {
+        return false;
+    }
+
+    auto ViewPointLocation = FVector{};
+    auto ViewPointRotation = FRotator{};
+    Controller->GetPlayerViewPoint(ViewPointLocation, ViewPointRotation);
+
+    OutTraceStartLocation     = ViewPointLocation;
+    const auto TraceDirection = GetTraceDirection(ViewPointRotation.Vector());
+    OutTraceEndLocation       = OutTraceStartLocation + TraceDirection * ShootingDistance;
+
+    return true;
+}
+
+FVector ASTUBaseWeapon::GetTraceDirection(const FVector& ViewPointForwardVector) const
+{
+    return ViewPointForwardVector;
 }

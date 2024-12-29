@@ -19,7 +19,8 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
     protected:
         virtual void MakeShot();
 
-        float CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const override;
+        float   CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const override;
+        FVector GetTraceDirection(const FVector& ViewPointForwardVector) const override;
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")

@@ -25,27 +25,20 @@ void ASTURifleWeapon::StopFire()
 void ASTURifleWeapon::MakeShot()
 {
     UE_LOG(LogTemp, Error, TEXT("Rifle shot!"));
-    const auto Player = Cast<ACharacter>(GetOwner());
-    if (!GetWorld() || !Player)
+
+    ACharacter*  Player     = nullptr;
+    AController* Controller = nullptr;
+    if (!GetPlayerAndController(Player, Controller))
     {
         return;
     }
 
-    const auto Controller = Player->GetController();
-    if (!Controller)
+    auto TraceStartLocation = FVector{};
+    auto TraceEndLocation   = FVector{};
+    if (!GetTraceData(TraceStartLocation, TraceEndLocation))
     {
         return;
     }
-
-    auto ViewPointLocation = FVector{};
-    auto ViewPointRotation = FRotator{};
-    Controller->GetPlayerViewPoint(ViewPointLocation, ViewPointRotation);
-
-    const auto TraceStartLocation  = ViewPointLocation;
-    const auto ShootingConeHalfRad = FMath::DegreesToRadians(ShootingSpreadConeAngle) / 2.0f;
-    const auto TraceDirection =
-      FMath::VRandCone(ViewPointRotation.Vector(), FMath::Clamp(TimeFromFireStart / 4, 0.0f, ShootingConeHalfRad));
-    const auto TraceEndLocation = TraceStartLocation + TraceDirection * ShootingDistance;
 
     const auto MuzzleTransform     = WeaponMesh->GetSocketTransform(MuzzleSocketName);
     const auto MuzzleForwardVector = MuzzleTransform.GetRotation().GetForwardVector();
@@ -85,4 +78,10 @@ float ASTURifleWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceF
 {
     return FMath::GetMappedRangeValueClamped(FVector2D{100.0f, ShootingDistance - DistanceFromTraceStartToMuzzle},
                                              FVector2D{MaxDamage, MinDamage}, DistanceFromMuzzle);
+}
+
+FVector ASTURifleWeapon::GetTraceDirection(const FVector& ViewPointForwardVector) const
+{
+    const auto ShootingConeHalfRad = FMath::DegreesToRadians(ShootingSpreadConeAngle) / 2.0f;
+    return FMath::VRandCone(ViewPointForwardVector, FMath::Clamp(TimeFromFireStart / 4, 0.0f, ShootingConeHalfRad));
 }
