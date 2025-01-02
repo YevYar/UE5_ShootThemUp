@@ -16,25 +16,35 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
     public:
         USTUWeaponComponent();
 
+        UFUNCTION(BlueprintCallable, Category = "Actions")
+        void NextWeapon();
+
         UFUNCTION(BlueprintCallable, Category = "Damage")
         void StartFire();
         UFUNCTION(BlueprintCallable, Category = "Damage")
         void StopFire();
 
-        void SetLifeSpan(float LifeSpan);
-
     protected:
         virtual void BeginPlay() override;
+        virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+        void AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, USceneComponent* Mesh, const FName& SocketName);
+        void EquipTheWeapon(int32 WeaponIndex);
 
     private:
-        void SpawnWeapon();
+        void SpawnWeapons();
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-        TSubclassOf<ASTUBaseWeapon> WeaponClass;
+        TArray<TSubclassOf<ASTUBaseWeapon>> WeaponClassesToSpawn;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-        FName WeaponAttachementPoint = "WeaponPoint";
+        FName WeaponArmourySocket = "WeaponArmouryPoint";
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+        FName WeaponEquipSocket = "WeaponEquipPoint";
 
         UPROPERTY()
-        ASTUBaseWeapon* SpawnedWeapon;
+        TArray<ASTUBaseWeapon*> SpawnedWeapons;
+        UPROPERTY()
+        ASTUBaseWeapon* CurrentWeapon      = nullptr;
+        int32           CurrentWeaponIndex = 0;
 };

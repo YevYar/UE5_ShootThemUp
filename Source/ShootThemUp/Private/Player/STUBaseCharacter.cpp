@@ -75,6 +75,7 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
         PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::TryToJump);
         PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::StartFire);
         PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
+        PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::NextWeapon);
     }
 }
 
@@ -267,10 +268,6 @@ void ASTUBaseCharacter::OnDeath()
     PlayAnimMontage(DeathMontage);
 
     SetLifeSpan(LifeSpanAfterDeath);
-    if (WeaponComponent)
-    {
-        WeaponComponent->SetLifeSpan(LifeSpanAfterDeath);
-    }
 
     if (Controller)
     {
