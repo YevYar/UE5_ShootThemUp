@@ -29,7 +29,6 @@ ASTULauncherProjectile::ASTULauncherProjectile()
         SphereComponent->SetNotifyRigidBodyCollision(true);
         SphereComponent->SetGenerateOverlapEvents(false);
         SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-        SphereComponent->IgnoreActorWhenMoving(GetOwner(), true);
     }
 }
 
@@ -46,6 +45,8 @@ void ASTULauncherProjectile::BeginPlay()
     check(SphereComponent);
 
     MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
+
+    SphereComponent->IgnoreActorWhenMoving(GetOwner(), true);
     SphereComponent->OnComponentHit.AddDynamic(this, &ASTULauncherProjectile::OnHit);
 
     SetLifeSpan(LifeSpan);

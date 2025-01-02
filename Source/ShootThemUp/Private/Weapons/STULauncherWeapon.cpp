@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 
+#include "Player/STUBaseCharacter.h"
 #include "Weapons/STULauncherProjectile.h"
 
 void ASTULauncherWeapon::StartFire()
@@ -38,6 +39,13 @@ void ASTULauncherWeapon::MakeShot()
         const auto ShootingDirection = (TraceEndLocation - MuzzleTransform.GetLocation()).GetSafeNormal();
         SpawnedProjectile->SetShotDirection(ShootingDirection);
         SpawnedProjectile->SetOwner(GetOwner());
+
+        const auto Character = Cast<ASTUBaseCharacter>(GetOwner());
+        if (Character)
+        {
+            Character->MoveIgnoreActorAdd(SpawnedProjectile);
+        }
+
         SpawnedProjectile->FinishSpawning(ProjactileTranform);
 
         DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), TraceEndLocation, FColor::Red, false, 2.0f, 0.0f,
