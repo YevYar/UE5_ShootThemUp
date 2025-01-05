@@ -20,7 +20,10 @@ void ASTULauncherWeapon::StopFire()
 
 void ASTULauncherWeapon::MakeShot()
 {
-    UE_LOG(LogTemp, Error, TEXT("Launcher shot!"));
+    if (IsAmmoEmpty())
+    {
+        return;
+    }
 
     auto TraceStartLocation = FVector{};
     auto TraceEndLocation   = FVector{};
@@ -28,6 +31,8 @@ void ASTULauncherWeapon::MakeShot()
     {
         return;
     }
+
+    UE_LOG(LogTemp, Error, TEXT("Launcher shot!"));
 
     const auto MuzzleTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
 
@@ -51,6 +56,8 @@ void ASTULauncherWeapon::MakeShot()
         DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), TraceEndLocation, FColor::Red, false, 2.0f, 0.0f,
                       3.0f);
     }
+
+    DecreaseBullets();
 }
 
 FVector ASTULauncherWeapon::GetTraceDirection(const FVector& ViewPointForwardVector) const

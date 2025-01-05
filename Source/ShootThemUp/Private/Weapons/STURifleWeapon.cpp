@@ -24,12 +24,17 @@ void ASTURifleWeapon::StopFire()
 
 void ASTURifleWeapon::MakeShot()
 {
-    UE_LOG(LogTemp, Error, TEXT("Rifle shot!"));
+    if (IsAmmoEmpty())
+    {
+        StopFire();
+        return;
+    }
 
     ACharacter*  Player     = nullptr;
     AController* Controller = nullptr;
     if (!GetPlayerAndController(Player, Controller))
     {
+        StopFire();
         return;
     }
 
@@ -37,8 +42,11 @@ void ASTURifleWeapon::MakeShot()
     auto TraceEndLocation   = FVector{};
     if (!GetTraceData(TraceStartLocation, TraceEndLocation))
     {
+        StopFire();
         return;
     }
+
+    UE_LOG(LogTemp, Error, TEXT("Rifle shot!"));
 
     const auto MuzzleTransform     = WeaponMesh->GetSocketTransform(MuzzleSocketName);
     const auto MuzzleForwardVector = MuzzleTransform.GetRotation().GetForwardVector();
@@ -72,6 +80,8 @@ void ASTURifleWeapon::MakeShot()
     }
 
     TimeFromFireStart += ShootingInterval;
+
+    DecreaseBullets();
 }
 
 float ASTURifleWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const

@@ -27,6 +27,11 @@ void ASTUBaseWeapon::StopFire()
     UE_LOG(LogBaseWeapon, All, TEXT("Stop Fire!"));
 }
 
+FVector ASTUBaseWeapon::GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation)
+{
+    return (ImpactPoint - MuzzleLocation).GetSafeNormal();
+}
+
 bool ASTUBaseWeapon::IsTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target)
 {
     return FVector::DotProduct(MuzzleForwardVector, Target) > 0.0f;
@@ -51,9 +56,55 @@ bool ASTUBaseWeapon::GetPlayerAndController(ACharacter*& OutPlayer, AController*
     return true;
 }
 
-FVector ASTUBaseWeapon::GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation)
+bool ASTUBaseWeapon::DecreaseBullets()
 {
-    return (ImpactPoint - MuzzleLocation).GetSafeNormal();
+    --CurrentAmmo.BulletsAmount;
+    LogAmmo();
+
+    if (IsClipEmpty())
+    {
+        return ChangeClip();
+    }
+
+    return true;
+}
+
+bool ASTUBaseWeapon::ChangeClip()
+{
+    if (!CurrentAmmo.IsClipsInfinite && CurrentAmmo.ClipsAmount == 0)
+    {
+        return false;
+    }
+
+    if (!CurrentAmmo.IsClipsInfinite)
+    {
+        --CurrentAmmo.ClipsAmount;
+    }
+
+    CurrentAmmo.BulletsAmount = DefaultAmmo.BulletsAmount;
+
+    UE_LOG(LogBaseWeapon, Display, TEXT("---- CHANGE CLIP ----"));
+    LogAmmo();
+
+    return true;
+}
+
+bool ASTUBaseWeapon::IsAmmoEmpty() const
+{
+    return !CurrentAmmo.IsClipsInfinite && CurrentAmmo.ClipsAmount == 0 && IsClipEmpty();
+}
+
+bool ASTUBaseWeapon::IsClipEmpty() const
+{
+    return CurrentAmmo.BulletsAmount == 0;
+}
+
+void ASTUBaseWeapon::LogAmmo() const
+{
+    const auto AmmoMessage =
+      FString::Printf(TEXT("Ammo: %d/%s"), CurrentAmmo.BulletsAmount,
+                      *(CurrentAmmo.IsClipsInfinite ? "Infinite" : FString::FromInt(CurrentAmmo.ClipsAmount)));
+    UE_LOG(LogBaseWeapon, Display, TEXT("%s"), *AmmoMessage);
 }
 
 void ASTUBaseWeapon::BeginPlay()
@@ -61,6 +112,8 @@ void ASTUBaseWeapon::BeginPlay()
     Super::BeginPlay();
 
     check(WeaponMesh);
+
+    CurrentAmmo = DefaultAmmo;
 }
 
 void ASTUBaseWeapon::ApplyDamageToTheHitActor(const FHitResult& HitResult, const FVector& MuzzleLocation) const

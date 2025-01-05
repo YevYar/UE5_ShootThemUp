@@ -8,6 +8,19 @@
 
 class USkeletalMeshComponent;
 
+USTRUCT(BlueprintType) struct FAmmoData
+{
+        GENERATED_USTRUCT_BODY()
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        int32 BulletsAmount = 0;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings",
+                  meta = (EditCondition = "!IsClipsInfinite"))
+        int32 ClipsAmount = 0;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        bool IsClipsInfinite = false;
+};
+
 UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 {
         GENERATED_BODY()
@@ -26,6 +39,19 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 
         bool GetPlayerAndController(ACharacter*& OutPlayer, AController*& OutController) const;
 
+        // --------------- AMMO METHODS ---------------
+        /**
+         * \return true if there are bullets in the clip, false otherwise.
+         */
+        bool DecreaseBullets();
+        /**
+         * \return false if there is no clip to change the current clip, true otherwise.
+         */
+        bool ChangeClip();
+        bool IsAmmoEmpty() const;
+        bool IsClipEmpty() const;
+        void LogAmmo() const;
+
         void BeginPlay() override;
 
         virtual void    ApplyDamageToTheHitActor(const FHitResult& HitResult, const FVector& MuzzleLocation) const;
@@ -38,7 +64,12 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         USkeletalMeshComponent* WeaponMesh;
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        FAmmoData DefaultAmmo = FAmmoData{20, 5, false};
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         FName MuzzleSocketName = "MuzzleSocket";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         float ShootingDistance = 1500.0f;
+
+    private:
+        FAmmoData CurrentAmmo = FAmmoData{20, 5, false};
 };
