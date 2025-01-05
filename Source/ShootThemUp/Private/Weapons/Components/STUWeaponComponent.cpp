@@ -3,8 +3,11 @@
 
 #include "Weapons/Components/STUWeaponComponent.h"
 
+#include "Animation/AnimMontage.h"
 #include "GameFramework/Character.h"
 
+#include "Animations/STUEquipChangeWeaponAnimNotify.h"
+#include "Animations/STUEquipWeaponFinishedAnimNotify.h"
 #include "Weapons/STUBaseWeapon.h"
 
 USTUWeaponComponent::USTUWeaponComponent()
@@ -14,13 +17,17 @@ USTUWeaponComponent::USTUWeaponComponent()
 
 void USTUWeaponComponent::NextWeapon()
 {
-    const auto NextWeaponIndex = (CurrentWeaponIndex + 1) % SpawnedWeapons.Num();
-    EquipTheWeapon(NextWeaponIndex);
+    if (!CanEquipWeapon())
+    {
+        return;
+    }
+
+    EquipTheWeapon((CurrentWeaponIndex + 1) % SpawnedWeapons.Num());
 }
 
 void USTUWeaponComponent::StartFire()
 {
-    if (CurrentWeapon)
+    if (CanFire())
     {
         CurrentWeapon->StartFire();
     }
@@ -40,6 +47,7 @@ void USTUWeaponComponent::BeginPlay()
 
     SpawnWeapons();
     EquipTheWeapon(0);
+    SubscribeOnNotifiers();
 }
 
 void USTUWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -68,6 +76,16 @@ void USTUWeaponComponent::AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, UScene
     }
 }
 
+bool USTUWeaponComponent::CanFire() const
+{
+    return CurrentWeapon && !bIsEquipAnimationInProgress;
+}
+
+bool USTUWeaponComponent::CanEquipWeapon() const
+{
+    return !bIsEquipAnimationInProgress;
+}
+
 void USTUWeaponComponent::EquipTheWeapon(int32 WeaponIndex)
 {
     if (WeaponIndex >= SpawnedWeapons.Num())
@@ -75,7 +93,7 @@ void USTUWeaponComponent::EquipTheWeapon(int32 WeaponIndex)
         return;
     }
 
-    const auto Character = Cast<ACharacter>(GetOwner());
+    const auto Character = GetCharacter();
     if (!Character)
     {
         return;
@@ -84,17 +102,92 @@ void USTUWeaponComponent::EquipTheWeapon(int32 WeaponIndex)
     if (CurrentWeapon)
     {
         CurrentWeapon->StopFire();
+    }
+
+    NextWeaponIndex = WeaponIndex;
+
+    if (PlayAnimMontage(EquipWeaponMontage))
+    {
+        bIsEquipAnimationInProgress = true;
+    }
+}
+
+ACharacter* USTUWeaponComponent::GetCharacter() const
+{
+    return Cast<ACharacter>(GetOwner());
+}
+
+USkeletalMeshComponent* USTUWeaponComponent::GetCharacterMeshComponent() const
+{
+    auto Character = GetCharacter();
+    if (Character)
+    {
+        return Character->GetMesh();
+    }
+
+    return nullptr;
+}
+
+bool USTUWeaponComponent::PlayAnimMontage(UAnimMontage* AnimMontage)
+{
+    auto Character = GetCharacter();
+    if (Character)
+    {
+        return Character->PlayAnimMontage(AnimMontage) > 0.0f;
+    }
+
+    return false;
+}
+
+void USTUWeaponComponent::SubscribeOnNotifiers()
+{
+    check(EquipWeaponMontage);
+
+    if (EquipWeaponMontage)
+    {
+        for (const auto& Notify : EquipWeaponMontage->Notifies)
+        {
+            if (auto EquipFinishedNotify = Cast<USTUEquipWeaponFinishedAnimNotify>(Notify.Notify))
+            {
+                EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
+            }
+            else if (auto EquipChangeWeapon = Cast<USTUEquipChangeWeaponAnimNotify>(Notify.Notify))
+            {
+                EquipChangeWeapon->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipChangeWeapon);
+            }
+        }
+    }
+}
+
+void USTUWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
+{
+    if (MeshComponent == GetCharacterMeshComponent())
+    {
+        bIsEquipAnimationInProgress = false;
+    }
+}
+
+void USTUWeaponComponent::OnEquipChangeWeapon(USkeletalMeshComponent* MeshComponent)
+{
+    const auto Character = GetCharacter();
+    if (!Character || MeshComponent != Character->GetMesh())
+    {
+        return;
+    }
+
+    if (CurrentWeapon)
+    {
         AttachWeaponToTheSocket(CurrentWeapon, Character->GetMesh(), WeaponArmourySocket);
     }
 
-    CurrentWeapon      = SpawnedWeapons[WeaponIndex];
-    CurrentWeaponIndex = WeaponIndex;
+    CurrentWeapon      = SpawnedWeapons[NextWeaponIndex];
+    CurrentWeaponIndex = NextWeaponIndex;
     AttachWeaponToTheSocket(CurrentWeapon, Character->GetMesh(), WeaponEquipSocket);
 }
 
 void USTUWeaponComponent::SpawnWeapons()
 {
-    const auto Character = Cast<ACharacter>(GetOwner());
+    const auto Character = GetCharacter();
     if (!Character || !GetWorld())
     {
         return;

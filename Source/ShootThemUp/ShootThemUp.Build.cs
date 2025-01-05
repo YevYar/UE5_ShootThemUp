@@ -14,8 +14,10 @@ public class ShootThemUp : ModuleRules
 
         // Allow includes without full path, just by the name of the file. However, I prefer full path
         PublicIncludePaths.AddRange(new string[] {
-            "ShootThemUp/Public/Player",
+            "ShootThemUp/Public/Animations",
             "ShootThemUp/Public/Dev",
+            "ShootThemUp/Public/Player",
+            "ShootThemUp/Public/UI",
             "ShootThemUp/Public/Weapons"
         });
 

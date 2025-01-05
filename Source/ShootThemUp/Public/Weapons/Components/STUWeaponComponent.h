@@ -6,7 +6,9 @@
 #include "CoreMinimal.h"
 #include "STUWeaponComponent.generated.h"
 
+class ACharacter;
 class ASTUBaseWeapon;
+class UAnimMontage;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
@@ -28,13 +30,25 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         virtual void BeginPlay() override;
         virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-        void AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, USceneComponent* Mesh, const FName& SocketName);
-        void EquipTheWeapon(int32 WeaponIndex);
+        void        AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, USceneComponent* Mesh, const FName& SocketName);
+        bool        CanFire() const;
+        bool        CanEquipWeapon() const;
+        void        EquipTheWeapon(int32 WeaponIndex);
+        ACharacter* GetCharacter() const;
+        USkeletalMeshComponent* GetCharacterMeshComponent() const;
+        bool                    PlayAnimMontage(UAnimMontage* AnimMontage);
 
     private:
+        virtual void SubscribeOnNotifiers();
+
+        void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
+        void OnEquipChangeWeapon(USkeletalMeshComponent* MeshComponent);
         void SpawnWeapons();
 
     protected:
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animations")
+        UAnimMontage* EquipWeaponMontage;
+
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
         TArray<TSubclassOf<ASTUBaseWeapon>> WeaponClassesToSpawn;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
@@ -47,4 +61,8 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         UPROPERTY()
         ASTUBaseWeapon* CurrentWeapon      = nullptr;
         int32           CurrentWeaponIndex = 0;
+        int32           NextWeaponIndex    = 0;
+
+    private:
+        bool bIsEquipAnimationInProgress = false;
 };
