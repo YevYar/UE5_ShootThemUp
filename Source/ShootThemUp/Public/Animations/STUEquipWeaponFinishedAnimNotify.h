@@ -2,20 +2,12 @@
 
 #pragma once
 
-#include "Animation/AnimNotifies/AnimNotify.h"
+#include "Animations/STUBaseAnimNotify.h"
+
 #include "CoreMinimal.h"
 #include "STUEquipWeaponFinishedAnimNotify.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnNotifiedSignature, USkeletalMeshComponent*);
-
-UCLASS() class SHOOTTHEMUP_API USTUEquipWeaponFinishedAnimNotify : public UAnimNotify
+UCLASS() class SHOOTTHEMUP_API USTUEquipWeaponFinishedAnimNotify : public USTUBaseAnimNotify
 {
         GENERATED_BODY()
-
-    public:
-        void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
-                    const FAnimNotifyEventReference& EventReference) override;
-
-    public:
-        FOnNotifiedSignature OnNotified;
 };
