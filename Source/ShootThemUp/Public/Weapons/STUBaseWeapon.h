@@ -8,6 +8,8 @@
 
 class USkeletalMeshComponent;
 
+DECLARE_MULTICAST_DELEGATE(FReloadRequiredSignature);
+
 USTRUCT(BlueprintType) struct FAmmoData
 {
         GENERATED_USTRUCT_BODY()
@@ -29,9 +31,18 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         ASTUBaseWeapon();
 
         UFUNCTION(BlueprintCallable, Category = "Actions")
+        virtual bool CanReload() const;
+        /**
+         * \return false if there is no clip to change the current clip, true otherwise.
+         */
+        UFUNCTION(BlueprintCallable, Category = "Actions")
+        bool ChangeClip();
+        UFUNCTION(BlueprintCallable, Category = "Actions")
         virtual void StartFire();
         UFUNCTION(BlueprintCallable, Category = "Actions")
         virtual void StopFire();
+
+        bool IsAmmoEmpty() const;
 
     protected:
         static FVector GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation);
@@ -40,15 +51,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         bool GetPlayerAndController(ACharacter*& OutPlayer, AController*& OutController) const;
 
         // --------------- AMMO METHODS ---------------
-        /**
-         * \return true if there are bullets in the clip, false otherwise.
-         */
-        bool DecreaseBullets();
-        /**
-         * \return false if there is no clip to change the current clip, true otherwise.
-         */
-        bool ChangeClip();
-        bool IsAmmoEmpty() const;
+        void DecreaseBullets();
         bool IsClipEmpty() const;
         void LogAmmo() const;
 
@@ -58,6 +61,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         virtual float   CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const;
         virtual bool    GetTraceData(FVector& OutTraceStartLocation, FVector& OutTraceEndLocation) const;
         virtual FVector GetTraceDirection(const FVector& ViewPointForwardVector) const;
+
+    public:
+        FReloadRequiredSignature ReloadRequired;
 
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

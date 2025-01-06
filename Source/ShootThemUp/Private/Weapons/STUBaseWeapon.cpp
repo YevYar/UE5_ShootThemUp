@@ -17,6 +17,34 @@ ASTUBaseWeapon::ASTUBaseWeapon()
     SetRootComponent(WeaponMesh);
 }
 
+bool ASTUBaseWeapon::CanReload() const
+{
+    return CurrentAmmo.BulletsAmount < DefaultAmmo.BulletsAmount
+           && (CurrentAmmo.IsClipsInfinite || CurrentAmmo.ClipsAmount > 0);
+}
+
+bool ASTUBaseWeapon::ChangeClip()
+{
+    StopFire();
+
+    if (!CanReload())
+    {
+        return false;
+    }
+
+    if (!CurrentAmmo.IsClipsInfinite)
+    {
+        --CurrentAmmo.ClipsAmount;
+    }
+
+    CurrentAmmo.BulletsAmount = DefaultAmmo.BulletsAmount;
+
+    UE_LOG(LogBaseWeapon, Display, TEXT("---- CHANGE CLIP ----"));
+    LogAmmo();
+
+    return true;
+}
+
 void ASTUBaseWeapon::StartFire()
 {
     UE_LOG(LogBaseWeapon, All, TEXT("Start Fire!"));
@@ -25,6 +53,11 @@ void ASTUBaseWeapon::StartFire()
 void ASTUBaseWeapon::StopFire()
 {
     UE_LOG(LogBaseWeapon, All, TEXT("Stop Fire!"));
+}
+
+bool ASTUBaseWeapon::IsAmmoEmpty() const
+{
+    return !CurrentAmmo.IsClipsInfinite && CurrentAmmo.ClipsAmount == 0 && IsClipEmpty();
 }
 
 FVector ASTUBaseWeapon::GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation)
@@ -56,42 +89,16 @@ bool ASTUBaseWeapon::GetPlayerAndController(ACharacter*& OutPlayer, AController*
     return true;
 }
 
-bool ASTUBaseWeapon::DecreaseBullets()
+void ASTUBaseWeapon::DecreaseBullets()
 {
     --CurrentAmmo.BulletsAmount;
     LogAmmo();
 
     if (IsClipEmpty())
     {
-        return ChangeClip();
+        StopFire();
+        ReloadRequired.Broadcast();
     }
-
-    return true;
-}
-
-bool ASTUBaseWeapon::ChangeClip()
-{
-    if (!CurrentAmmo.IsClipsInfinite && CurrentAmmo.ClipsAmount == 0)
-    {
-        return false;
-    }
-
-    if (!CurrentAmmo.IsClipsInfinite)
-    {
-        --CurrentAmmo.ClipsAmount;
-    }
-
-    CurrentAmmo.BulletsAmount = DefaultAmmo.BulletsAmount;
-
-    UE_LOG(LogBaseWeapon, Display, TEXT("---- CHANGE CLIP ----"));
-    LogAmmo();
-
-    return true;
-}
-
-bool ASTUBaseWeapon::IsAmmoEmpty() const
-{
-    return !CurrentAmmo.IsClipsInfinite && CurrentAmmo.ClipsAmount == 0 && IsClipEmpty();
 }
 
 bool ASTUBaseWeapon::IsClipEmpty() const
