@@ -167,16 +167,15 @@ void USTUWeaponComponent::SubscribeOnNotifiers()
 
     if (EquipWeaponMontage)
     {
-        for (const auto& Notify : EquipWeaponMontage->Notifies)
+        if (auto EquipFinishedNotify =
+              FindFirstAnimNotifyInAnimMontage<USTUEquipWeaponFinishedAnimNotify>(EquipWeaponMontage))
         {
-            if (auto EquipFinishedNotify = Cast<USTUEquipWeaponFinishedAnimNotify>(Notify.Notify))
-            {
-                EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
-            }
-            else if (auto EquipChangeWeapon = Cast<USTUEquipChangeWeaponAnimNotify>(Notify.Notify))
-            {
-                EquipChangeWeapon->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipChangeWeapon);
-            }
+            EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
+        }
+        if (auto EquipChangeWeapon =
+              FindFirstAnimNotifyInAnimMontage<USTUEquipChangeWeaponAnimNotify>(EquipWeaponMontage))
+        {
+            EquipChangeWeapon->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipChangeWeapon);
         }
     }
 }
@@ -252,12 +251,10 @@ void USTUWeaponComponent::SpawnWeapons()
 
             SpawnedWeapon->ReloadRequired.AddUObject(this, &USTUWeaponComponent::ReloadWeapon);
 
-            for (const auto& Notify : WeaponData.ReloadAnimMontage->Notifies)
+            if (auto ReloadFinishedNotify =
+                  FindFirstAnimNotifyInAnimMontage<USTUReloadFinishedAnimNotify>(WeaponData.ReloadAnimMontage))
             {
-                if (auto ReloadFinishedNotify = Cast<USTUReloadFinishedAnimNotify>(Notify.Notify))
-                {
-                    ReloadFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
-                }
+                ReloadFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
             }
 
             SpawnedWeapons.Add(SpawnedWeapon);
