@@ -21,6 +21,11 @@ USTUHealthComponent::USTUHealthComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
+float USTUHealthComponent::GetHealthPercent() const noexcept
+{
+    return MaxHealth > 0.0 ? GetHealth() / MaxHealth : 0.0f;
+}
+
 float USTUHealthComponent::GetHealth() const noexcept
 {
     return Health;

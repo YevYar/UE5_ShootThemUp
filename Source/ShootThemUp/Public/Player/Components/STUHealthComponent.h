@@ -17,6 +17,9 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
     public:
         USTUHealthComponent();
 
+        UFUNCTION(BlueprintCallable, Category = "Health")
+        float GetHealthPercent() const noexcept;
+
         float GetHealth() const noexcept;
         bool  IsDead() const noexcept;
         void  SetHealth(float NewHealth, bool IsCausedByDamage = false, float LastDamage = 0.0f) noexcept;
