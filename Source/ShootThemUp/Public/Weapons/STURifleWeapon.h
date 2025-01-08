@@ -23,13 +23,14 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         FVector GetTraceDirection(const FVector& ViewPointForwardVector) const override;
 
     protected:
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ClampMin = "0.0"))
         float MaxDamage = 30.0f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ClampMin = "0.0"))
         float MinDamage = 15.0f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ClampMin = "0.0"))
         float ShootingInterval = 0.1f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ToolTip = "In Degrees."))
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings",
+                  meta = (ClampMin = "0.0", ToolTip = "In Degrees."))
         float ShootingSpreadConeAngle = 9.0f;
 
         FTimerHandle BurstShootingTimer;

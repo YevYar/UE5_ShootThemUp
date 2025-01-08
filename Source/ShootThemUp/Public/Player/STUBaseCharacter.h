@@ -64,7 +64,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         void OnLanding(const FHitResult& LandingHit);
 
     protected:
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Appearance", meta = (ToolTip = "Time in seconds."))
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Appearance",
+                  meta = (ClampMin = "0.0", ToolTip = "Time in seconds."))
         float LifeSpanAfterDeath = 10.0f;
 
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

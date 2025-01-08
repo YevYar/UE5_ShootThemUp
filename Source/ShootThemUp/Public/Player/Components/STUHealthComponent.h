@@ -4,11 +4,10 @@
 
 #include "Components/ActorComponent.h"
 #include "CoreMinimal.h"
-#include "STUHealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDiedSignature);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthChangedSignature, float, Health, bool, IsCausedByDamage, float,
-                                               LastDamage);
+#include "STUCoreTypes.h"
+
+#include "STUHealthComponent.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent

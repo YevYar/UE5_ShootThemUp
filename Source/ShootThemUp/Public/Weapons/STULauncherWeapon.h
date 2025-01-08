@@ -26,6 +26,7 @@ UCLASS() class SHOOTTHEMUP_API ASTULauncherWeapon : public ASTUBaseWeapon
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         TSubclassOf<ASTULauncherProjectile> ProjectileType;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ToolTip = "In Degrees."))
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings",
+                  meta = (ClampMin = "0.0", ToolTip = "In Degrees."))
         float ShootingSpreadConeAngle = 12.0f;
 };

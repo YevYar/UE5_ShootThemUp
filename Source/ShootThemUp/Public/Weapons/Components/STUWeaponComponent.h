@@ -6,22 +6,12 @@
 #include "CoreMinimal.h"
 
 #include "Animations/STUBaseAnimNotify.h"
+#include "STUCoreTypes.h"
 
 #include "STUWeaponComponent.generated.h"
 
 class ACharacter;
-class ASTUBaseWeapon;
 class UAnimMontage;
-
-USTRUCT(BlueprintType) struct FWeaponSpawnData
-{
-        GENERATED_USTRUCT_BODY()
-
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
-        TSubclassOf<ASTUBaseWeapon> WeaponClass;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
-        UAnimMontage* ReloadAnimMontage = nullptr;
-};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
@@ -56,26 +46,6 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         bool                    PlayAnimMontage(UAnimMontage* AnimMontage);
 
     private:
-        template<typename NotifyType>
-        requires std::is_base_of_v<USTUBaseAnimNotify, NotifyType>
-        static NotifyType* FindFirstAnimNotifyInAnimMontage(const UAnimMontage* AnimMontage)
-        {
-            if (!AnimMontage)
-            {
-                return nullptr;
-            }
-
-            for (const auto& Notify : AnimMontage->Notifies)
-            {
-                if (auto CastedNotify = Cast<NotifyType>(Notify.Notify))
-                {
-                    return CastedNotify;
-                }
-            }
-
-            return nullptr;
-        }
-
         virtual void SubscribeOnNotifiers();
 
         UAnimMontage* GetWeaponReloadAnimMontage(const UClass* WeaponClass);

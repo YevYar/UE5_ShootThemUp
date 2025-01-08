@@ -119,6 +119,9 @@ void ASTUBaseWeapon::BeginPlay()
     Super::BeginPlay();
 
     check(WeaponMesh);
+    checkf(DefaultAmmo.BulletsAmount > 0, TEXT("The bullets amount must be above 0!"));
+    checkf(DefaultAmmo.ClipsAmount > 0, TEXT("The clips amount must be above 0!"));
+    checkf(ShootingDistance > 0, TEXT("The shooting distance must be above 0!"));
 
     CurrentAmmo = DefaultAmmo;
 }

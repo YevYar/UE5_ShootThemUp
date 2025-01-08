@@ -49,7 +49,7 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer
 
     SpringArmComponent->bUsePawnControlRotation = true;
     SpringArmComponent->SetupAttachment(GetRootComponent());
-    SpringArmComponent->SocketOffset = FVector(0.0f, 100.0f, 80.0f);
+    SpringArmComponent->SocketOffset = FVector{0.0f, 100.0f, 80.0f};
 
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     if (CameraComponent)
@@ -76,7 +76,8 @@ void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
         PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::StartFire);
         PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
         PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::NextWeapon);
-        PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::ReloadWeapon);
+        PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, WeaponComponent,
+                                         &USTUWeaponComponent::ReloadWeapon);
     }
 }
 

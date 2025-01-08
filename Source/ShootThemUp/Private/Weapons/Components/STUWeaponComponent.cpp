@@ -6,12 +6,18 @@
 #include "Animation/AnimMontage.h"
 #include "GameFramework/Character.h"
 
+#include "Animations/STUAnimUtilities.h"
 #include "Animations/STUEquipChangeWeaponAnimNotify.h"
 #include "Animations/STUEquipWeaponFinishedAnimNotify.h"
 #include "Animations/STUReloadFinishedAnimNotify.h"
 #include "Weapons/STUBaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
+
+namespace
+{
+constexpr auto MaxWeaponsPerCharacterNumber = int32{2};
+}
 
 USTUWeaponComponent::USTUWeaponComponent()
 {
@@ -22,7 +28,11 @@ void USTUWeaponComponent::NextWeapon()
 {
     if (CanEquipWeapon())
     {
-        EquipTheWeapon((CurrentWeaponIndex + 1) % SpawnedWeapons.Num());
+        const auto NextWeaponIdx = (CurrentWeaponIndex + 1) % SpawnedWeapons.Num();
+        if (NextWeaponIdx != CurrentWeaponIndex)
+        {
+            EquipTheWeapon(NextWeaponIdx);
+        }
     }
 }
 
@@ -58,6 +68,9 @@ void USTUWeaponComponent::StopFire()
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
+
+    checkf(WeaponDataToSpawn.Num() <= MaxWeaponsPerCharacterNumber, TEXT("Character can have no more than %d weapons!"),
+           MaxWeaponsPerCharacterNumber);
 
     SpawnWeapons();
     EquipTheWeapon(0);
@@ -168,14 +181,25 @@ void USTUWeaponComponent::SubscribeOnNotifiers()
     if (EquipWeaponMontage)
     {
         if (auto EquipFinishedNotify =
-              FindFirstAnimNotifyInAnimMontage<USTUEquipWeaponFinishedAnimNotify>(EquipWeaponMontage))
+              AnimUtilities::FindFirstAnimNotifyInAnimMontage<USTUEquipWeaponFinishedAnimNotify>(EquipWeaponMontage))
         {
             EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
         }
+        else
+        {
+            UE_LOG(LogWeaponComponent, Error, TEXT("EquipFinished anim notify was forgotten to set!"));
+            checkNoEntry();
+        }
+
         if (auto EquipChangeWeapon =
-              FindFirstAnimNotifyInAnimMontage<USTUEquipChangeWeaponAnimNotify>(EquipWeaponMontage))
+              AnimUtilities::FindFirstAnimNotifyInAnimMontage<USTUEquipChangeWeaponAnimNotify>(EquipWeaponMontage))
         {
             EquipChangeWeapon->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipChangeWeapon);
+        }
+        else
+        {
+            UE_LOG(LogWeaponComponent, Error, TEXT("EquipChangeWeapon anim notify was forgotten to set!"));
+            checkNoEntry();
         }
     }
 }
@@ -222,7 +246,11 @@ void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent
     if (MeshComponent == GetCharacterMeshComponent())
     {
         bIsReloadAnimationInProgress = false;
-        CurrentWeapon->ChangeClip();
+
+        if (CurrentWeapon)
+        {
+            CurrentWeapon->ChangeClip();
+        }
     }
 }
 
@@ -252,9 +280,15 @@ void USTUWeaponComponent::SpawnWeapons()
             SpawnedWeapon->ReloadRequired.AddUObject(this, &USTUWeaponComponent::ReloadWeapon);
 
             if (auto ReloadFinishedNotify =
-                  FindFirstAnimNotifyInAnimMontage<USTUReloadFinishedAnimNotify>(WeaponData.ReloadAnimMontage))
+                  AnimUtilities::FindFirstAnimNotifyInAnimMontage<USTUReloadFinishedAnimNotify>(WeaponData
+                                                                                                  .ReloadAnimMontage))
             {
                 ReloadFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
+            }
+            else
+            {
+                UE_LOG(LogWeaponComponent, Error, TEXT("ReloadFinished anim notify was forgotten to set!"));
+                checkNoEntry();
             }
 
             SpawnedWeapons.Add(SpawnedWeapon);

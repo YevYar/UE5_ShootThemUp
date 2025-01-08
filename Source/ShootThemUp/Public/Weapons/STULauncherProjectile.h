@@ -37,16 +37,16 @@ UCLASS() class SHOOTTHEMUP_API ASTULauncherProjectile : public AActor
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
         USphereComponent* SphereComponent;
 
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings")
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings", meta = (ClampMin = "0.0"))
         float DamageRadius = 400.0f;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings")
         bool DoFullDamage = false;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings")
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings", meta = (ClampMin = "0.0"))
         float MaxDamage = 100.0f;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings")
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings", meta = (ClampMin = "0.0"))
         float MinDamage = 30.0f;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings",
-                  meta = (ToolTip = "In Seconds."))
+                  meta = (ClampMin = "0.0", ToolTip = "In Seconds."))
         float LifeSpan = 7.0f;
 
     private:
