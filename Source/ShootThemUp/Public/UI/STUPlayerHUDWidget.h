@@ -13,4 +13,6 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
     public:
         UFUNCTION(BlueprintCallable, Category = "Health")
         float GetHealthPercent() const noexcept;
+        UFUNCTION(BlueprintCallable, Category = "Weapon")
+        bool GetWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept;
 };

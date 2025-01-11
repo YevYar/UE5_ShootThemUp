@@ -30,7 +30,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         UFUNCTION(BlueprintCallable, Category = "Actions")
         virtual void StopFire();
 
-        bool IsAmmoEmpty() const;
+        FWeaponUIData GetWeaponUIData() const noexcept;
+        bool          IsAmmoEmpty() const;
 
     protected:
         static FVector GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation);
@@ -63,6 +64,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         FName MuzzleSocketName = "MuzzleSocket";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         float ShootingDistance = 1500.0f;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        FWeaponUIData WeaponUIData;
 
     private:
         FAmmoData CurrentAmmo = FAmmoData{20, 5, false};

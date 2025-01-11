@@ -31,6 +31,9 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         UFUNCTION(BlueprintCallable, Category = "Damage")
         void StopFire();
 
+        UFUNCTION(BlueprintCallable, Category = "UI")
+        bool GetWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept;
+
     protected:
         virtual void BeginPlay() override;
         virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

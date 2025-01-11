@@ -8,7 +8,9 @@
 
 void ASTUGameHUD::DrawHUD()
 {
-    DrawCrossline();
+    Super::DrawHUD();
+
+    // DrawCrossline();
 }
 
 void ASTUGameHUD::BeginPlay()

@@ -65,6 +65,16 @@ void USTUWeaponComponent::StopFire()
     }
 }
 
+bool USTUWeaponComponent::GetWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept
+{
+    if (CurrentWeapon)
+    {
+        WeaponUIData = CurrentWeapon->GetWeaponUIData();
+        return true;
+    }
+    return false;
+}
+
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();

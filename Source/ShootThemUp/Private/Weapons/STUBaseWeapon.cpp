@@ -55,6 +55,11 @@ void ASTUBaseWeapon::StopFire()
     UE_LOG(LogBaseWeapon, All, TEXT("Stop Fire!"));
 }
 
+FWeaponUIData ASTUBaseWeapon::GetWeaponUIData() const noexcept
+{
+    return WeaponUIData;
+}
+
 bool ASTUBaseWeapon::IsAmmoEmpty() const
 {
     return !CurrentAmmo.IsClipsInfinite && CurrentAmmo.ClipsAmount == 0 && IsClipEmpty();

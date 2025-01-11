@@ -36,3 +36,13 @@ USTRUCT(BlueprintType) struct FWeaponSpawnData
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         UAnimMontage* ReloadAnimMontage = nullptr;
 };
+
+USTRUCT(BlueprintType) struct FWeaponUIData
+{
+        GENERATED_USTRUCT_BODY()
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponUI")
+        UTexture2D* WeaponIcon = nullptr;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponUI")
+        UTexture2D* WeaponCrosshair = nullptr;
+};
