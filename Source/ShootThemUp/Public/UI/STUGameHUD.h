@@ -13,6 +13,13 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameHUD : public AHUD
     public:
         void DrawHUD() override;
 
+    protected:
+        void BeginPlay() override;
+
+    protected:
+        UPROPERTY(EditDefaultsOnly, Category = "UI")
+        TSubclassOf<UUserWidget> PlayerHUDWidget;
+
     private:
         void DrawCrossline();
 };

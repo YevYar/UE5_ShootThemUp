@@ -3,11 +3,23 @@
 
 #include "UI/STUGameHUD.h"
 
+#include "Blueprint/UserWidget.h"
 #include "Engine/Canvas.h"
 
 void ASTUGameHUD::DrawHUD()
 {
     DrawCrossline();
+}
+
+void ASTUGameHUD::BeginPlay()
+{
+    Super::BeginPlay();
+
+    const auto PlayerWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidget);
+    if (PlayerWidget)
+    {
+        PlayerWidget->AddToViewport();
+    }
 }
 
 void ASTUGameHUD::DrawCrossline()
