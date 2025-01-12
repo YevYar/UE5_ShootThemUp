@@ -6,7 +6,7 @@
 #include "Player/Components/STUHealthComponent.h"
 #include "Weapons/Components/STUWeaponComponent.h"
 
-float USTUPlayerHUDWidget::GetHealthPercent() const noexcept
+float USTUPlayerHUDWidget::GetHealthPercent() const
 {
     const auto PlayerPawn = GetOwningPlayerPawn();
     if (!PlayerPawn)
@@ -19,15 +19,25 @@ float USTUPlayerHUDWidget::GetHealthPercent() const noexcept
     return HealthComponent ? HealthComponent->GetHealthPercent() : 0.0f;
 }
 
-bool USTUPlayerHUDWidget::GetWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept
+bool USTUPlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const
+{
+    const auto WeaponComponent = GetWeaponComponent();
+    return WeaponComponent && WeaponComponent->GetCurrentWeaponAmmoData(WeaponAmmoData);
+}
+
+bool USTUPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const
+{
+    const auto WeaponComponent = GetWeaponComponent();
+    return WeaponComponent && WeaponComponent->GetCurrentWeaponUIData(WeaponUIData);
+}
+
+USTUWeaponComponent* USTUPlayerHUDWidget::GetWeaponComponent() const
 {
     const auto PlayerPawn = GetOwningPlayerPawn();
     if (!PlayerPawn)
     {
-        return false;
+        return nullptr;
     }
 
-    const auto WeaponComponent =
-      Cast<USTUWeaponComponent>(PlayerPawn->FindComponentByClass(USTUWeaponComponent::StaticClass()));
-    return WeaponComponent && WeaponComponent->GetWeaponUIData(WeaponUIData);
+    return Cast<USTUWeaponComponent>(PlayerPawn->FindComponentByClass(USTUWeaponComponent::StaticClass()));
 }

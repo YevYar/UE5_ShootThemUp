@@ -55,6 +55,11 @@ void ASTUBaseWeapon::StopFire()
     UE_LOG(LogBaseWeapon, All, TEXT("Stop Fire!"));
 }
 
+FAmmoData ASTUBaseWeapon::GetWeaponAmmoData() const noexcept
+{
+    return CurrentAmmo;
+}
+
 FWeaponUIData ASTUBaseWeapon::GetWeaponUIData() const noexcept
 {
     return WeaponUIData;

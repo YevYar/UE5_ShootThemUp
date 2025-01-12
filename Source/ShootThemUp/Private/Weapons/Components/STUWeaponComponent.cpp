@@ -65,7 +65,17 @@ void USTUWeaponComponent::StopFire()
     }
 }
 
-bool USTUWeaponComponent::GetWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept
+bool USTUWeaponComponent::GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const noexcept
+{
+    if (CurrentWeapon)
+    {
+        WeaponAmmoData = CurrentWeapon->GetWeaponAmmoData();
+        return true;
+    }
+    return false;
+}
+
+bool USTUWeaponComponent::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept
 {
     if (CurrentWeapon)
     {

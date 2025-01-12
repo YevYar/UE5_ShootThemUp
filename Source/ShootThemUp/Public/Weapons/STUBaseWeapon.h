@@ -30,6 +30,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         UFUNCTION(BlueprintCallable, Category = "Actions")
         virtual void StopFire();
 
+        FAmmoData     GetWeaponAmmoData() const noexcept;
         FWeaponUIData GetWeaponUIData() const noexcept;
         bool          IsAmmoEmpty() const;
 
