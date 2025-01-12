@@ -24,3 +24,15 @@ UCLASS() class SHOOTTHEMUP_API USTUUtilities : public UBlueprintFunctionLibrary
                                       AActor* DamageCauser = nullptr, AController* InstigatedByController = nullptr,
                                       bool DoFullDamage = false);
 };
+
+template<typename ComponentType>
+requires std::is_base_of_v<UActorComponent, ComponentType>
+ComponentType* GetSTUPlayerComponent(APawn* PlayerPawn)
+{
+    if (!PlayerPawn)
+    {
+        return nullptr;
+    }
+
+    return Cast<ComponentType>(PlayerPawn->GetComponentByClass(ComponentType::StaticClass()));
+}

@@ -6,9 +6,6 @@
 #include "CoreMinimal.h"
 #include "STUPlayerHUDWidget.generated.h"
 
-class USTUHealthComponent;
-class USTUWeaponComponent;
-
 UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
 {
         GENERATED_BODY()
@@ -26,8 +23,4 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
         bool GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const;
         UFUNCTION(BlueprintCallable, Category = "Weapon")
         bool GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const;
-
-    private:
-        USTUHealthComponent* GetHealthComponent() const;
-        USTUWeaponComponent* GetWeaponComponent() const;
 };
