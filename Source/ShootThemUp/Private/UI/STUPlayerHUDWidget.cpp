@@ -18,6 +18,12 @@ bool USTUPlayerHUDWidget::IsPlayerAlive() const
     return HealthComponent && !HealthComponent->IsDead();
 }
 
+bool USTUPlayerHUDWidget::IsPlayerSpectating() const
+{
+    const auto PlayerController = GetOwningPlayer();
+    return PlayerController && PlayerController->GetStateName() == NAME_Spectating;
+}
+
 bool USTUPlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const
 {
     const auto WeaponComponent = GetWeaponComponent();
