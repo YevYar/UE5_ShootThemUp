@@ -40,7 +40,7 @@ bool ASTUBaseWeapon::ChangeClip()
     CurrentAmmo.BulletsAmount = DefaultAmmo.BulletsAmount;
 
     UE_LOG(LogBaseWeapon, Display, TEXT("---- CHANGE CLIP ----"));
-    LogAmmo();
+    // LogAmmo();
 
     return true;
 }
@@ -102,7 +102,7 @@ bool ASTUBaseWeapon::GetPlayerAndController(ACharacter*& OutPlayer, AController*
 void ASTUBaseWeapon::DecreaseBullets()
 {
     --CurrentAmmo.BulletsAmount;
-    LogAmmo();
+    // LogAmmo();
 
     if (IsClipEmpty())
     {
