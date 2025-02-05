@@ -22,6 +22,17 @@ ASTUBasePickup::ASTUBasePickup()
     }
 }
 
+void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+    Super::NotifyActorBeginOverlap(OtherActor);
+
+    const auto Pawn = Cast<APawn>(OtherActor);
+    if (Pawn && GivePickupTo(Pawn))
+    {
+        TakePickup();
+    }
+}
+
 void ASTUBasePickup::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
@@ -30,12 +41,32 @@ void ASTUBasePickup::Tick(float DeltaTime)
 void ASTUBasePickup::BeginPlay()
 {
     Super::BeginPlay();
+
+    check(SphereComponent);
 }
 
-void ASTUBasePickup::NotifyActorBeginOverlap(AActor* OtherActor)
+bool ASTUBasePickup::GivePickupTo(APawn* PlayerPawn)
 {
-    Super::NotifyActorBeginOverlap(OtherActor);
+    return false;
+}
 
-    UE_LOG(LogTemp, Error, TEXT("Overlap"));
-    Destroy();
+void ASTUBasePickup::RespawnPickup()
+{
+    if (GetRootComponent())
+    {
+        SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+        GetRootComponent()->SetVisibility(true, true);
+    }
+}
+
+void ASTUBasePickup::TakePickup()
+{
+    if (GetRootComponent())
+    {
+        SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+        GetRootComponent()->SetVisibility(false, true);
+
+        FTimerHandle RespawnTimer;
+        GetWorldTimerManager().SetTimer(RespawnTimer, this, &ASTUBasePickup::RespawnPickup, RespawnInterval);
+    }
 }
