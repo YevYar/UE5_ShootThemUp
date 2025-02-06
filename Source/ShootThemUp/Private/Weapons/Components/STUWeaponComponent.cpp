@@ -36,8 +36,26 @@ void USTUWeaponComponent::NextWeapon()
     }
 }
 
-void USTUWeaponComponent::ReloadWeapon()
+void USTUWeaponComponent::ReloadCurrentWeapon()
 {
+    ReloadWeapon(CurrentWeapon);
+}
+
+void USTUWeaponComponent::ReloadWeapon(ASTUBaseWeapon* WeaponToReload)
+{
+    if (WeaponToReload != CurrentWeapon)
+    {
+        for (auto Weapon : SpawnedWeapons)
+        {
+            if (Weapon == WeaponToReload)
+            {
+                Weapon->ChangeClip();
+                return;
+            }
+        }
+        return;
+    }
+
     if (CanReloadWeapon())
     {
         StopFire();
@@ -82,6 +100,19 @@ bool USTUWeaponComponent::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) co
         WeaponUIData = CurrentWeapon->GetWeaponUIData();
         return true;
     }
+    return false;
+}
+
+bool USTUWeaponComponent::TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponClass, int32 ClipsAmount)
+{
+    for (const auto Weapon : SpawnedWeapons)
+    {
+        if (Weapon && Weapon->IsA(WeaponClass))
+        {
+            return Weapon->TryToAddAmmo(ClipsAmount);
+        }
+    }
+
     return false;
 }
 

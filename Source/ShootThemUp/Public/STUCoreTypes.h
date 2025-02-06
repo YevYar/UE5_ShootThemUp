@@ -10,9 +10,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthChangedSignature, float, H
                                                LastDamage);
 
 // ----- WEAPON
-DECLARE_MULTICAST_DELEGATE(FReloadRequiredSignature);
-
 class ASTUBaseWeapon;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FReloadRequiredSignature, ASTUBaseWeapon*);
 
 USTRUCT(BlueprintType) struct FAmmoData
 {

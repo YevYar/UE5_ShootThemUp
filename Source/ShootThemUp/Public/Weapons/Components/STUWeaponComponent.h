@@ -24,7 +24,9 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         UFUNCTION(BlueprintCallable, Category = "Actions")
         void NextWeapon();
         UFUNCTION(BlueprintCallable, Category = "Actions")
-        void ReloadWeapon();
+        void ReloadCurrentWeapon();
+        UFUNCTION(BlueprintCallable, Category = "Actions")
+        void ReloadWeapon(ASTUBaseWeapon* WeaponToReload);
 
         UFUNCTION(BlueprintCallable, Category = "Damage")
         void StartFire();
@@ -35,6 +37,8 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         bool GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const noexcept;
         UFUNCTION(BlueprintCallable, Category = "UI")
         bool GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept;
+
+        bool TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponClass, int32 ClipsAmount);
 
     protected:
         virtual void BeginPlay() override;

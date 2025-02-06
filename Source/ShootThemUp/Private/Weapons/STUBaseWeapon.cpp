@@ -40,7 +40,6 @@ bool ASTUBaseWeapon::ChangeClip()
     CurrentAmmo.BulletsAmount = DefaultAmmo.BulletsAmount;
 
     UE_LOG(LogBaseWeapon, Display, TEXT("---- CHANGE CLIP ----"));
-    // LogAmmo();
 
     return true;
 }
@@ -53,6 +52,51 @@ void ASTUBaseWeapon::StartFire()
 void ASTUBaseWeapon::StopFire()
 {
     UE_LOG(LogBaseWeapon, All, TEXT("Stop Fire!"));
+}
+
+bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
+{
+    if (ClipsAmount < 0 || IsAmmoFull())
+    {
+        return false;
+    }
+
+    if (IsAmmoEmpty())
+    {
+        UE_LOG(LogBaseWeapon, Display, TEXT("Ammo was empty."));
+
+        CurrentAmmo.ClipsAmount = FMath::Clamp(ClipsAmount, 0, DefaultAmmo.ClipsAmount);
+        ReloadRequired.Broadcast(this);
+    }
+    else if (CurrentAmmo.ClipsAmount < DefaultAmmo.ClipsAmount)
+    {
+        UE_LOG(LogBaseWeapon, Display, TEXT("Clips were added."));
+
+        const auto NextClipsAmount = CurrentAmmo.ClipsAmount + ClipsAmount;
+
+        CurrentAmmo.ClipsAmount = DefaultAmmo.ClipsAmount - NextClipsAmount >= 0 ? NextClipsAmount
+                                                                                 : DefaultAmmo.ClipsAmount + 1;
+
+        if (CurrentAmmo.BulletsAmount != DefaultAmmo.BulletsAmount)
+        {
+            UE_LOG(LogBaseWeapon, Display, TEXT("Reload current clip."));
+
+            ReloadRequired.Broadcast(this);
+        }
+        else if (CurrentAmmo.ClipsAmount - DefaultAmmo.ClipsAmount == 1)
+        {
+            CurrentAmmo.ClipsAmount--;
+        }
+    }
+    else if (CurrentAmmo.BulletsAmount != DefaultAmmo.BulletsAmount)
+    {
+        UE_LOG(LogBaseWeapon, Display, TEXT("Clips were full, reload current clip."));
+
+        CurrentAmmo.ClipsAmount++;
+        ReloadRequired.Broadcast(this);
+    }
+
+    return true;
 }
 
 FAmmoData ASTUBaseWeapon::GetWeaponAmmoData() const noexcept
@@ -68,6 +112,12 @@ FWeaponUIData ASTUBaseWeapon::GetWeaponUIData() const noexcept
 bool ASTUBaseWeapon::IsAmmoEmpty() const
 {
     return !CurrentAmmo.IsClipsInfinite && CurrentAmmo.ClipsAmount == 0 && IsClipEmpty();
+}
+
+bool ASTUBaseWeapon::IsAmmoFull() const
+{
+    return (CurrentAmmo.IsClipsInfinite || CurrentAmmo.ClipsAmount == DefaultAmmo.ClipsAmount)
+           && CurrentAmmo.BulletsAmount == DefaultAmmo.BulletsAmount;
 }
 
 FVector ASTUBaseWeapon::GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation)
@@ -107,7 +157,7 @@ void ASTUBaseWeapon::DecreaseBullets()
     if (IsClipEmpty())
     {
         StopFire();
-        ReloadRequired.Broadcast();
+        ReloadRequired.Broadcast(this);
     }
 }
 
