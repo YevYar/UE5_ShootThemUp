@@ -36,6 +36,11 @@ bool USTUHealthComponent::IsDead() const noexcept
     return bIsDead;
 }
 
+bool USTUHealthComponent::IsHealthFull() const noexcept
+{
+    return Health == MaxHealth;
+}
+
 void USTUHealthComponent::SetHealth(float NewHealth, bool IsCausedByDamage, float LastDamage) noexcept
 {
     const auto LastHealth = Health;
@@ -66,6 +71,17 @@ void USTUHealthComponent::SetHealth(float NewHealth, bool IsCausedByDamage, floa
             }
         }
     }
+}
+
+bool USTUHealthComponent::TryToAddHealth(float HealthAmount)
+{
+    if (IsDead() || IsHealthFull())
+    {
+        return false;
+    }
+    
+    SetHealth(Health + HealthAmount);
+    return true;
 }
 
 void USTUHealthComponent::BeginPlay()
@@ -99,7 +115,7 @@ void USTUHealthComponent::AutoHeal()
 {
     SetHealth(Health + HealAmount);
 
-    if (Health == MaxHealth)
+    if (IsHealthFull())
     {
         StopHealing();
     }

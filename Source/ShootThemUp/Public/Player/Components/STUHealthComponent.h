@@ -22,7 +22,9 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 
         float GetHealth() const noexcept;
         bool  IsDead() const noexcept;
+        bool  IsHealthFull() const noexcept;
         void  SetHealth(float NewHealth, bool IsCausedByDamage = false, float LastDamage = 0.0f) noexcept;
+        bool  TryToAddHealth(float HealthAmount);
 
     protected:
         virtual void BeginPlay() override;

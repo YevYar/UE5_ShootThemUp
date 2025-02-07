@@ -29,7 +29,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBasePickup : public AActor
         void TakePickup();
 
     protected:
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Effect")
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
         float RespawnInterval = 5.0f;
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
