@@ -28,10 +28,16 @@ UCLASS() class SHOOTTHEMUP_API ASTUBasePickup : public AActor
         void RespawnPickup();
         void TakePickup();
 
+    private:
+        void GenerateRotationYaw();
+
     protected:
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
         float RespawnInterval = 5.0f;
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
         USphereComponent* SphereComponent;
+
+    private:
+        float RotationYaw = 1.0f;
 };
