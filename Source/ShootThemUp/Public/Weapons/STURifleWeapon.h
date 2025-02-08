@@ -8,15 +8,21 @@
 
 #include "STURifleWeapon.generated.h"
 
+class USTUWeaponVFXComponent;
+
 UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
 {
         GENERATED_BODY()
 
     public:
+        ASTURifleWeapon();
+
         void StartFire() override;
         void StopFire() override;
 
     protected:
+        void BeginPlay() override;
+
         virtual void MakeShot();
 
         float   CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const override;
@@ -32,6 +38,9 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings",
                   meta = (ClampMin = "0.0", ToolTip = "In Degrees."))
         float ShootingSpreadConeAngle = 9.0f;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        USTUWeaponVFXComponent* VFXComponent;
 
         FTimerHandle BurstShootingTimer;
         float        TimeFromFireStart = 0.0f;

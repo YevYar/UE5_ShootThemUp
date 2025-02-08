@@ -7,6 +7,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 
 #include "STUUtilities.h"
+#include "Weapons/Components/STUWeaponVFXComponent.h"
 
 ASTULauncherProjectile::ASTULauncherProjectile()
 {
@@ -14,6 +15,7 @@ ASTULauncherProjectile::ASTULauncherProjectile()
 
     MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
     SphereComponent   = CreateDefaultSubobject<USphereComponent>("SphereComponent");
+    VFXComponent      = CreateDefaultSubobject<USTUWeaponVFXComponent>("VFXComponent");
 
     if (MovementComponent)
     {
@@ -43,6 +45,7 @@ void ASTULauncherProjectile::BeginPlay()
 
     check(MovementComponent);
     check(SphereComponent);
+    check(VFXComponent);
 
     MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
 
@@ -71,6 +74,7 @@ void ASTULauncherProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
                                      GetOwner(), GetController(), DoFullDamage);
 
     DrawDebugSphere(GetWorld(), Hit.ImpactPoint, DamageRadius, 20, FColor::Red, false, 1.0f, 0.0f, 3.0f);
+    VFXComponent->PlayImpactVFX(Hit);
 
     Destroy();
 }

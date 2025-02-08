@@ -6,6 +6,13 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 
+#include "Weapons/Components/STUWeaponVFXComponent.h"
+
+ASTURifleWeapon::ASTURifleWeapon()
+{
+    VFXComponent = CreateDefaultSubobject<USTUWeaponVFXComponent>("VFXComponent");
+}
+
 void ASTURifleWeapon::StartFire()
 {
     TimeFromFireStart = 0.0f;
@@ -20,6 +27,13 @@ void ASTURifleWeapon::StopFire()
         TimeFromFireStart = 0.0f;
         GetWorldTimerManager().ClearTimer(BurstShootingTimer);
     }
+}
+
+void ASTURifleWeapon::BeginPlay()
+{
+    Super::BeginPlay();
+
+    check(VFXComponent);
 }
 
 void ASTURifleWeapon::MakeShot()
@@ -63,6 +77,7 @@ void ASTURifleWeapon::MakeShot()
             DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), HitResult.ImpactPoint, FColor::Red, false, 2.0f,
                           0.0f, 3.0f);
             DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 10.0f, FColor::Red, false, 2.0f, 0.0f, 3.0f);
+            VFXComponent->PlayImpactVFX(HitResult);
 
             if (HitResult.GetActor())
             {

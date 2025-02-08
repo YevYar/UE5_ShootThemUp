@@ -9,6 +9,7 @@
 #include "STULauncherProjectile.generated.h"
 
 class UProjectileMovementComponent;
+class USTUWeaponVFXComponent;
 class USphereComponent;
 
 UCLASS() class SHOOTTHEMUP_API ASTULauncherProjectile : public AActor
@@ -48,6 +49,9 @@ UCLASS() class SHOOTTHEMUP_API ASTULauncherProjectile : public AActor
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings",
                   meta = (ClampMin = "0.0", ToolTip = "In Seconds."))
         float LifeSpan = 7.0f;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        USTUWeaponVFXComponent* VFXComponent;
 
     private:
         FVector ShotDirection;
