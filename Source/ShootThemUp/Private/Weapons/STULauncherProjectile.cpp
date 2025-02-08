@@ -31,6 +31,7 @@ ASTULauncherProjectile::ASTULauncherProjectile()
         SphereComponent->SetNotifyRigidBodyCollision(true);
         SphereComponent->SetGenerateOverlapEvents(false);
         SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+        SphereComponent->bReturnMaterialOnMove = true;
     }
 }
 

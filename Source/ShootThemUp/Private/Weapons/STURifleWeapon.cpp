@@ -68,6 +68,7 @@ void ASTURifleWeapon::MakeShot()
     auto HitResult       = FHitResult{};
     auto CollisionParams = FCollisionQueryParams{};
     CollisionParams.AddIgnoredActor(Player);
+    CollisionParams.bReturnPhysicalMaterial = true;
 
     if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStartLocation, TraceEndLocation, ECC_Visibility,
                                              CollisionParams))
