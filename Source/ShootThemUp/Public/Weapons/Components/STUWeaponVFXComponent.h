@@ -2,11 +2,12 @@
 
 #pragma once
 
+#include "STUCoreTypes.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "STUWeaponVFXComponent.generated.h"
 
-class UNiagaraSystem;
 class UPhysicalMaterial;
 
 UCLASS() class SHOOTTHEMUP_API USTUWeaponVFXComponent : public UActorComponent
@@ -20,7 +21,7 @@ UCLASS() class SHOOTTHEMUP_API USTUWeaponVFXComponent : public UActorComponent
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
-        UNiagaraSystem* DefaultEffect;
+        FImpactData DefaultImpactData;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
-        TMap<UPhysicalMaterial*, UNiagaraSystem*> MaterialEffects;
+        TMap<UPhysicalMaterial*, FImpactData> ImpactDataMap;
 };

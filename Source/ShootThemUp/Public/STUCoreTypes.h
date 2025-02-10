@@ -46,3 +46,31 @@ USTRUCT(BlueprintType) struct FWeaponUIData
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponUI")
         UTexture2D* WeaponCrosshair = nullptr;
 };
+
+// ----- VFX
+class UMaterialInterface;
+class UNiagaraSystem;
+
+USTRUCT(BlueprintType) struct FDecalData
+{
+        GENERATED_USTRUCT_BODY()
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        UMaterialInterface* Material = nullptr;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        FVector Size = FVector{15.0f};
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        float LifeTime = 5.0f;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        float FadeOutTime = 2.0f;
+};
+
+USTRUCT(BlueprintType) struct FImpactData
+{
+        GENERATED_USTRUCT_BODY()
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        UNiagaraSystem* Effect = nullptr;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        FDecalData DecalData;
+};
