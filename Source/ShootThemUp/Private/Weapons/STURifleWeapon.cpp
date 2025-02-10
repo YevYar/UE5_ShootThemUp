@@ -77,7 +77,6 @@ void ASTURifleWeapon::MakeShot()
         {
             DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), HitResult.ImpactPoint, FColor::Red, false, 2.0f,
                           0.0f, 3.0f);
-            DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 10.0f, FColor::Red, false, 2.0f, 0.0f, 3.0f);
             VFXComponent->PlayImpactVFX(HitResult);
 
             if (HitResult.GetActor())
