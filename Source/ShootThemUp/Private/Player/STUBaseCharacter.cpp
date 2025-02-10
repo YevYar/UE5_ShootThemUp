@@ -267,7 +267,7 @@ void ASTUBaseCharacter::OnDeath()
 
     HealthTextComponent->SetVisibility(false, true);
     GetCharacterMovement()->DisableMovement();
-    PlayAnimMontage(DeathMontage);
+    // PlayAnimMontage(DeathMontage);
 
     SetLifeSpan(LifeSpanAfterDeath);
 
@@ -279,6 +279,12 @@ void ASTUBaseCharacter::OnDeath()
     if (GetCapsuleComponent())
     {
         GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+    }
+
+    if (GetMesh())
+    {
+        GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        GetMesh()->SetSimulatePhysics(true);
     }
 }
 
