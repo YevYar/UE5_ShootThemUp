@@ -9,6 +9,8 @@
 
 #include "STUHealthComponent.generated.h"
 
+class UCameraShakeBase;
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 {
@@ -30,13 +32,14 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         virtual void BeginPlay() override;
 
     private:
-        void StopHealing();
-
         UFUNCTION()
         void AutoHeal();
         UFUNCTION()
         void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
                              class AController* InstigatedBy, AActor* DamageCauser);
+
+        void StopHealing();
+        void PlayCameraShakeEffect(TSubclassOf<UCameraShakeBase> CameraShakeEffect);
 
     public:
         UPROPERTY(BlueprintAssignable, Category = "Health")
@@ -59,6 +62,8 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health", meta = (ClampMin = "0.0"))
         float MaxHealth = 100.0f;
 
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        TSubclassOf<UCameraShakeBase> CameraShakeOnDamageEffect;
     private:
         bool         bIsDead = false;
         FTimerHandle HealTimer;

@@ -4,6 +4,7 @@
 #include "Player/Components/STUHealthComponent.h"
 
 #include "Engine/TimerHandle.h"
+#include "GameFramework/Controller.h"
 
 #include "Dev/STUFireDamageType.h"
 #include "Dev/STUIceDamageType.h"
@@ -79,7 +80,7 @@ bool USTUHealthComponent::TryToAddHealth(float HealthAmount)
     {
         return false;
     }
-    
+
     SetHealth(Health + HealthAmount);
     return true;
 }
@@ -96,18 +97,6 @@ void USTUHealthComponent::BeginPlay()
     if (Owner)
     {
         Owner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
-    }
-}
-
-void USTUHealthComponent::StopHealing()
-{
-    if (AutoHealEnabled)
-    {
-        auto World = GetWorld();
-        if (World)
-        {
-            World->GetTimerManager().ClearTimer(HealTimer);
-        }
     }
 }
 
@@ -150,4 +139,40 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
     {
         UE_LOG(LogHealth, Display, TEXT("Wow, unknown damage type!"));
     }
+
+    PlayCameraShakeEffect(CameraShakeOnDamageEffect);
+}
+
+void USTUHealthComponent::StopHealing()
+{
+    if (AutoHealEnabled)
+    {
+        auto World = GetWorld();
+        if (World)
+        {
+            World->GetTimerManager().ClearTimer(HealTimer);
+        }
+    }
+}
+
+void USTUHealthComponent::PlayCameraShakeEffect(TSubclassOf<UCameraShakeBase> CameraShakeEffect)
+{
+    if (IsDead())
+    {
+        return;
+    }
+
+    const auto Pawn = Cast<APawn>(GetOwner());
+    if (!Pawn)
+    {
+        return;
+    }
+
+    const auto Controller = Pawn->GetController<APlayerController>();
+    if (!Controller || !Controller->PlayerCameraManager)
+    {
+        return;
+    }
+
+    Controller->PlayerCameraManager->StartCameraShake(CameraShakeEffect);
 }
