@@ -11,8 +11,12 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
         GENERATED_BODY()
 
     public:
+        bool Initialize() override;
+
         UFUNCTION(BlueprintCallable, Category = "Health")
         float GetHealthPercent() const;
+        UFUNCTION(BlueprintImplementableEvent, Category = "Health")
+        void OnTakeDamage();
 
         UFUNCTION(BlueprintCallable, Category = "PlayerStatus")
         bool IsPlayerAlive() const;
@@ -23,4 +27,8 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
         bool GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const;
         UFUNCTION(BlueprintCallable, Category = "Weapon")
         bool GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const;
+
+    private:
+        UFUNCTION()
+        void OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage);
 };

@@ -7,6 +7,17 @@
 #include "STUUtilities.h"
 #include "Weapons/Components/STUWeaponComponent.h"
 
+bool USTUPlayerHUDWidget::Initialize()
+{
+    const auto HealthComponent = GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
+    if (HealthComponent)
+    {
+        HealthComponent->HealthChanged.AddDynamic(this, &USTUPlayerHUDWidget::OnHealthChanged);
+    }
+
+    return Super::Initialize();
+}
+
 float USTUPlayerHUDWidget::GetHealthPercent() const
 {
     const auto HealthComponent = GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
@@ -35,4 +46,12 @@ bool USTUPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) co
 {
     const auto WeaponComponent = GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
     return WeaponComponent && WeaponComponent->GetCurrentWeaponUIData(WeaponUIData);
+}
+
+void USTUPlayerHUDWidget::OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage)
+{
+    if (IsCausedByDamage)
+    {
+        OnTakeDamage();
+    }
 }
