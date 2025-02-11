@@ -8,6 +8,7 @@
 
 #include "Dev/STUFireDamageType.h"
 #include "Dev/STUIceDamageType.h"
+#include "Dev/STULandingDamageType.h"
 #include "Player/STUBaseCharacter.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealth, All, All)
@@ -127,6 +128,18 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
         return;
     }
 
+    if (DamageType->IsA<USTULandingDamageType>())
+    {
+        if (Damage >= RequiredLandingDamageToShowLandingEffect)
+        {
+            UE_LOG(LogHealth, Display, TEXT("Hard landing!"));
+            PlayCameraShakeEffect(CameraShakeOnLandingEffect);
+            return;
+        }
+        
+        UE_LOG(LogHealth, Display, TEXT("Small damage on landing!"));
+        return;
+    }
     if (DamageType->IsA<USTUIceDamageType>())
     {
         UE_LOG(LogHealth, Display, TEXT("Sooooo cooooooold!"));

@@ -12,6 +12,7 @@
 #include "GameFramework/SpectatorPawn.h"
 #include "GameFramework/SpringArmComponent.h"
 
+#include "Dev/STULandingDamageType.h"
 #include "Player/Components/STUCharacterMovementComponent.h"
 #include "Player/Components/STUHealthComponent.h"
 #include "Weapons/Components/STUWeaponComponent.h"
@@ -324,5 +325,5 @@ void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
     const auto ReceivedLandingDamage =
       FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
 
-    HealthComponent->SetHealth(HealthComponent->GetHealth() - ReceivedLandingDamage, true, ReceivedLandingDamage);
+    TakeDamage(ReceivedLandingDamage, FDamageEvent{USTULandingDamageType::StaticClass()}, nullptr, this);
 }

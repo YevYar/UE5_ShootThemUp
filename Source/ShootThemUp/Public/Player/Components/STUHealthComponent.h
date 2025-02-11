@@ -48,6 +48,9 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         FHealthChangedSignature HealthChanged;
 
     protected:
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+        float RequiredLandingDamageToShowLandingEffect = 20.0f;
+
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal")
         bool AutoHealEnabled = true;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Heal",
@@ -64,6 +67,9 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
         TSubclassOf<UCameraShakeBase> CameraShakeOnDamageEffect;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        TSubclassOf<UCameraShakeBase> CameraShakeOnLandingEffect;
+
     private:
         bool         bIsDead = false;
         FTimerHandle HealTimer;
