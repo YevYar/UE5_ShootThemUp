@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 #include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 #include "Weapons/Components/STUWeaponVFXComponent.h"
 
@@ -78,8 +79,9 @@ void ASTURifleWeapon::MakeShot()
     {
         if (IsTargetAhead(MuzzleForwardVector, HitResult.ImpactPoint - MuzzleTransform.GetLocation()))
         {
-            DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), HitResult.ImpactPoint, FColor::Red, false, 2.0f,
-                          0.0f, 3.0f);
+            TraceEndLocation = HitResult.ImpactPoint;
+            /*DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), HitResult.ImpactPoint, FColor::Red, false, 2.0f,
+                          0.0f, 3.0f);*/
             VFXComponent->PlayImpactVFX(HitResult);
 
             if (HitResult.GetActor())
@@ -92,10 +94,12 @@ void ASTURifleWeapon::MakeShot()
     {
         if (IsTargetAhead(MuzzleForwardVector, TraceEndLocation - MuzzleTransform.GetLocation()))
         {
-            DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), TraceEndLocation, FColor::Green, false, 2.0f, 0.0f,
-                          3.0f);
+            /*DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), TraceEndLocation, FColor::Green, false, 2.0f, 0.0f,
+                          3.0f);*/
         }
     }
+
+    SpawnTraceEffect(MuzzleTransform.GetLocation(), TraceEndLocation);
 
     TimeFromFireStart += ShootingInterval;
 
@@ -129,5 +133,15 @@ void ASTURifleWeapon::SetMuzzleEffectVisibility(bool Visibility)
     {
         MuzzleEffectComponent->SetPaused(!Visibility);
         MuzzleEffectComponent->SetVisibility(Visibility, true);
+    }
+}
+
+void ASTURifleWeapon::SpawnTraceEffect(const FVector& TraceStart, const FVector& TraceEnd)
+{
+    const auto TraceEffectComponent =
+      UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TraceTargetEffect, TraceStart);
+    if (TraceEffectComponent)
+    {
+        TraceEffectComponent->SetVariableVec3(TraceTargetName, TraceEnd);
     }
 }

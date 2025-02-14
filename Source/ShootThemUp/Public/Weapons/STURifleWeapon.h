@@ -9,6 +9,7 @@
 #include "STURifleWeapon.generated.h"
 
 class UNiagaraComponent;
+class UNiagaraSystem;
 class USTUWeaponVFXComponent;
 
 UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
@@ -31,6 +32,7 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
 
         void InitMuzzleEffect();
         void SetMuzzleEffectVisibility(bool Visibility);
+        void SpawnTraceEffect(const FVector& TraceStart, const FVector& TraceEnd);
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ClampMin = "0.0"))
@@ -45,6 +47,10 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
 
         UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "VFX")
         UNiagaraComponent* MuzzleEffectComponent;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        UNiagaraSystem* TraceTargetEffect;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        FName TraceTargetName = "TraceTarget";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
         USTUWeaponVFXComponent* VFXComponent;
 
