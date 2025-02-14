@@ -8,6 +8,7 @@
 
 #include "STURifleWeapon.generated.h"
 
+class UNiagaraComponent;
 class USTUWeaponVFXComponent;
 
 UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
@@ -28,6 +29,9 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         float   CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const override;
         FVector GetTraceDirection(const FVector& ViewPointForwardVector) const override;
 
+        void InitMuzzleEffect();
+        void SetMuzzleEffectVisibility(bool Visibility);
+
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ClampMin = "0.0"))
         float MaxDamage = 30.0f;
@@ -39,6 +43,8 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
                   meta = (ClampMin = "0.0", ToolTip = "In Degrees."))
         float ShootingSpreadConeAngle = 9.0f;
 
+        UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "VFX")
+        UNiagaraComponent* MuzzleEffectComponent;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
         USTUWeaponVFXComponent* VFXComponent;
 

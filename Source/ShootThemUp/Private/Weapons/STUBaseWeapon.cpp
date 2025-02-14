@@ -6,6 +6,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/Character.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
 
@@ -147,6 +149,12 @@ bool ASTUBaseWeapon::GetPlayerAndController(ACharacter*& OutPlayer, AController*
     OutPlayer     = Player;
     OutController = Controller;
     return true;
+}
+
+UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleEffect()
+{
+    return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleEffect, WeaponMesh, MuzzleSocketName, FVector::ZeroVector,
+                                                        FRotator::ZeroRotator, EAttachLocation::SnapToTargetIncludingScale, true);
 }
 
 void ASTUBaseWeapon::DecreaseBullets()

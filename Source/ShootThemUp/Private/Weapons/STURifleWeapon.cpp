@@ -5,6 +5,7 @@
 
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
+#include "NiagaraComponent.h"
 
 #include "Weapons/Components/STUWeaponVFXComponent.h"
 
@@ -18,6 +19,7 @@ void ASTURifleWeapon::StartFire()
     TimeFromFireStart = 0.0f;
     GetWorldTimerManager().SetTimer(BurstShootingTimer, this, &ASTURifleWeapon::MakeShot, ShootingInterval, true);
     MakeShot();
+    InitMuzzleEffect();
 }
 
 void ASTURifleWeapon::StopFire()
@@ -27,6 +29,7 @@ void ASTURifleWeapon::StopFire()
         TimeFromFireStart = 0.0f;
         GetWorldTimerManager().ClearTimer(BurstShootingTimer);
     }
+    SetMuzzleEffectVisibility(false);
 }
 
 void ASTURifleWeapon::BeginPlay()
@@ -109,4 +112,22 @@ FVector ASTURifleWeapon::GetTraceDirection(const FVector& ViewPointForwardVector
 {
     const auto ShootingConeHalfRad = FMath::DegreesToRadians(ShootingSpreadConeAngle) / 2.0f;
     return FMath::VRandCone(ViewPointForwardVector, FMath::Clamp(TimeFromFireStart / 4, 0.0f, ShootingConeHalfRad));
+}
+
+void ASTURifleWeapon::InitMuzzleEffect()
+{
+    if (!MuzzleEffectComponent)
+    {
+        MuzzleEffectComponent = SpawnMuzzleEffect();
+    }
+    SetMuzzleEffectVisibility(true);
+}
+
+void ASTURifleWeapon::SetMuzzleEffectVisibility(bool Visibility)
+{
+    if (MuzzleEffectComponent)
+    {
+        MuzzleEffectComponent->SetPaused(!Visibility);
+        MuzzleEffectComponent->SetVisibility(Visibility, true);
+    }
 }

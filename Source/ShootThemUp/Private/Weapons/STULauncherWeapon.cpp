@@ -58,6 +58,7 @@ void ASTULauncherWeapon::MakeShot()
     }
 
     DecreaseBullets();
+    SpawnMuzzleEffect();
 }
 
 FVector ASTULauncherWeapon::GetTraceDirection(const FVector& ViewPointForwardVector) const

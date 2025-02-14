@@ -9,6 +9,8 @@
 
 #include "STUBaseWeapon.generated.h"
 
+class UNiagaraComponent;
+class UNiagaraSystem;
 class USkeletalMeshComponent;
 
 UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
@@ -41,7 +43,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         static FVector GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation);
         static bool    IsTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target);
 
-        bool GetPlayerAndController(ACharacter*& OutPlayer, AController*& OutController) const;
+        bool               GetPlayerAndController(ACharacter*& OutPlayer, AController*& OutController) const;
+        UNiagaraComponent* SpawnMuzzleEffect();
 
         // --------------- AMMO METHODS ---------------
         void DecreaseBullets();
@@ -61,6 +64,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USkeletalMeshComponent* WeaponMesh;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+        UNiagaraSystem* MuzzleEffect;
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         FAmmoData DefaultAmmo = FAmmoData{20, 5, false};
