@@ -18,9 +18,12 @@ ASTURifleWeapon::ASTURifleWeapon()
 void ASTURifleWeapon::StartFire()
 {
     TimeFromFireStart = 0.0f;
-    GetWorldTimerManager().SetTimer(BurstShootingTimer, this, &ASTURifleWeapon::MakeShot, ShootingInterval, true);
-    MakeShot();
-    InitMuzzleEffect();
+    GetWorldTimerManager().SetTimer(BurstShootingTimer, this, &ASTURifleWeapon::MakeShotTimerSlot, ShootingInterval,
+                                    true);
+    if (MakeShot())
+    {
+        InitMuzzleEffect();
+    }
 }
 
 void ASTURifleWeapon::StopFire()
@@ -40,12 +43,12 @@ void ASTURifleWeapon::BeginPlay()
     check(VFXComponent);
 }
 
-void ASTURifleWeapon::MakeShot()
+bool ASTURifleWeapon::MakeShot()
 {
     if (IsAmmoEmpty())
     {
         StopFire();
-        return;
+        return false;
     }
 
     ACharacter*  Player     = nullptr;
@@ -53,7 +56,7 @@ void ASTURifleWeapon::MakeShot()
     if (!GetPlayerAndController(Player, Controller))
     {
         StopFire();
-        return;
+        return false;
     }
 
     auto TraceStartLocation = FVector{};
@@ -61,7 +64,7 @@ void ASTURifleWeapon::MakeShot()
     if (!GetTraceData(TraceStartLocation, TraceEndLocation))
     {
         StopFire();
-        return;
+        return false;
     }
 
     UE_LOG(LogTemp, Error, TEXT("Rifle shot!"));
@@ -104,6 +107,8 @@ void ASTURifleWeapon::MakeShot()
     TimeFromFireStart += ShootingInterval;
 
     DecreaseBullets();
+
+    return true;
 }
 
 float ASTURifleWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const
@@ -125,6 +130,11 @@ void ASTURifleWeapon::InitMuzzleEffect()
         MuzzleEffectComponent = SpawnMuzzleEffect();
     }
     SetMuzzleEffectVisibility(true);
+}
+
+void ASTURifleWeapon::MakeShotTimerSlot()
+{
+    MakeShot();
 }
 
 void ASTURifleWeapon::SetMuzzleEffectVisibility(bool Visibility)
