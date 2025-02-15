@@ -77,7 +77,7 @@ void ASTULauncherProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
     USTUUtilities::ApplyRadialDamage(GetWorld(), MinDamage, MaxDamage, Hit.ImpactPoint, DamageRadius, IgnoreActors,
                                      GetOwner(), GetController(), DoFullDamage);
 
-    DrawDebugSphere(GetWorld(), Hit.ImpactPoint, DamageRadius, 20, FColor::Red, false, 1.0f, 0.0f, 3.0f);
+    // DrawDebugSphere(GetWorld(), Hit.ImpactPoint, DamageRadius, 20, FColor::Red, false, 1.0f, 0.0f, 3.0f);
     VFXComponent->PlayImpactVFX(Hit);
 
     GetRootComponent()->SetVisibility(false, true);

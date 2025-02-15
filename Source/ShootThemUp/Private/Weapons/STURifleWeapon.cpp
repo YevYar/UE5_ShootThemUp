@@ -93,14 +93,14 @@ bool ASTURifleWeapon::MakeShot()
             }
         }
     }
-    else
+    /*else
     {
         if (IsTargetAhead(MuzzleForwardVector, TraceEndLocation - MuzzleTransform.GetLocation()))
         {
-            /*DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), TraceEndLocation, FColor::Green, false, 2.0f, 0.0f,
-                          3.0f);*/
+            DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), TraceEndLocation, FColor::Green, false, 2.0f, 0.0f,
+                          3.0f);
         }
-    }
+    }*/
 
     SpawnTraceEffect(MuzzleTransform.GetLocation(), TraceEndLocation);
 
