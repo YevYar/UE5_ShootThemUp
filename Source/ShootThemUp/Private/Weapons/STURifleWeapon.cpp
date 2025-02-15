@@ -43,6 +43,18 @@ void ASTURifleWeapon::BeginPlay()
     check(VFXComponent);
 }
 
+float ASTURifleWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const
+{
+    return FMath::GetMappedRangeValueClamped(FVector2D{100.0f, ShootingDistance - DistanceFromTraceStartToMuzzle},
+                                             FVector2D{MaxDamage, MinDamage}, DistanceFromMuzzle);
+}
+
+FVector ASTURifleWeapon::GetTraceDirection(const FVector& ViewPointForwardVector) const
+{
+    const auto ShootingConeHalfRad = FMath::DegreesToRadians(ShootingSpreadConeAngle) / 2.0f;
+    return FMath::VRandCone(ViewPointForwardVector, FMath::Clamp(TimeFromFireStart / 4, 0.0f, ShootingConeHalfRad));
+}
+
 bool ASTURifleWeapon::MakeShot()
 {
     if (IsAmmoEmpty())
@@ -109,18 +121,6 @@ bool ASTURifleWeapon::MakeShot()
     DecreaseBullets();
 
     return true;
-}
-
-float ASTURifleWeapon::CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const
-{
-    return FMath::GetMappedRangeValueClamped(FVector2D{100.0f, ShootingDistance - DistanceFromTraceStartToMuzzle},
-                                             FVector2D{MaxDamage, MinDamage}, DistanceFromMuzzle);
-}
-
-FVector ASTURifleWeapon::GetTraceDirection(const FVector& ViewPointForwardVector) const
-{
-    const auto ShootingConeHalfRad = FMath::DegreesToRadians(ShootingSpreadConeAngle) / 2.0f;
-    return FMath::VRandCone(ViewPointForwardVector, FMath::Clamp(TimeFromFireStart / 4, 0.0f, ShootingConeHalfRad));
 }
 
 void ASTURifleWeapon::InitMuzzleEffect()

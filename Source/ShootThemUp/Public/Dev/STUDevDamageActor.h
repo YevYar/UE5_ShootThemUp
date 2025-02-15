@@ -19,7 +19,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUDevDamageActor : public AActor
         virtual void Tick(float DeltaTime) override;
 
     protected:
-        virtual void BeginPlay() override;
+        void BeginPlay() override;
 
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite)

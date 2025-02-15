@@ -25,10 +25,10 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
     protected:
         void BeginPlay() override;
 
-        virtual bool MakeShot();
-
         float   CalculateDamage(float DistanceFromMuzzle, float DistanceFromTraceStartToMuzzle) const override;
         FVector GetTraceDirection(const FVector& ViewPointForwardVector) const override;
+
+        virtual bool MakeShot();
 
         void InitMuzzleEffect();
         void MakeShotTimerSlot();

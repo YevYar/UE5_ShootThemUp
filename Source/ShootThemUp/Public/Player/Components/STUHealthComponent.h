@@ -29,7 +29,7 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         bool  TryToAddHealth(float HealthAmount);
 
     protected:
-        virtual void BeginPlay() override;
+        void BeginPlay() override;
 
     private:
         UFUNCTION()

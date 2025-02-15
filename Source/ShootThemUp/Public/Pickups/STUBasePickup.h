@@ -21,7 +21,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBasePickup : public AActor
         void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
     protected:
-        virtual void BeginPlay() override;
+        void BeginPlay() override;
 
         virtual bool GivePickupTo(APawn* PlayerPawn);
 

@@ -41,8 +41,8 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         bool TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponClass, int32 ClipsAmount);
 
     protected:
-        virtual void BeginPlay() override;
-        virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+        void BeginPlay() override;
+        void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
         void        AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, USceneComponent* Mesh, const FName& SocketName);
         bool        CanFire() const;

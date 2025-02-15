@@ -25,7 +25,7 @@ UCLASS() class SHOOTTHEMUP_API ASTULauncherProjectile : public AActor
         void SetShotDirection(const FVector& ShotDirection);
 
     protected:
-        virtual void BeginPlay() override;
+        void BeginPlay() override;
 
         UFUNCTION()
         virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
