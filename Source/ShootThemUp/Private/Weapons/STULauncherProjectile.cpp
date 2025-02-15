@@ -5,6 +5,8 @@
 
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 #include "STUUtilities.h"
 #include "Weapons/Components/STUWeaponVFXComponent.h"
@@ -54,6 +56,7 @@ void ASTULauncherProjectile::BeginPlay()
     SphereComponent->OnComponentHit.AddDynamic(this, &ASTULauncherProjectile::OnHit);
 
     SetLifeSpan(LifeSpan);
+    SpawnTraceSmokeEffect();
 }
 
 void ASTULauncherProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
@@ -77,11 +80,23 @@ void ASTULauncherProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
     DrawDebugSphere(GetWorld(), Hit.ImpactPoint, DamageRadius, 20, FColor::Red, false, 1.0f, 0.0f, 3.0f);
     VFXComponent->PlayImpactVFX(Hit);
 
-    Destroy();
+    GetRootComponent()->SetVisibility(false, true);
+    if (SpawnedTraceSmokeEffect)
+    {
+        SpawnedTraceSmokeEffect->SetVisibility(true, true);
+    }
+    SetLifeSpan(LifeSpanAfterHit);
 }
 
 AController* ASTULauncherProjectile::GetController() const
 {
     const auto Pawn = Cast<APawn>(GetOwner());
     return Pawn ? Pawn->GetController() : nullptr;
+}
+
+void ASTULauncherProjectile::SpawnTraceSmokeEffect()
+{
+    SpawnedTraceSmokeEffect =
+      UNiagaraFunctionLibrary::SpawnSystemAttached(TraceSmokeEffect, GetRootComponent(), NAME_None, FVector::ZeroVector,
+                                                   FRotator::ZeroRotator, EAttachLocation::SnapToTarget, false);
 }
