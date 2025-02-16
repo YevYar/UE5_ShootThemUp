@@ -52,7 +52,7 @@ void USTUHealthComponent::SetHealth(float NewHealth, bool IsCausedByDamage, floa
     {
         HealthChanged.Broadcast(Health, IsCausedByDamage, LastDamage);
 
-        if (Health == MIN_HEALTH)
+        if (Health <= MIN_HEALTH + 0.9f)
         {
             bIsDead = true;
             Died.Broadcast();
