@@ -8,13 +8,23 @@ public class ShootThemUp : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Niagara", "PhysicsCore" });
+		PublicDependencyModuleNames.AddRange(new string[] {
+            "Core",
+            "CoreUObject",
+            "Engine",
+            "InputCore",
+            "Niagara",
+            "PhysicsCore",
+            "GameplayTasks",
+            "NavigationSystem"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
         // Allow includes without full path, just by the name of the file. However, I prefer full path
         PublicIncludePaths.AddRange(new string[] {
             "ShootThemUp/Public/AI",
+            "ShootThemUp/Public/AI/Tasks",
             "ShootThemUp/Public/Animations",
             "ShootThemUp/Public/Dev",
             "ShootThemUp/Public/Pickups",
