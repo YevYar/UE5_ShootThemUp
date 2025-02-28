@@ -20,4 +20,10 @@ UCLASS() class SHOOTTHEMUP_API USTUNextLocationTask : public UBTTaskNode
         float Radius = 1000.0f;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
         FBlackboardKeySelector AimLocationKey;
+
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+        bool ShouldFindLocationAroundOtherActor = false;
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI",
+                  meta = (EditCondition = "ShouldFindLocationAroundOtherActor"))
+        FBlackboardKeySelector CenterActorKey;
 };
