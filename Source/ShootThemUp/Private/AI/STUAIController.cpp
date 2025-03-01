@@ -5,7 +5,10 @@
 
 #include "AI/STUAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BrainComponent.h"
+
 #include "Player/Components/STUAIPerceptionComponent.h"
+#include "Player/Components/STUHealthComponent.h"
 
 ASTUAIController::ASTUAIController()
 {
@@ -31,7 +34,18 @@ void ASTUAIController::OnPossess(APawn* InPawn)
     if (STUCharacter)
     {
         RunBehaviorTree(STUCharacter->BehaviorTreeAsset);
+
+        const auto HealthComponent = STUCharacter->FindComponentByClass<USTUHealthComponent>();
+        if (HealthComponent)
+        {
+            HealthComponent->Died.AddDynamic(this, &ASTUAIController::StopBehaviorTree);
+        }
     }
+}
+
+void ASTUAIController::StopBehaviorTree()
+{
+    BrainComponent->StopLogic("The character died.");
 }
 
 AActor* ASTUAIController::GetFocusOnActor() const

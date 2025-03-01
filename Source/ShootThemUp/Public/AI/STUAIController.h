@@ -20,6 +20,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUAIController : public AAIController
     protected:
         void OnPossess(APawn* InPawn) override;
 
+        UFUNCTION()
+        void StopBehaviorTree();
+
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
         FName FocusOnKeyName = "EnemyActor";
