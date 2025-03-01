@@ -154,7 +154,8 @@ bool ASTUBaseWeapon::GetPlayerAndController(ACharacter*& OutPlayer, AController*
 UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleEffect()
 {
     return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleEffect, WeaponMesh, MuzzleSocketName, FVector::ZeroVector,
-                                                        FRotator::ZeroRotator, EAttachLocation::SnapToTargetIncludingScale, true);
+                                                        FRotator::ZeroRotator,
+                                                        EAttachLocation::SnapToTargetIncludingScale, true);
 }
 
 void ASTUBaseWeapon::DecreaseBullets()
@@ -232,7 +233,7 @@ bool ASTUBaseWeapon::GetTraceData(FVector& OutTraceStartLocation, FVector& OutTr
 
     auto ViewPointLocation = FVector{};
     auto ViewPointRotation = FRotator{};
-    Controller->GetPlayerViewPoint(ViewPointLocation, ViewPointRotation);
+    GetPlayerViewPoint(ViewPointLocation, ViewPointRotation);
 
     OutTraceStartLocation     = ViewPointLocation;
     const auto TraceDirection = GetTraceDirection(ViewPointRotation.Vector());
@@ -244,4 +245,24 @@ bool ASTUBaseWeapon::GetTraceData(FVector& OutTraceStartLocation, FVector& OutTr
 FVector ASTUBaseWeapon::GetTraceDirection(const FVector& ViewPointForwardVector) const
 {
     return ViewPointForwardVector;
+}
+
+void ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewPointLocation, FRotator& ViewPointRotation) const
+{
+    ACharacter*  Player     = nullptr;
+    AController* Controller = nullptr;
+    if (!GetPlayerAndController(Player, Controller))
+    {
+        return;
+    }
+
+    if (Player->IsPlayerControlled())
+    {
+        Controller->GetPlayerViewPoint(ViewPointLocation, ViewPointRotation);
+    }
+    else
+    {
+        ViewPointLocation = WeaponMesh->GetSocketLocation(MuzzleSocketName);
+        ViewPointRotation = WeaponMesh->GetSocketRotation(MuzzleSocketName);
+    }
 }

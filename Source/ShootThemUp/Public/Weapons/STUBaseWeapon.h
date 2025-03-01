@@ -58,6 +58,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         virtual bool    GetTraceData(FVector& OutTraceStartLocation, FVector& OutTraceEndLocation) const;
         virtual FVector GetTraceDirection(const FVector& ViewPointForwardVector) const;
 
+        void GetPlayerViewPoint(FVector& ViewPointLocation, FRotator& ViewPointRotation) const;
+
     public:
         FReloadRequiredSignature ReloadRequired;
 
