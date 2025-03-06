@@ -34,10 +34,11 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 
         virtual bool TryToAddAmmo(int32 ClipsAmount);
 
-        FAmmoData     GetWeaponAmmoData() const noexcept;
-        FWeaponUIData GetWeaponUIData() const noexcept;
-        bool          IsAmmoEmpty() const;
-        bool          IsAmmoFull() const;
+        FAmmoData           GetWeaponAmmoData() const noexcept;
+        virtual EWeaponType GetWeaponType() const noexcept;
+        FWeaponUIData       GetWeaponUIData() const noexcept;
+        bool                IsAmmoEmpty() const;
+        bool                IsAmmoFull() const;
 
     protected:
         static FVector GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation);

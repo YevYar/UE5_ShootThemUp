@@ -106,6 +106,11 @@ FAmmoData ASTUBaseWeapon::GetWeaponAmmoData() const noexcept
     return CurrentAmmo;
 }
 
+EWeaponType ASTUBaseWeapon::GetWeaponType() const noexcept
+{
+    return EWeaponType::EWT_Unknown;
+}
+
 FWeaponUIData ASTUBaseWeapon::GetWeaponUIData() const noexcept
 {
     return WeaponUIData;

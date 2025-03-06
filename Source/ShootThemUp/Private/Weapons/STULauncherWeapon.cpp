@@ -18,6 +18,11 @@ void ASTULauncherWeapon::StopFire()
 {
 }
 
+EWeaponType ASTULauncherWeapon::GetWeaponType() const noexcept
+{
+    return EWeaponType::EWT_Launcher;
+}
+
 void ASTULauncherWeapon::MakeShot()
 {
     if (IsAmmoEmpty())

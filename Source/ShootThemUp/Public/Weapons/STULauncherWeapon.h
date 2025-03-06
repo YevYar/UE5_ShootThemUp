@@ -18,6 +18,8 @@ UCLASS() class SHOOTTHEMUP_API ASTULauncherWeapon : public ASTUBaseWeapon
         void StartFire() override;
         void StopFire() override;
 
+        EWeaponType GetWeaponType() const noexcept override;
+
     protected:
         virtual void MakeShot();
 

@@ -22,6 +22,8 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         void StartFire() override;
         void StopFire() override;
 
+        EWeaponType GetWeaponType() const noexcept override;
+
     protected:
         void BeginPlay() override;
 

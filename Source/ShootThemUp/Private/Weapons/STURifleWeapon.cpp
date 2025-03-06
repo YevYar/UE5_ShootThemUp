@@ -36,6 +36,11 @@ void ASTURifleWeapon::StopFire()
     SetMuzzleEffectVisibility(false);
 }
 
+EWeaponType ASTURifleWeapon::GetWeaponType() const noexcept
+{
+    return EWeaponType::EWT_Rifle;
+}
+
 void ASTURifleWeapon::BeginPlay()
 {
     Super::BeginPlay();

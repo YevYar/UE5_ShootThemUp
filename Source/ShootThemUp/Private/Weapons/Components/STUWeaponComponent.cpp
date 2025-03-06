@@ -103,6 +103,11 @@ bool USTUWeaponComponent::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) co
     return false;
 }
 
+EWeaponType USTUWeaponComponent::GetCurrentWeaponType() const noexcept
+{
+    return CurrentWeapon ? CurrentWeapon->GetWeaponType() : EWeaponType::EWT_Unknown;
+}
+
 bool USTUWeaponComponent::TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponClass, int32 ClipsAmount)
 {
     for (const auto Weapon : SpawnedWeapons)

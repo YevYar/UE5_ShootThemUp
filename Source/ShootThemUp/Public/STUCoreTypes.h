@@ -47,6 +47,13 @@ USTRUCT(BlueprintType) struct FWeaponUIData
         UTexture2D* WeaponCrosshair = nullptr;
 };
 
+enum class EWeaponType
+{
+    EWT_Launcher,
+    EWT_Rifle,
+    EWT_Unknown
+};
+
 // ----- VFX
 class UMaterialInterface;
 class UNiagaraSystem;
