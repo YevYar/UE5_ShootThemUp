@@ -23,13 +23,18 @@ UCLASS() class SHOOTTHEMUP_API ASTUAIController : public AAIController
         UFUNCTION()
         void StopBehaviorTree();
 
+    private:
+        AActor* GetFocusOnActor() const;
+        void    SetRotationIfLauncher();
+
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
         FName FocusOnKeyName = "EnemyActor";
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+        FName IsCurrentWeaponLauncherKeyName = "IsCurrentWeaponLauncher";
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+        FName ProjectileLaunchRotationKeyName = "ProjectileLaunchRotation";
 
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USTUAIPerceptionComponent* STUPerceptionComponent;
-
-    private:
-        AActor* GetFocusOnActor() const;
 };

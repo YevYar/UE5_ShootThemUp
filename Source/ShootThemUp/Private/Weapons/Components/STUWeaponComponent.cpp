@@ -103,6 +103,11 @@ bool USTUWeaponComponent::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) co
     return false;
 }
 
+bool USTUWeaponComponent::CanFire() const
+{
+    return CurrentWeapon && !CurrentWeapon->IsAmmoEmpty() && !IsAnimMontageInProgress();
+}
+
 FVector USTUWeaponComponent::GetCurrentWeaponMuzzleLocation() const
 {
     return CurrentWeapon ? CurrentWeapon->GetMuzzleLocation() : FVector{};
@@ -162,11 +167,6 @@ void USTUWeaponComponent::AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, UScene
     {
         Weapon->AttachToComponent(Mesh, FAttachmentTransformRules{EAttachmentRule::SnapToTarget, false}, SocketName);
     }
-}
-
-bool USTUWeaponComponent::CanFire() const
-{
-    return CurrentWeapon && !CurrentWeapon->IsAmmoEmpty() && !IsAnimMontageInProgress();
 }
 
 bool USTUWeaponComponent::CanEquipWeapon() const

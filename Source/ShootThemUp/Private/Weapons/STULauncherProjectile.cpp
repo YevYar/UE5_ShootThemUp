@@ -8,6 +8,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 
+#include "STUCoreConstants.h"
 #include "STUUtilities.h"
 #include "Weapons/Components/STUWeaponVFXComponent.h"
 
@@ -21,7 +22,7 @@ ASTULauncherProjectile::ASTULauncherProjectile()
 
     if (MovementComponent)
     {
-        MovementComponent->InitialSpeed           = 1700.0f;
+        MovementComponent->InitialSpeed           = GameConfig::PROJECTILE_INITIAL_SPEED;
         MovementComponent->ProjectileGravityScale = 1.2f;
     }
 

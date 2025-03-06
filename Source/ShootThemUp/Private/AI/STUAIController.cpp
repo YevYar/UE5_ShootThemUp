@@ -23,7 +23,20 @@ void ASTUAIController::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    SetFocus(GetFocusOnActor());
+    const auto BlackboardComponent = GetBlackboardComponent();
+    if (!BlackboardComponent)
+    {
+        return;
+    }
+
+    if (BlackboardComponent->GetValueAsBool(IsCurrentWeaponLauncherKeyName))
+    {
+        SetRotationIfLauncher();
+    }
+    else
+    {
+        SetFocus(GetFocusOnActor());
+    }
 }
 
 void ASTUAIController::OnPossess(APawn* InPawn)
@@ -57,4 +70,16 @@ AActor* ASTUAIController::GetFocusOnActor() const
     }
 
     return nullptr;
+}
+
+void ASTUAIController::SetRotationIfLauncher()
+{
+    const auto BlackboardComponent = GetBlackboardComponent();
+    if (!BlackboardComponent)
+    {
+        return;
+    }
+
+    const auto ProjectileLaunchRotation = BlackboardComponent->GetValueAsRotator(ProjectileLaunchRotationKeyName);
+    SetControlRotation(ProjectileLaunchRotation);
 }

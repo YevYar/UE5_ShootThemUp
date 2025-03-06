@@ -38,6 +38,7 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         UFUNCTION(BlueprintCallable, Category = "UI")
         bool GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept;
 
+        bool        CanFire() const;
         FVector     GetCurrentWeaponMuzzleLocation() const;
         EWeaponType GetCurrentWeaponType() const noexcept;
         bool        TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponClass, int32 ClipsAmount);
@@ -47,7 +48,6 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
         void        AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, USceneComponent* Mesh, const FName& SocketName);
-        bool        CanFire() const;
         bool        CanEquipWeapon() const;
         bool        CanReloadWeapon() const;
         void        EquipTheWeapon(int32 WeaponIndex);
