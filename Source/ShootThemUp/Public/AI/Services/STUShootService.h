@@ -20,6 +20,7 @@ UCLASS() class SHOOTTHEMUP_API USTUShootService : public UBTService
         void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
     private:
+        FVector GetRandomLocationInTheRadiusOfTarget(const FVector& TargetLocation) const;
         void    SetRequiredRotationToShootFromLauncher(UBlackboardComponent* BlackboardComponent, const APawn* Pawn,
                                                        const AActor*              EnemyActor,
                                                        const USTUWeaponComponent* WeaponComponent) const;
@@ -29,6 +30,8 @@ UCLASS() class SHOOTTHEMUP_API USTUShootService : public UBTService
         FBlackboardKeySelector EnemyActorKey;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
         FBlackboardKeySelector IsCurrentWeaponLauncherKey;
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+        float MaximumDeviationFromTheTarget = 450.0f;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
         FBlackboardKeySelector ProjectileLaunchRotationKey;
 };

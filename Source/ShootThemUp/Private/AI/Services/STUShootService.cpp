@@ -48,6 +48,15 @@ void USTUShootService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
     Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 }
 
+FVector USTUShootService::GetRandomLocationInTheRadiusOfTarget(const FVector& TargetLocation) const
+{
+    auto       Result                      = FVector{TargetLocation};
+    auto       DirectionComponentToChange  = FMath::RandBool() ? &Result.X : &Result.Y;
+    const auto Sign                        = FMath::RandBool() ? 1 : -1;
+    *DirectionComponentToChange           += Sign * FMath::RandRange(0.0f, MaximumDeviationFromTheTarget);
+    return Result;
+}
+
 void USTUShootService::SetRequiredRotationToShootFromLauncher(UBlackboardComponent* BlackboardComponent,
                                                               const APawn* Pawn, const AActor* EnemyActor,
                                                               const USTUWeaponComponent* WeaponComponent) const
@@ -58,7 +67,7 @@ void USTUShootService::SetRequiredRotationToShootFromLauncher(UBlackboardCompone
     }
 
     const auto StartLocation  = WeaponComponent->GetCurrentWeaponMuzzleLocation();
-    const auto TargetLocation = EnemyActor->GetActorLocation();
+    const auto TargetLocation = GetRandomLocationInTheRadiusOfTarget(EnemyActor->GetActorLocation());
     const auto LaunchSpeed    = GameConfig::PROJECTILE_INITIAL_SPEED;
     auto       LaunchVelocity = FVector{};
 
