@@ -6,6 +6,7 @@
 #include "AI/STUAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BrainComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "Player/Components/STUAIPerceptionComponent.h"
 #include "Player/Components/STUHealthComponent.h"
@@ -31,7 +32,7 @@ void ASTUAIController::Tick(float DeltaTime)
 
     if (BlackboardComponent->GetValueAsBool(IsCurrentWeaponLauncherKeyName))
     {
-        SetRotationIfLauncher();
+        SetRotationIfLauncher(DeltaTime);
     }
     else
     {
@@ -72,7 +73,7 @@ AActor* ASTUAIController::GetFocusOnActor() const
     return nullptr;
 }
 
-void ASTUAIController::SetRotationIfLauncher()
+void ASTUAIController::SetRotationIfLauncher(float DeltaTime)
 {
     const auto BlackboardComponent = GetBlackboardComponent();
     if (!BlackboardComponent)
@@ -81,5 +82,21 @@ void ASTUAIController::SetRotationIfLauncher()
     }
 
     const auto ProjectileLaunchRotation = BlackboardComponent->GetValueAsRotator(ProjectileLaunchRotationKeyName);
-    SetControlRotation(ProjectileLaunchRotation);
+    SmoothRotateWithMovementSpeed(ProjectileLaunchRotation, DeltaTime);
+}
+
+void ASTUAIController::SmoothRotateWithMovementSpeed(const FRotator& TargetRotation, float DeltaTime)
+{
+    const auto CurrentRotation = GetControlRotation();
+    const auto OwnedCharacter  = Cast<ACharacter>(GetPawn());
+
+    if (OwnedCharacter && OwnedCharacter->GetCharacterMovement())
+    {
+        const auto RotationSpeed = OwnedCharacter->GetCharacterMovement()->RotationRate.Yaw;
+
+        // Interpolate the rotation based on the movement component's rotation rate
+        const auto NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, RotationSpeed);
+
+        SetControlRotation(NewRotation);
+    }
 }

@@ -25,7 +25,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUAIController : public AAIController
 
     private:
         AActor* GetFocusOnActor() const;
-        void    SetRotationIfLauncher();
+        void    SetRotationIfLauncher(float DeltaTime);
+        void    SmoothRotateWithMovementSpeed(const FRotator& TargetRotation, float DeltaTime);
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
