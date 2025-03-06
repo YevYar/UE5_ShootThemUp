@@ -101,6 +101,16 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
     return true;
 }
 
+FVector ASTUBaseWeapon::GetMuzzleLocation() const
+{
+    return WeaponMesh->GetSocketLocation(MuzzleSocketName);
+}
+
+FRotator ASTUBaseWeapon::GetMuzzleRotation() const
+{
+    return WeaponMesh->GetSocketRotation(MuzzleSocketName);
+}
+
 FAmmoData ASTUBaseWeapon::GetWeaponAmmoData() const noexcept
 {
     return CurrentAmmo;
@@ -267,7 +277,7 @@ void ASTUBaseWeapon::GetPlayerViewPoint(FVector& ViewPointLocation, FRotator& Vi
     }
     else
     {
-        ViewPointLocation = WeaponMesh->GetSocketLocation(MuzzleSocketName);
-        ViewPointRotation = WeaponMesh->GetSocketRotation(MuzzleSocketName);
+        ViewPointLocation = GetMuzzleLocation();
+        ViewPointRotation = GetMuzzleRotation();
     }
 }

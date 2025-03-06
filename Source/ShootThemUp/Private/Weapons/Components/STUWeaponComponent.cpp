@@ -103,6 +103,11 @@ bool USTUWeaponComponent::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) co
     return false;
 }
 
+FVector USTUWeaponComponent::GetCurrentWeaponMuzzleLocation() const
+{
+    return CurrentWeapon ? CurrentWeapon->GetMuzzleLocation() : FVector{};
+}
+
 EWeaponType USTUWeaponComponent::GetCurrentWeaponType() const noexcept
 {
     return CurrentWeapon ? CurrentWeapon->GetWeaponType() : EWeaponType::EWT_Unknown;

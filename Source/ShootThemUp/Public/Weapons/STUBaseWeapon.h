@@ -34,6 +34,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 
         virtual bool TryToAddAmmo(int32 ClipsAmount);
 
+        FVector             GetMuzzleLocation() const;
+        FRotator            GetMuzzleRotation() const;
         FAmmoData           GetWeaponAmmoData() const noexcept;
         virtual EWeaponType GetWeaponType() const noexcept;
         FWeaponUIData       GetWeaponUIData() const noexcept;

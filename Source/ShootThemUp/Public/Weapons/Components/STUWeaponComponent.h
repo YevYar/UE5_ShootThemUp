@@ -38,6 +38,7 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         UFUNCTION(BlueprintCallable, Category = "UI")
         bool GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const noexcept;
 
+        FVector     GetCurrentWeaponMuzzleLocation() const;
         EWeaponType GetCurrentWeaponType() const noexcept;
         bool        TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponClass, int32 ClipsAmount);
 

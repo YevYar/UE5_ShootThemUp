@@ -39,14 +39,14 @@ void ASTULauncherWeapon::MakeShot()
 
     UE_LOG(LogTemp, Error, TEXT("Launcher shot!"));
 
-    const auto MuzzleTransform = WeaponMesh->GetSocketTransform(MuzzleSocketName);
+    const auto MuzzleLocation = GetMuzzleLocation();
 
-    const auto ProjactileTranform = FTransform{FRotator::ZeroRotator, MuzzleTransform.GetLocation()};
+    const auto ProjactileTranform = FTransform{FRotator::ZeroRotator, MuzzleLocation};
     auto SpawnedProjectile = GetWorld()->SpawnActorDeferred<ASTULauncherProjectile>(ProjectileType, ProjactileTranform);
 
     if (SpawnedProjectile)
     {
-        const auto ShootingDirection = (TraceEndLocation - MuzzleTransform.GetLocation()).GetSafeNormal();
+        const auto ShootingDirection = (TraceEndLocation - MuzzleLocation).GetSafeNormal();
         SpawnedProjectile->SetShotDirection(ShootingDirection);
         SpawnedProjectile->SetOwner(GetOwner());
 
@@ -58,8 +58,7 @@ void ASTULauncherWeapon::MakeShot()
 
         SpawnedProjectile->FinishSpawning(ProjactileTranform);
 
-        DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), TraceEndLocation, FColor::Red, false, 2.0f, 0.0f,
-                      3.0f);
+        DrawDebugLine(GetWorld(), MuzzleLocation, TraceEndLocation, FColor::Red, false, 2.0f, 0.0f, 3.0f);
     }
 
     DecreaseBullets();
