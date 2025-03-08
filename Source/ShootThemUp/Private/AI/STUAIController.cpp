@@ -95,7 +95,8 @@ void ASTUAIController::SmoothRotateWithMovementSpeed(const FRotator& TargetRotat
         const auto RotationSpeed = OwnedCharacter->GetCharacterMovement()->RotationRate.Yaw;
 
         // Interpolate the rotation based on the movement component's rotation rate
-        const auto NewRotation = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, RotationSpeed);
+        auto NewRotation  = FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, RotationSpeed);
+        NewRotation.Pitch = TargetRotation.Pitch;
 
         SetControlRotation(NewRotation);
     }
