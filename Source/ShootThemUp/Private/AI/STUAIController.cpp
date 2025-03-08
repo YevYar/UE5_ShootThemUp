@@ -59,7 +59,10 @@ void ASTUAIController::OnPossess(APawn* InPawn)
 
 void ASTUAIController::StopBehaviorTree()
 {
-    BrainComponent->StopLogic("The character died.");
+    if (BrainComponent)
+    {
+        BrainComponent->Cleanup();
+    }
 }
 
 AActor* ASTUAIController::GetFocusOnActor() const
