@@ -41,6 +41,7 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         bool        CanFire() const;
         FVector     GetCurrentWeaponMuzzleLocation() const;
         EWeaponType GetCurrentWeaponType() const noexcept;
+        bool        DoesCurrentWeaponNeedAmmo() const;
         bool        TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponClass, int32 ClipsAmount);
 
     protected:
