@@ -12,6 +12,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUAmmoPickup : public ASTUBasePickup
 {
         GENERATED_BODY()
 
+    public:
+        TSubclassOf<ASTUBaseWeapon> GetWeaponClass() const;
+
     protected:
         bool GivePickupTo(APawn* PlayerPawn) override;
 

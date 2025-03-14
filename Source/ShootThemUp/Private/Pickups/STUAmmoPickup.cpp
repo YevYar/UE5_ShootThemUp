@@ -6,6 +6,11 @@
 #include "STUUtilities.h"
 #include "Weapons/Components/STUWeaponComponent.h"
 
+TSubclassOf<ASTUBaseWeapon> ASTUAmmoPickup::GetWeaponClass() const
+{
+    return WeaponClass;
+}
+
 bool ASTUAmmoPickup::GivePickupTo(APawn* PlayerPawn)
 {
     if (!PlayerPawn)
