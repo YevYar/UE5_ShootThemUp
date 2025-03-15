@@ -74,7 +74,7 @@ void USTUShootService::SetRequiredRotationToShootFromLauncher(UBlackboardCompone
     if (UGameplayStatics::SuggestProjectileVelocity(GetWorld(), LaunchVelocity, StartLocation, TargetLocation,
                                                     LaunchSpeed, false, 0, 0,
                                                     ESuggestProjVelocityTraceOption::DoNotTrace,
-                                                    FCollisionResponseParams::DefaultResponseParam, {}, true))
+                                                    FCollisionResponseParams::DefaultResponseParam, {}, false))
     {
         BlackboardComponent->SetValueAsRotator(ProjectileLaunchRotationKey.SelectedKeyName,
                                                LaunchVelocity.ToOrientationRotator());

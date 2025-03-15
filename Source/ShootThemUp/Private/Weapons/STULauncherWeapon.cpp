@@ -58,7 +58,7 @@ void ASTULauncherWeapon::MakeShot()
 
         SpawnedProjectile->FinishSpawning(ProjactileTranform);
 
-        DrawDebugLine(GetWorld(), MuzzleLocation, TraceEndLocation, FColor::Red, false, 2.0f, 0.0f, 3.0f);
+        // DrawDebugLine(GetWorld(), MuzzleLocation, TraceEndLocation, FColor::Red, false, 2.0f, 0.0f, 3.0f);
     }
 
     DecreaseBullets();
