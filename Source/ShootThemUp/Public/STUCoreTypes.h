@@ -4,6 +4,15 @@
 
 #include "STUCoreTypes.generated.h"
 
+// ----- GAME MODE
+USTRUCT(BlueprintType) struct FGameData
+{
+        GENERATED_USTRUCT_BODY()
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "1", ClampMax = "100"))
+        int32 PlayersAmount = 2;
+};
+
 // ----- HEALTH
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDiedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthChangedSignature, float, Health, bool, IsCausedByDamage, float,
