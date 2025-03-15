@@ -16,9 +16,11 @@ UCLASS() class SHOOTTHEMUP_API ASTUBasePickup : public AActor
         ASTUBasePickup();
 
     public:
-        virtual void Tick(float DeltaTime) override;
+        void Tick(float DeltaTime) override;
 
         void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+        bool CouldBeTaken() const;
 
     protected:
         void BeginPlay() override;
@@ -39,5 +41,6 @@ UCLASS() class SHOOTTHEMUP_API ASTUBasePickup : public AActor
         USphereComponent* SphereComponent;
 
     private:
-        float RotationYaw = 1.0f;
+        FTimerHandle RespawnTimer;
+        float        RotationYaw = 1.0f;
 };
