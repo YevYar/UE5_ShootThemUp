@@ -9,6 +9,8 @@
 #include "Player/STUPlayerController.h"
 #include "UI/STUGameHUD.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogSTUGameModeBase, All, All);
+
 ASTUGameModeBase::ASTUGameModeBase()
 {
     DefaultPawnClass      = ASTUBaseCharacter::StaticClass();
@@ -30,6 +32,7 @@ void ASTUGameModeBase::StartPlay()
     Super::StartPlay();
 
     SpawnBots();
+    StartRound();
 }
 
 bool ASTUGameModeBase::IsDebug() const noexcept
@@ -55,5 +58,32 @@ void ASTUGameModeBase::SpawnBots()
 
         const auto AIController = GetWorld()->SpawnActor<AAIController>(AIControllerClass, SpawnParameters);
         RestartPlayer(AIController);
+    }
+}
+
+void ASTUGameModeBase::StartRound()
+{
+    ++CurrentRound;
+    RemainingRoundTime = GameData.RoundDuration;
+    GetWorldTimerManager().SetTimer(RoundTimerHandle, this, &ASTUGameModeBase::UpdateRoundTimer, 1.0f, true);
+}
+
+void ASTUGameModeBase::UpdateRoundTimer()
+{
+    UE_LOG(LogSTUGameModeBase, Display, TEXT("Time: %i | Round: %i/%i"), RemainingRoundTime, CurrentRound,
+           GameData.RoundAmount);
+
+    if (--RemainingRoundTime <= 0)
+    {
+        GetWorldTimerManager().ClearTimer(RoundTimerHandle);
+
+        if (CurrentRound < GameData.RoundAmount)
+        {
+            StartRound();
+        }
+        else
+        {
+            UE_LOG(LogSTUGameModeBase, Display, TEXT("============ GAME OVER ============"))
+        }
     }
 }

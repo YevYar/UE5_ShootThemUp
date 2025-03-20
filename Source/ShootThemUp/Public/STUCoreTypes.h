@@ -11,6 +11,11 @@ USTRUCT(BlueprintType) struct FGameData
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "1", ClampMax = "100"))
         int32 PlayersAmount = 2;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "1", ClampMax = "10"))
+        int32 RoundAmount = 5;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game",
+                  meta = (ClampMin = "3", ClampMax = "300", Tooltip = "In seconds"))
+        int32 RoundDuration = 5;
 };
 
 // ----- HEALTH

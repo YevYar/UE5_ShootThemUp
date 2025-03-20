@@ -26,6 +26,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
 
     private:
         void SpawnBots();
+        void StartRound();
+        void UpdateRoundTimer();
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
@@ -34,4 +36,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         TSubclassOf<APawn> AIPawnClass;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
         FGameData GameData;
+
+    private:
+        int32        CurrentRound       = 0;
+        int32        RemainingRoundTime = 0;
+        FTimerHandle RoundTimerHandle;
 };
