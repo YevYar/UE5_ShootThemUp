@@ -165,6 +165,48 @@ void USTUWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
     Super::EndPlay(EndPlayReason);
 }
 
+void USTUWeaponComponent::SpawnWeapons()
+{
+    const auto Character = GetCharacter();
+    if (!Character || !GetWorld())
+    {
+        return;
+    }
+
+    for (const auto WeaponData : WeaponDataToSpawn)
+    {
+        if (!WeaponData.ReloadAnimMontage)
+        {
+            UE_LOG(LogWeaponComponent, Error, TEXT("Reload Anim montage hasn't been provided."));
+            continue;
+        }
+
+        auto SpawnedWeapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponData.WeaponClass);
+
+        if (SpawnedWeapon)
+        {
+            AttachWeaponToTheSocket(SpawnedWeapon, Character->GetMesh(), WeaponArmourySocket);
+            SpawnedWeapon->SetOwner(Character);
+
+            SpawnedWeapon->ReloadRequired.AddUObject(this, &USTUWeaponComponent::ReloadWeapon);
+
+            if (auto ReloadFinishedNotify =
+                  AnimUtilities::FindFirstAnimNotifyInAnimMontage<USTUReloadFinishedAnimNotify>(WeaponData
+                                                                                                  .ReloadAnimMontage))
+            {
+                ReloadFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
+            }
+            else
+            {
+                UE_LOG(LogWeaponComponent, Error, TEXT("ReloadFinished anim notify was forgotten to set!"));
+                checkNoEntry();
+            }
+
+            SpawnedWeapons.Add(SpawnedWeapon);
+        }
+    }
+}
+
 void USTUWeaponComponent::AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, USceneComponent* Mesh,
                                                   const FName& SocketName)
 {
@@ -316,48 +358,6 @@ void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent
         if (CurrentWeapon)
         {
             CurrentWeapon->ChangeClip();
-        }
-    }
-}
-
-void USTUWeaponComponent::SpawnWeapons()
-{
-    const auto Character = GetCharacter();
-    if (!Character || !GetWorld())
-    {
-        return;
-    }
-
-    for (const auto WeaponData : WeaponDataToSpawn)
-    {
-        if (!WeaponData.ReloadAnimMontage)
-        {
-            UE_LOG(LogWeaponComponent, Error, TEXT("Reload Anim montage hasn't been provided."));
-            continue;
-        }
-
-        auto SpawnedWeapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponData.WeaponClass);
-
-        if (SpawnedWeapon)
-        {
-            AttachWeaponToTheSocket(SpawnedWeapon, Character->GetMesh(), WeaponArmourySocket);
-            SpawnedWeapon->SetOwner(Character);
-
-            SpawnedWeapon->ReloadRequired.AddUObject(this, &USTUWeaponComponent::ReloadWeapon);
-
-            if (auto ReloadFinishedNotify =
-                  AnimUtilities::FindFirstAnimNotifyInAnimMontage<USTUReloadFinishedAnimNotify>(WeaponData
-                                                                                                  .ReloadAnimMontage))
-            {
-                ReloadFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
-            }
-            else
-            {
-                UE_LOG(LogWeaponComponent, Error, TEXT("ReloadFinished anim notify was forgotten to set!"));
-                checkNoEntry();
-            }
-
-            SpawnedWeapons.Add(SpawnedWeapon);
         }
     }
 }

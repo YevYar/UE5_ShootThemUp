@@ -48,6 +48,8 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         void BeginPlay() override;
         void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+        virtual void SpawnWeapons();
+
         void        AttachWeaponToTheSocket(ASTUBaseWeapon* Weapon, USceneComponent* Mesh, const FName& SocketName);
         bool        CanEquipWeapon() const;
         bool        CanReloadWeapon() const;
@@ -64,7 +66,6 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         void          OnEquipFinished(USkeletalMeshComponent* MeshComponent);
         void          OnEquipChangeWeapon(USkeletalMeshComponent* MeshComponent);
         void          OnReloadFinished(USkeletalMeshComponent* MeshComponent);
-        void          SpawnWeapons();
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animations")

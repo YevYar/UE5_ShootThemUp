@@ -14,4 +14,7 @@ UCLASS() class SHOOTTHEMUP_API USTUAIWeaponComponent : public USTUWeaponComponen
     public:
         void NextWeapon() override;
         void StartFire() override;
+
+    protected:
+        void SpawnWeapons() override;
 };

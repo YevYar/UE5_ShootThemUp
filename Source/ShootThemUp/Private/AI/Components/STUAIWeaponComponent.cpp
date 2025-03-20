@@ -3,6 +3,8 @@
 
 #include "AI/Components/STUAIWeaponComponent.h"
 
+#include "Algo/RandomShuffle.h"
+
 #include "Weapons/STUBaseWeapon.h"
 
 void USTUAIWeaponComponent::NextWeapon()
@@ -39,4 +41,10 @@ void USTUAIWeaponComponent::StartFire()
     {
         NextWeapon();
     }
+}
+
+void USTUAIWeaponComponent::SpawnWeapons()
+{
+    Algo::RandomShuffle(WeaponDataToSpawn);
+    Super::SpawnWeapons();
 }
