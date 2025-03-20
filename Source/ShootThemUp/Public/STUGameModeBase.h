@@ -25,6 +25,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         bool IsDebug() const noexcept;
 
     private:
+        void RespawnPlayers();
+        void RespawnOnePlayer(AController* Controller);
         void SpawnBots();
         void StartRound();
         void UpdateRoundTimer();

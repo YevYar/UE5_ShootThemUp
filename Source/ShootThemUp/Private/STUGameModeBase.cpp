@@ -44,6 +44,28 @@ bool ASTUGameModeBase::IsDebug() const noexcept
 #endif
 }
 
+void ASTUGameModeBase::RespawnPlayers()
+{
+    if (!GetWorld())
+    {
+        return;
+    }
+
+    for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
+    {
+        RespawnOnePlayer(It->Get());
+    }
+}
+
+void ASTUGameModeBase::RespawnOnePlayer(AController* Controller)
+{
+    if (Controller && Controller->GetPawn())
+    {
+        Controller->GetPawn()->Reset();
+    }
+    RestartPlayer(Controller);
+}
+
 void ASTUGameModeBase::SpawnBots()
 {
     if (!GetWorld())
@@ -79,6 +101,7 @@ void ASTUGameModeBase::UpdateRoundTimer()
 
         if (CurrentRound < GameData.RoundAmount)
         {
+            RespawnPlayers();
             StartRound();
         }
         else

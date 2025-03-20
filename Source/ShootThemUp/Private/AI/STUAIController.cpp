@@ -18,6 +18,8 @@ ASTUAIController::ASTUAIController()
     {
         SetPerceptionComponent(*STUPerceptionComponent);
     }
+
+   bWantsPlayerState = true;
 }
 
 void ASTUAIController::Tick(float DeltaTime)
