@@ -20,7 +20,7 @@ void ASTURifleWeapon::StartFire()
     TimeFromFireStart = 0.0f;
     GetWorldTimerManager().SetTimer(BurstShootingTimer, this, &ASTURifleWeapon::MakeShotTimerSlot, ShootingInterval,
                                     true);
-    if (MakeShot())
+    if (MakeShot() && !IsClipEmpty())
     {
         InitMuzzleEffect();
     }
@@ -28,12 +28,10 @@ void ASTURifleWeapon::StartFire()
 
 void ASTURifleWeapon::StopFire()
 {
-    if (BurstShootingTimer.IsValid())
-    {
-        TimeFromFireStart = 0.0f;
-        GetWorldTimerManager().ClearTimer(BurstShootingTimer);
-    }
     SetMuzzleEffectVisibility(false);
+
+    TimeFromFireStart = 0.0f;
+    GetWorldTimerManager().ClearTimer(BurstShootingTimer);
 }
 
 EWeaponType ASTURifleWeapon::GetWeaponType() const noexcept
@@ -108,6 +106,11 @@ bool ASTURifleWeapon::MakeShot()
             {
                 ApplyDamageToTheHitActor(HitResult, MuzzleTransform.GetLocation());
             }
+        }
+        else
+        {
+            StopFire();
+            return false;
         }
     }
     /*else

@@ -56,14 +56,11 @@ void USTUWeaponComponent::ReloadWeapon(ASTUBaseWeapon* WeaponToReload)
         return;
     }
 
-    if (CanReloadWeapon())
-    {
-        StopFire();
+    StopFire();
 
-        if (PlayAnimMontage(CurrentReloadAnimMontage))
-        {
-            bIsReloadAnimationInProgress = true;
-        }
+    if (CanReloadWeapon() && PlayAnimMontage(CurrentReloadAnimMontage))
+    {
+        bIsReloadAnimationInProgress = true;
     }
 }
 
@@ -273,6 +270,8 @@ bool USTUWeaponComponent::IsAnimMontageInProgress() const
 
 bool USTUWeaponComponent::PlayAnimMontage(UAnimMontage* AnimMontage)
 {
+    StopFire();
+
     auto Character = GetCharacter();
     if (Character)
     {
