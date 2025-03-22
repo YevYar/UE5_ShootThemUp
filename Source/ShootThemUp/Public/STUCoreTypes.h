@@ -16,6 +16,12 @@ USTRUCT(BlueprintType) struct FGameData
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game",
                   meta = (ClampMin = "3", ClampMax = "300", Tooltip = "In seconds"))
         int32 RoundDuration = 5;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
+        TArray<FLinearColor> TeamColors;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
+        FLinearColor TeamDefaultColor = FLinearColor::Red;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "2", ClampMax = "10"))
+        int32 TeamsNumber = 2;
 };
 
 // ----- HEALTH

@@ -143,6 +143,15 @@ bool ASTUBaseCharacter::IsRunning() const
     return bWantsToRun && IsMovingForward();
 }
 
+void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& PlayerColor)
+{
+    const auto Material = GetMesh()->CreateAndSetMaterialInstanceDynamic(0);
+    if (Material)
+    {
+        Material->SetVectorParameterValue(MaterialColorName, PlayerColor);
+    }
+}
+
 void ASTUBaseCharacter::BeginPlay()
 {
     Super::BeginPlay();

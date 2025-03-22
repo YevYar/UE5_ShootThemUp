@@ -44,6 +44,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         UFUNCTION(BlueprintCallable, Category = "Movement")
         bool IsRunning() const;
 
+        void SetPlayerColor(const FLinearColor& PlayerColor);
+
     protected:
         void BeginPlay() override;
         void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -87,6 +89,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         FVector2D LandingDamage = FVector2D{10.0f, 100.0f};
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
         FVector2D LandingDamageVelocity = FVector2D{900.0f, 1200.0f};
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Material")
+        FName MaterialColorName = "Paint Color";
 
     private:
         bool         bIsIdleForward   = true;

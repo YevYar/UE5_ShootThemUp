@@ -25,11 +25,14 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         bool IsDebug() const noexcept;
 
     private:
-        void RespawnPlayers();
-        void RespawnOnePlayer(AController* Controller);
-        void SpawnBots();
-        void StartRound();
-        void UpdateRoundTimer();
+        FLinearColor GetTeamColorByTeamID(int32 TeamID) const;
+        void         InitTeamsData() const;
+        void         RespawnPlayers();
+        void         RespawnOnePlayer(AController* Controller);
+        void         SetPlayerColor(AController* Controller) const;
+        void         SpawnBots();
+        void         StartRound();
+        void         UpdateRoundTimer();
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
