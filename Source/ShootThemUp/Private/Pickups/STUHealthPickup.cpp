@@ -3,8 +3,8 @@
 
 #include "Pickups/STUHealthPickup.h"
 
-#include "STUUtilities.h"
 #include "Player/Components/STUHealthComponent.h"
+#include "STUUtilities.h"
 
 bool ASTUHealthPickup::GivePickupTo(APawn* PlayerPawn)
 {
@@ -13,7 +13,7 @@ bool ASTUHealthPickup::GivePickupTo(APawn* PlayerPawn)
         return false;
     }
 
-    const auto HealthComponent = GetSTUPlayerComponent<USTUHealthComponent>(PlayerPawn);
+    const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(PlayerPawn);
     if (HealthComponent)
     {
         return HealthComponent->TryToAddHealth(HealthAmount);

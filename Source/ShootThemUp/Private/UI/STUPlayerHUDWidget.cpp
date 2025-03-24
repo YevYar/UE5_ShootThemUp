@@ -9,7 +9,7 @@
 
 bool USTUPlayerHUDWidget::Initialize()
 {
-    const auto HealthComponent = GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
+    const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
     if (HealthComponent)
     {
         HealthComponent->HealthChanged.AddDynamic(this, &USTUPlayerHUDWidget::OnHealthChanged);
@@ -20,13 +20,13 @@ bool USTUPlayerHUDWidget::Initialize()
 
 float USTUPlayerHUDWidget::GetHealthPercent() const
 {
-    const auto HealthComponent = GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
+    const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
     return HealthComponent ? HealthComponent->GetHealthPercent() : 0.0f;
 }
 
 bool USTUPlayerHUDWidget::IsPlayerAlive() const
 {
-    const auto HealthComponent = GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
+    const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
     return HealthComponent && !HealthComponent->IsDead();
 }
 
@@ -38,13 +38,13 @@ bool USTUPlayerHUDWidget::IsPlayerSpectating() const
 
 bool USTUPlayerHUDWidget::GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const
 {
-    const auto WeaponComponent = GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
+    const auto WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
     return WeaponComponent && WeaponComponent->GetCurrentWeaponAmmoData(WeaponAmmoData);
 }
 
 bool USTUPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const
 {
-    const auto WeaponComponent = GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
+    const auto WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
     return WeaponComponent && WeaponComponent->GetCurrentWeaponUIData(WeaponUIData);
 }
 

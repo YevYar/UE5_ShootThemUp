@@ -25,6 +25,8 @@ UCLASS() class SHOOTTHEMUP_API USTUUtilities : public UBlueprintFunctionLibrary
                                       bool DoFullDamage = false);
 };
 
+namespace STUUtils
+{
 template<typename ComponentType>
 requires std::is_base_of_v<UActorComponent, ComponentType>
 ComponentType* GetSTUPlayerComponent(APawn* PlayerPawn)
@@ -36,3 +38,4 @@ ComponentType* GetSTUPlayerComponent(APawn* PlayerPawn)
 
     return Cast<ComponentType>(PlayerPawn->GetComponentByClass(ComponentType::StaticClass()));
 }
+}  // namespace STUUtils
