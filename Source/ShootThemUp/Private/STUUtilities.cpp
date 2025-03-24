@@ -6,6 +6,8 @@
 #include "Engine/DamageEvents.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "Player/STUPlayerState.h"
+
 bool USTUUtilities::ApplyRadialDamage(UWorld* World, float MinDamage, float MaxDamage, const FVector& Origin,
                                       float DamageRadius, const TArray<AActor*>& IgnoreActors, AActor* DamageCauser,
                                       AController* InstigatedByController, bool DoFullDamage)
@@ -46,4 +48,17 @@ bool USTUUtilities::ApplyRadialDamage(UWorld* World, float MinDamage, float MaxD
     }
 
     return false;
+}
+
+bool STUUtils::AreEnemies(const AController* Controller1, const AController* Controller2)
+{
+    if (!Controller1 || !Controller2 || Controller1 == Controller2)
+    {
+        return false;
+    }
+
+    const auto PlayerState1 = Cast<ASTUPlayerState>(Controller1->PlayerState);
+    const auto PlayerState2 = Cast<ASTUPlayerState>(Controller2->PlayerState);
+
+    return PlayerState1 && PlayerState2 && PlayerState1->GetTeamID() != PlayerState2->GetTeamID();
 }

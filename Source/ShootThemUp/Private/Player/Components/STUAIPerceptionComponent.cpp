@@ -7,6 +7,7 @@
 #include "Perception/AISense_Sight.h"
 
 #include "Player/Components/STUHealthComponent.h"
+#include "STUUtilities.h"
 
 AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
 {
@@ -41,8 +42,11 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
             continue;
         }
 
+        const auto PerceivedPawn = Cast<APawn>(PerceivedActor);
+        const auto AreEnemies    = PerceivedPawn && STUUtils::AreEnemies(Controller, PerceivedPawn->Controller);
+
         const auto HealthComponent = PerceivedActor->FindComponentByClass<USTUHealthComponent>();
-        if (HealthComponent && !HealthComponent->IsDead())  // TODO: check if enemy or not
+        if (HealthComponent && !HealthComponent->IsDead() && AreEnemies)
         {
             const auto DistanceToActor = (PerceivedActor->GetActorLocation() - OwnLocation).Size();
             if (DistanceToActor < ClosestDistance)
