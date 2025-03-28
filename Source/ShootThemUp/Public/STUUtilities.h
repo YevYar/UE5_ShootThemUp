@@ -9,6 +9,8 @@
 
 #include "STUUtilities.generated.h"
 
+class ASTUPlayerState;
+
 class FSTURadialDamageEvent : public FDamageEvent
 {
 };
@@ -40,4 +42,6 @@ ComponentType* GetSTUPlayerComponent(APawn* PlayerPawn)
 
     return Cast<ComponentType>(PlayerPawn->GetComponentByClass(ComponentType::StaticClass()));
 }
+
+ASTUPlayerState* GetSTUPlayerState(const AController* Controller);
 }  // namespace STUUtils

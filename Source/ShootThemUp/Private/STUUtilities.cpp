@@ -57,8 +57,13 @@ bool STUUtils::AreEnemies(const AController* Controller1, const AController* Con
         return false;
     }
 
-    const auto PlayerState1 = Cast<ASTUPlayerState>(Controller1->PlayerState);
-    const auto PlayerState2 = Cast<ASTUPlayerState>(Controller2->PlayerState);
+    const auto PlayerState1 = GetSTUPlayerState(Controller1);
+    const auto PlayerState2 = GetSTUPlayerState(Controller2);
 
     return PlayerState1 && PlayerState2 && PlayerState1->GetTeamID() != PlayerState2->GetTeamID();
+}
+
+ASTUPlayerState* STUUtils::GetSTUPlayerState(const AController* Controller)
+{
+    return Controller ? Cast<ASTUPlayerState>(Controller->PlayerState) : nullptr;
 }

@@ -8,6 +8,7 @@
 #include "Player/STUBaseCharacter.h"
 #include "Player/STUPlayerController.h"
 #include "Player/STUPlayerState.h"
+#include "STUUtilities.h"
 #include "UI/STUGameHUD.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGameModeBase, All, All);
@@ -72,7 +73,7 @@ void ASTUGameModeBase::InitTeamsData() const
     for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
     {
         const auto Controller  = It->Get();
-        auto       PlayerState = Controller ? Cast<ASTUPlayerState>(Controller->PlayerState) : nullptr;
+        auto       PlayerState = STUUtils::GetSTUPlayerState(Controller);
 
         if (!PlayerState)
         {
@@ -113,7 +114,7 @@ void ASTUGameModeBase::RespawnOnePlayer(AController* Controller)
 
 void ASTUGameModeBase::SetPlayerColor(AController* Controller) const
 {
-    const auto PlayerState = Controller ? Cast<ASTUPlayerState>(Controller->PlayerState) : nullptr;
+    const auto PlayerState = STUUtils::GetSTUPlayerState(Controller);
     if (!PlayerState)
     {
         return;
