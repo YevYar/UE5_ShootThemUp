@@ -10,6 +10,7 @@
 #include "Dev/STUIceDamageType.h"
 #include "Dev/STULandingDamageType.h"
 #include "Player/STUBaseCharacter.h"
+#include "STUGameModeBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealth, All, All)
 
@@ -43,7 +44,8 @@ bool USTUHealthComponent::IsHealthFull() const noexcept
     return Health == MaxHealth;
 }
 
-void USTUHealthComponent::SetHealth(float NewHealth, bool IsCausedByDamage, float LastDamage) noexcept
+void USTUHealthComponent::SetHealth(float NewHealth, bool IsCausedByDamage, AController* DamageCauser,
+                                    float LastDamage) noexcept
 {
     const auto LastHealth = Health;
     Health                = FMath::Clamp(NewHealth, MIN_HEALTH, MaxHealth);
@@ -55,6 +57,7 @@ void USTUHealthComponent::SetHealth(float NewHealth, bool IsCausedByDamage, floa
         if (Health <= MIN_HEALTH + 0.9f)
         {
             bIsDead = true;
+            Killed(DamageCauser);
             Died.Broadcast();
             StopHealing();
             return;
@@ -121,7 +124,7 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
         return;
     }
 
-    SetHealth(Health - Damage, true, Damage);
+    SetHealth(Health - Damage, true, InstigatedBy, Damage);
 
     if (!DamageType)
     {
@@ -136,7 +139,7 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
             PlayCameraShakeEffect(CameraShakeOnLandingEffect);
             return;
         }
-        
+
         UE_LOG(LogHealth, Display, TEXT("Small damage on landing!"));
         return;
     }
@@ -156,15 +159,20 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
     PlayCameraShakeEffect(CameraShakeOnDamageEffect);
 }
 
-void USTUHealthComponent::StopHealing()
+void USTUHealthComponent::Killed(const AController* KillerController) const
 {
-    if (AutoHealEnabled)
+    if (!KillerController || !GetWorld())
     {
-        auto World = GetWorld();
-        if (World)
-        {
-            World->GetTimerManager().ClearTimer(HealTimer);
-        }
+        return;
+    }
+
+    const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+    if (GameMode)
+    {
+        const auto Pawn             = Cast<APawn>(GetOwner());
+        const auto VictimController = Pawn ? Pawn->Controller : nullptr;
+
+        GameMode->Killed(KillerController, VictimController);
     }
 }
 
@@ -188,4 +196,16 @@ void USTUHealthComponent::PlayCameraShakeEffect(TSubclassOf<UCameraShakeBase> Ca
     }
 
     Controller->PlayerCameraManager->StartCameraShake(CameraShakeEffect);
+}
+
+void USTUHealthComponent::StopHealing()
+{
+    if (AutoHealEnabled)
+    {
+        const auto World = GetWorld();
+        if (World)
+        {
+            World->GetTimerManager().ClearTimer(HealTimer);
+        }
+    }
 }

@@ -17,7 +17,18 @@ UCLASS() class SHOOTTHEMUP_API ASTUPlayerState : public APlayerState
         void SetTeamColor(const FLinearColor& NewColor);
         void SetTeamID(int32 NewID) noexcept;
 
+        // Game statistics
+        int32 AddDeath() noexcept;
+        int32 AddKill() noexcept;
+
+        int32 GetDeathsScore() const noexcept;
+        int32 GetKillsScore() const noexcept;
+
     private:
         int32        TeamID = 0;  // No Team
         FLinearColor TeamColor;
+
+        // Game statistics
+        int32 DeathsScore = 0;
+        int32 KillsScore  = 0;
 };

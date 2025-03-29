@@ -48,6 +48,26 @@ bool ASTUGameModeBase::IsDebug() const noexcept
 #endif
 }
 
+void ASTUGameModeBase::Killed(const AController* KillerController, const AController* VictimController) const
+{
+    auto VictimPlayerState = STUUtils::GetSTUPlayerState(VictimController);
+    if (VictimPlayerState)
+    {
+        VictimPlayerState->AddDeath();
+    }
+
+    if (KillerController == VictimController)
+    {
+        return;
+    }
+
+    auto KillerPlayerState = STUUtils::GetSTUPlayerState(KillerController);
+    if (KillerPlayerState)
+    {
+        KillerPlayerState->AddKill();
+    }
+}
+
 FLinearColor ASTUGameModeBase::GetTeamColorByTeamID(int32 TeamID) const
 {
     const auto TeamIDIndex = TeamID - 1;

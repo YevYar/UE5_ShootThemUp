@@ -24,6 +24,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         UFUNCTION(BlueprintCallable, Category = "Development")
         bool IsDebug() const noexcept;
 
+        void Killed(const AController* KillerController, const AController* VictimController) const;
+
     private:
         FLinearColor GetTeamColorByTeamID(int32 TeamID) const;
         void         InitTeamsData() const;

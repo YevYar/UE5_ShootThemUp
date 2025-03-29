@@ -25,7 +25,8 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         float GetHealth() const noexcept;
         bool  IsDead() const noexcept;
         bool  IsHealthFull() const noexcept;
-        void  SetHealth(float NewHealth, bool IsCausedByDamage = false, float LastDamage = 0.0f) noexcept;
+        void  SetHealth(float NewHealth, bool IsCausedByDamage = false, AController* DamageCauser = nullptr,
+                        float LastDamage = 0.0f) noexcept;
         bool  TryToAddHealth(float HealthAmount);
 
     protected:
@@ -38,8 +39,9 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
                              class AController* InstigatedBy, AActor* DamageCauser);
 
-        void StopHealing();
+        void Killed(const AController* KillerController) const;
         void PlayCameraShakeEffect(TSubclassOf<UCameraShakeBase> CameraShakeEffect);
+        void StopHealing();
 
     public:
         UPROPERTY(BlueprintAssignable, Category = "Health")

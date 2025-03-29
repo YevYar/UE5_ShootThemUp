@@ -25,3 +25,23 @@ void ASTUPlayerState::SetTeamID(int32 NewID) noexcept
         TeamID = NewID;
     }
 }
+
+int32 ASTUPlayerState::AddDeath() noexcept
+{
+    return ++DeathsScore;
+}
+
+int32 ASTUPlayerState::AddKill() noexcept
+{
+    return ++KillsScore;
+}
+
+int32 ASTUPlayerState::GetDeathsScore() const noexcept
+{
+    return DeathsScore;
+}
+
+int32 ASTUPlayerState::GetKillsScore() const noexcept
+{
+    return KillsScore;
+}
