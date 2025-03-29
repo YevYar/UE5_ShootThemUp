@@ -24,6 +24,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUPlayerState : public APlayerState
         int32 GetDeathsScore() const noexcept;
         int32 GetKillsScore() const noexcept;
 
+        void LogStatistics() const;
+
     private:
         int32        TeamID = 0;  // No Team
         FLinearColor TeamColor;

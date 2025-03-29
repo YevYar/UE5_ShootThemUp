@@ -109,6 +109,23 @@ void ASTUGameModeBase::InitTeamsData() const
     }
 }
 
+void ASTUGameModeBase::LogPlayersStatistics() const
+{
+    if (!GetWorld())
+    {
+        return;
+    }
+
+    for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
+    {
+        const auto PlayerState = STUUtils::GetSTUPlayerState(It->Get());
+        if (PlayerState)
+        {
+            PlayerState->LogStatistics();
+        }
+    }
+}
+
 void ASTUGameModeBase::RespawnPlayers()
 {
     if (!GetWorld())
@@ -187,7 +204,8 @@ void ASTUGameModeBase::UpdateRoundTimer()
         }
         else
         {
-            UE_LOG(LogSTUGameModeBase, Display, TEXT("============ GAME OVER ============"))
+            UE_LOG(LogSTUGameModeBase, Display, TEXT("============ GAME OVER ============"));
+            LogPlayersStatistics();
         }
     }
 }

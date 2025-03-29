@@ -29,6 +29,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
     private:
         FLinearColor GetTeamColorByTeamID(int32 TeamID) const;
         void         InitTeamsData() const;
+        void         LogPlayersStatistics() const;
         void         RespawnPlayers();
         void         RespawnOnePlayer(AController* Controller);
         void         SetPlayerColor(AController* Controller) const;

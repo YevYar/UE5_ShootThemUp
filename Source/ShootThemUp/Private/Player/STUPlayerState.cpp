@@ -3,6 +3,8 @@
 
 #include "Player/STUPlayerState.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogSTUPlayerState, All, All);
+
 FLinearColor ASTUPlayerState::GetTeamColor() const
 {
     return TeamColor;
@@ -44,4 +46,9 @@ int32 ASTUPlayerState::GetDeathsScore() const noexcept
 int32 ASTUPlayerState::GetKillsScore() const noexcept
 {
     return KillsScore;
+}
+
+void ASTUPlayerState::LogStatistics() const
+{
+    UE_LOG(LogSTUPlayerState, Display, TEXT("TeamID: %i;   Kills: %i;   Deaths: %i"), TeamID, KillsScore, DeathsScore);
 }
