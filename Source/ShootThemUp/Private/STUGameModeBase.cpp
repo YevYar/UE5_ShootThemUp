@@ -48,6 +48,21 @@ bool ASTUGameModeBase::IsDebug() const noexcept
 #endif
 }
 
+int32 ASTUGameModeBase::GetCurrentRound() const
+{
+    return CurrentRound;
+}
+
+int32 ASTUGameModeBase::GetNumberOfRounds() const
+{
+    return GameData.RoundAmount;
+}
+
+int32 ASTUGameModeBase::GetRoundRemainingTime() const
+{
+    return RemainingRoundTime;
+}
+
 void ASTUGameModeBase::Killed(const AController* KillerController, const AController* VictimController) const
 {
     auto VictimPlayerState = STUUtils::GetSTUPlayerState(VictimController);

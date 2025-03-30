@@ -24,6 +24,10 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         UFUNCTION(BlueprintCallable, Category = "Development")
         bool IsDebug() const noexcept;
 
+        int32 GetCurrentRound() const;
+        int32 GetNumberOfRounds() const;
+        int32 GetRoundRemainingTime() const;
+
         void Killed(const AController* KillerController, const AController* VictimController) const;
 
     private:
