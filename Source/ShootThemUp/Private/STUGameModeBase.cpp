@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 
+#include "Player/Components/STURespawnComponent.h"
 #include "Player/STUBaseCharacter.h"
 #include "Player/STUPlayerController.h"
 #include "Player/STUPlayerState.h"
@@ -12,6 +13,11 @@
 #include "UI/STUGameHUD.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGameModeBase, All, All);
+
+namespace
+{
+constexpr inline int32 MinRoundTimeForRespawn = 10;
+}
 
 ASTUGameModeBase::ASTUGameModeBase()
 {
@@ -35,6 +41,7 @@ void ASTUGameModeBase::StartPlay()
     Super::StartPlay();
 
     SpawnBots();
+    SubscribeOnBotsNotifiers();
     InitTeamsData();
     StartRound();
 }
@@ -70,6 +77,8 @@ void ASTUGameModeBase::Killed(const AController* KillerController, const AContro
     {
         VictimPlayerState->AddDeath();
     }
+
+    StartPlayerRespawn(VictimController);
 
     if (KillerController == VictimController)
     {
@@ -196,11 +205,38 @@ void ASTUGameModeBase::SpawnBots()
     }
 }
 
+void ASTUGameModeBase::StartPlayerRespawn(const AController* Controller) const
+{
+    const auto RespawnAvailable = RemainingRoundTime > MinRoundTimeForRespawn + GameData.RespawnTime;
+    if (!Controller || !RespawnAvailable)
+    {
+        return;
+    }
+
+    const auto RespawnComponent = Controller->FindComponentByClass<USTURespawnComponent>();
+    if (RespawnComponent)
+    {
+        RespawnComponent->Respawn(GameData.RespawnTime);
+    }
+}
+
 void ASTUGameModeBase::StartRound()
 {
     ++CurrentRound;
     RemainingRoundTime = GameData.RoundDuration;
     GetWorldTimerManager().SetTimer(RoundTimerHandle, this, &ASTUGameModeBase::UpdateRoundTimer, 1.0f, true);
+}
+
+void ASTUGameModeBase::SubscribeOnBotsNotifiers()
+{
+    for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
+    {
+        const auto RespawnComponent = It->Get()->FindComponentByClass<USTURespawnComponent>();
+        if (RespawnComponent)
+        {
+            RespawnComponent->ReadyToRespawn.AddUObject(this, &ASTUGameModeBase::RespawnOnePlayer);
+        }
+    }
 }
 
 void ASTUGameModeBase::UpdateRoundTimer()

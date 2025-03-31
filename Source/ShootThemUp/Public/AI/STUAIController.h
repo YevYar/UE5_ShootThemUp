@@ -7,6 +7,7 @@
 #include "STUAIController.generated.h"
 
 class USTUAIPerceptionComponent;
+class USTURespawnComponent;
 
 UCLASS() class SHOOTTHEMUP_API ASTUAIController : public AAIController
 {
@@ -36,6 +37,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUAIController : public AAIController
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
         FName ProjectileLaunchRotationKeyName = "ProjectileLaunchRotation";
 
+        UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+        USTURespawnComponent* RespawnComponent;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USTUAIPerceptionComponent* STUPerceptionComponent;
 };

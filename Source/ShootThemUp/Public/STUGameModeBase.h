@@ -38,7 +38,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         void         RespawnOnePlayer(AController* Controller);
         void         SetPlayerColor(AController* Controller) const;
         void         SpawnBots();
+        void         StartPlayerRespawn(const AController* Controller) const;
         void         StartRound();
+        void         SubscribeOnBotsNotifiers();
         void         UpdateRoundTimer();
 
     protected:

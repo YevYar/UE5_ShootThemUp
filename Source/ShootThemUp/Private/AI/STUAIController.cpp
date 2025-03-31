@@ -10,6 +10,7 @@
 
 #include "Player/Components/STUAIPerceptionComponent.h"
 #include "Player/Components/STUHealthComponent.h"
+#include "Player/Components/STURespawnComponent.h"
 
 ASTUAIController::ASTUAIController()
 {
@@ -19,7 +20,9 @@ ASTUAIController::ASTUAIController()
         SetPerceptionComponent(*STUPerceptionComponent);
     }
 
-   bWantsPlayerState = true;
+    RespawnComponent = CreateDefaultSubobject<USTURespawnComponent>("Respawn Component");
+
+    bWantsPlayerState = true;
 }
 
 void ASTUAIController::Tick(float DeltaTime)
