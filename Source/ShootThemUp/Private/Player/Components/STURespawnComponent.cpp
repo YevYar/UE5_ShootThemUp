@@ -8,6 +8,16 @@ USTURespawnComponent::USTURespawnComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
+int32 USTURespawnComponent::GetRemainingTimeToRespawn() const
+{
+    return RemainingTimeToRespawn;
+}
+
+bool USTURespawnComponent::IsRespawningInProgress() const
+{
+    return GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(RespawnTimer);
+}
+
 void USTURespawnComponent::Respawn(int32 RespawnTime)
 {
     if (!GetWorld())

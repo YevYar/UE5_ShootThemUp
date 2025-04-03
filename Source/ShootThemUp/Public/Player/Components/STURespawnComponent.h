@@ -17,7 +17,9 @@ class SHOOTTHEMUP_API USTURespawnComponent : public UActorComponent
     public:
         USTURespawnComponent();
 
-        void Respawn(int32 RespawnTime);
+        int32 GetRemainingTimeToRespawn() const;
+        bool  IsRespawningInProgress() const;
+        void  Respawn(int32 RespawnTime);
 
     public:
         FReadyToRespawnSignature ReadyToRespawn;
