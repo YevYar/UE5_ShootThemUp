@@ -59,7 +59,7 @@ void USTUPlayerHUDWidget::OnHealthChanged(float NewHealth, bool IsCausedByDamage
 void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
 {
     const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(NewPawn);
-    if (HealthComponent)
+    if (HealthComponent && !HealthComponent->HealthChanged.Contains(this, "OnHealthChanged"))
     {
         HealthComponent->HealthChanged.AddDynamic(this, &USTUPlayerHUDWidget::OnHealthChanged);
     }
