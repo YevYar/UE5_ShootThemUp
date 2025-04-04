@@ -31,6 +31,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         void Killed(const AController* KillerController, const AController* VictimController) const;
 
     private:
+        void         GameOver();
         FLinearColor GetTeamColorByTeamID(int32 TeamID) const;
         void         InitTeamsData() const;
         void         LogPlayersStatistics() const;

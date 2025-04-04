@@ -4,6 +4,7 @@
 #include "STUGameModeBase.h"
 
 #include "AIController.h"
+#include "EngineUtils.h"
 
 #include "Player/Components/STURespawnComponent.h"
 #include "Player/STUBaseCharacter.h"
@@ -89,6 +90,21 @@ void ASTUGameModeBase::Killed(const AController* KillerController, const AContro
     if (KillerPlayerState)
     {
         KillerPlayerState->AddKill();
+    }
+}
+
+void ASTUGameModeBase::GameOver()
+{
+    UE_LOG(LogSTUGameModeBase, Display, TEXT("============ GAME OVER ============"));
+    LogPlayersStatistics();
+
+    for (auto Pawn : TActorRange<APawn>(GetWorld()))
+    {
+        if (Pawn)
+        {
+            Pawn->TurnOff();
+            Pawn->DisableInput(nullptr);
+        }
     }
 }
 
@@ -255,8 +271,7 @@ void ASTUGameModeBase::UpdateRoundTimer()
         }
         else
         {
-            UE_LOG(LogSTUGameModeBase, Display, TEXT("============ GAME OVER ============"));
-            LogPlayersStatistics();
+            GameOver();
         }
     }
 }
