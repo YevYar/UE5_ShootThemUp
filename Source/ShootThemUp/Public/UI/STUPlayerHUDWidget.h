@@ -31,4 +31,6 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
     private:
         UFUNCTION()
         void OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage);
+
+        void OnNewPawn(APawn* NewPawn);
 };
