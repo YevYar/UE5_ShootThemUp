@@ -3,24 +3,15 @@
 
 #include "Player/STUBaseCharacter.h"
 
-#include "Animation/AnimMontage.h"
-#include "Camera/CameraComponent.h"
+// #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/DamageEvents.h"
-#include "Engine/TimerHandle.h"
-#include "GameFramework/SpectatorPawn.h"
-#include "GameFramework/SpringArmComponent.h"
 
 #include "Dev/STULandingDamageType.h"
 #include "Player/Components/STUCharacterMovementComponent.h"
 #include "Player/Components/STUHealthComponent.h"
 #include "Weapons/Components/STUWeaponComponent.h"
-
-namespace
-{
-constexpr inline float NULL_EPSILON = 0.0001f;
-}  // namespace
 
 ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer) :
     Super(ObjectInitializer
@@ -42,44 +33,7 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer
         DamageTextComponent->SetOwnerNoSee(true);
     }
 
-    SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
-    if (!SpringArmComponent)
-    {
-        return;
-    }
-
-    SpringArmComponent->bUsePawnControlRotation = true;
-    SpringArmComponent->SetupAttachment(GetRootComponent());
-    SpringArmComponent->SocketOffset = FVector{0.0f, 100.0f, 80.0f};
-
-    CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
-    if (CameraComponent)
-    {
-        CameraComponent->SetupAttachment(SpringArmComponent);
-    }
-
     WeaponComponent = CreateDefaultSubobject<USTUWeaponComponent>("WeaponComponent");
-}
-
-void ASTUBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-    if (PlayerInputComponent)
-    {
-        PlayerInputComponent->BindAxis("MoveForward", this, &ASTUBaseCharacter::MoveForward);
-        PlayerInputComponent->BindAxis("MoveRight", this, &ASTUBaseCharacter::MoveRight);
-        PlayerInputComponent->BindAxis("LookUp", this, &ASTUBaseCharacter::AddControllerPitchInput);
-        PlayerInputComponent->BindAxis("TurnAround", this, &ASTUBaseCharacter::AddControllerYawInput);
-        PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ASTUBaseCharacter::StartRun);
-        PlayerInputComponent->BindAction("Run", IE_Released, this, &ASTUBaseCharacter::StopRun);
-        PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASTUBaseCharacter::TryToJump);
-        PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &USTUWeaponComponent::StartFire);
-        PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &USTUWeaponComponent::StopFire);
-        PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &USTUWeaponComponent::NextWeapon);
-        PlayerInputComponent->BindAction("ReloadWeapon", IE_Pressed, WeaponComponent,
-                                         &USTUWeaponComponent::ReloadCurrentWeapon);
-    }
 }
 
 void ASTUBaseCharacter::Tick(float DeltaTime)
@@ -113,34 +67,9 @@ bool ASTUBaseCharacter::IsJumping() const
     return GetCharacterMovement() && GetCharacterMovement()->IsFalling();
 }
 
-bool ASTUBaseCharacter::IsIdle() const
-{
-    return bIsIdleForward && bIsIdleRight && GetVelocity().IsZero();
-}
-
-bool ASTUBaseCharacter::IsMovingBackward() const
-{
-    return !bIsIdleForward && !bIsMovingForward && !GetVelocity().IsZero();
-}
-
-bool ASTUBaseCharacter::IsMovingForward() const
-{
-    return !bIsIdleForward && bIsMovingForward && !GetVelocity().IsZero();
-}
-
-bool ASTUBaseCharacter::IsMovingLeft() const
-{
-    return !bIsIdleRight && !bIsMovingRight && !GetVelocity().IsZero();
-}
-
-bool ASTUBaseCharacter::IsMovingRight() const
-{
-    return !bIsIdleRight && bIsMovingRight && !GetVelocity().IsZero();
-}
-
 bool ASTUBaseCharacter::IsRunning() const
 {
-    return bWantsToRun && IsMovingForward();
+    return false;
 }
 
 void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& PlayerColor)
@@ -155,11 +84,6 @@ void ASTUBaseCharacter::SetPlayerColor(const FLinearColor& PlayerColor)
 void ASTUBaseCharacter::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (GetMesh())
-    {
-        InitialMeshRotation = GetMesh()->GetRelativeRotation();
-    }
 
     check(HealthComponent);
     check(HealthTextComponent);
@@ -186,91 +110,6 @@ void ASTUBaseCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
     ResetFields();
 }
 
-void ASTUBaseCharacter::MoveForward(float Amount)
-{
-    if (IsDead())
-    {
-        return;
-    }
-
-    AddMovementInput(GetActorForwardVector(), Amount);
-
-    bIsIdleForward   = Amount == 0.0f;
-    bIsMovingForward = Amount > NULL_EPSILON;
-}
-
-void ASTUBaseCharacter::MoveRight(float Amount)
-{
-    if (IsDead())
-    {
-        return;
-    }
-
-    AddMovementInput(GetActorRightVector(), Amount);
-
-    bIsIdleRight   = Amount == 0.0f;
-    bIsMovingRight = Amount > NULL_EPSILON;
-
-    const auto Direction        = GetMovementDirection();
-    const auto AbsolutDirection = FMath::Abs(Direction);
-
-    if (IsRunning() && GetMesh() && (AbsolutDirection > 0.0f && AbsolutDirection < 90.0f))
-    {
-        auto NewRotation = GetMesh()->GetRelativeRotation();
-        NewRotation.Yaw  = InitialMeshRotation.Yaw + Direction;
-        GetMesh()->SetRelativeRotation(NewRotation);
-    }
-    else if (GetMesh())
-    {
-        GetMesh()->SetRelativeRotation(InitialMeshRotation);
-    }
-}
-
-void ASTUBaseCharacter::StartRun()
-{
-    if (IsDead())
-    {
-        return;
-    }
-
-    bWantsToRun = true;
-}
-
-void ASTUBaseCharacter::StopRun()
-{
-    if (IsDead())
-    {
-        return;
-    }
-
-    bWantsToRun = false;
-}
-
-void ASTUBaseCharacter::TryToJump()
-{
-    if (IsIdle() || IsMovingForward())
-    {
-        Jump();
-    }
-}
-
-void ASTUBaseCharacter::ResetFields()
-{
-    bIsIdleForward      = true;
-    bIsIdleRight        = true;
-    bIsMovingForward    = false;
-    bIsMovingRight      = false;
-    bWantsToRun         = false;
-    InitialMeshRotation = FRotator{};
-
-    WeaponComponent->StopFire();
-
-    if (DamageDisplayTimer.IsValid())
-    {
-        GetWorldTimerManager().ClearTimer(DamageDisplayTimer);
-    }
-}
-
 void ASTUBaseCharacter::OnDeath()
 {
     ResetFields();
@@ -280,11 +119,6 @@ void ASTUBaseCharacter::OnDeath()
     // PlayAnimMontage(DeathMontage);
 
     SetLifeSpan(LifeSpanAfterDeath);
-
-    if (Controller)
-    {
-        Controller->ChangeState(NAME_Spectating);
-    }
 
     if (GetCapsuleComponent())
     {
@@ -335,4 +169,14 @@ void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
       FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
 
     TakeDamage(ReceivedLandingDamage, FDamageEvent{USTULandingDamageType::StaticClass()}, Controller, this);
+}
+
+void ASTUBaseCharacter::ResetFields()
+{
+    WeaponComponent->StopFire();
+
+    if (DamageDisplayTimer.IsValid())
+    {
+        GetWorldTimerManager().ClearTimer(DamageDisplayTimer);
+    }
 }
