@@ -23,7 +23,8 @@ ASTUPlayerCharacter::ASTUPlayerCharacter(const FObjectInitializer& ObjectInitial
 
     SpringArmComponent->bUsePawnControlRotation = true;
     SpringArmComponent->SetupAttachment(GetRootComponent());
-    SpringArmComponent->SocketOffset = FVector{0.0f, 100.0f, 80.0f};
+    SpringArmComponent->SocketOffset    = FVector{0.0f, 100.0f, 120.0f};
+    SpringArmComponent->TargetArmLength = 400;
 
     CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
     if (CameraComponent)
