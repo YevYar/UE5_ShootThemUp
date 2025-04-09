@@ -4,6 +4,8 @@
 #include "Player/STUPlayerCharacter.h"
 
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 #include "Weapons/Components/STUWeaponComponent.h"
@@ -30,6 +32,21 @@ ASTUPlayerCharacter::ASTUPlayerCharacter(const FObjectInitializer& ObjectInitial
     if (CameraComponent)
     {
         CameraComponent->SetupAttachment(SpringArmComponent);
+    }
+
+    CameraCollisionComponent = CreateDefaultSubobject<USphereComponent>("SphereComponent");
+    if (CameraCollisionComponent)
+    {
+        CameraCollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+        CameraCollisionComponent->SetSphereRadius(10.0f);
+        CameraCollisionComponent->SetupAttachment(CameraComponent);
+    }
+
+    if (GetMesh())
+    {
+        // Allows to update the position of the weapon accordingly to the animation of the mesh,
+        // even when the mesh isn't visible
+        GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
     }
 }
 
@@ -88,6 +105,11 @@ void ASTUPlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
+    check(CameraCollisionComponent);
+
+    CameraCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ASTUPlayerCharacter::OnCameraBeginOverlap);
+    CameraCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ASTUPlayerCharacter::OnCameraEndOverlap);
+
     if (GetMesh())
     {
         InitialMeshRotation = GetMesh()->GetRelativeRotation();
@@ -113,6 +135,25 @@ void ASTUPlayerCharacter::OnDeath()
     if (Controller)
     {
         Controller->ChangeState(NAME_Spectating);
+    }
+}
+
+void ASTUPlayerCharacter::OnCameraBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                               const FHitResult& SweepResult)
+{
+    if (CheckIfCameraOverlapCharacter(OtherComp))
+    {
+        SetCharacterVisibilityForPlayer(false);
+    }
+}
+
+void ASTUPlayerCharacter::OnCameraEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    if (CheckIfCameraOverlapCharacter(OtherComp))
+    {
+        SetCharacterVisibilityForPlayer(true);
     }
 }
 
@@ -182,4 +223,27 @@ void ASTUPlayerCharacter::TryToJump()
     {
         Jump();
     }
+}
+
+bool ASTUPlayerCharacter::CheckIfCameraOverlapCharacter(const UPrimitiveComponent* OverlappedComponent) const
+{
+    return Cast<UCapsuleComponent>(OverlappedComponent) == GetCapsuleComponent();
+}
+
+void ASTUPlayerCharacter::SetCharacterVisibilityForPlayer(bool Visibility)
+{
+    // Change visibility only of the Mesh
+    GetMesh()->SetOwnerNoSee(!Visibility);
+
+    // Change visibility of children components (Weapon)
+    /*TArray<USceneComponent*> MeshChildren;
+    GetMesh()->GetChildrenComponents(true, MeshChildren);
+    for (auto MeshChild : MeshChildren)
+    {
+        auto MeshPrimitive = Cast<UPrimitiveComponent>(MeshChild);
+        if (MeshPrimitive)
+        {
+            MeshPrimitive->SetOwnerNoSee(!Visibility);
+        }
+    }*/
 }

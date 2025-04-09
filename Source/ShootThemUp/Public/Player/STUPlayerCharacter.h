@@ -7,6 +7,7 @@
 #include "STUPlayerCharacter.generated.h"
 
 class UCameraComponent;
+class USphereComponent;
 class USpringArmComponent;
 
 UCLASS() class SHOOTTHEMUP_API ASTUPlayerCharacter : public ASTUBaseCharacter
@@ -35,13 +36,26 @@ UCLASS() class SHOOTTHEMUP_API ASTUPlayerCharacter : public ASTUBaseCharacter
         void ResetFields() override;
         void OnDeath() override;
 
+        UFUNCTION()
+        void OnCameraBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                  const FHitResult& SweepResult);
+        UFUNCTION()
+        void OnCameraEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
         void MoveForward(float Amount);
         void MoveRight(float Amount);
         void StartRun();
         void StopRun();
         void TryToJump();
 
+        bool CheckIfCameraOverlapCharacter(const UPrimitiveComponent* OverlappedComponent) const;
+        void SetCharacterVisibilityForPlayer(bool Visibility);
+
     protected:
+        UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+        USphereComponent* CameraCollisionComponent;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         UCameraComponent* CameraComponent;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
