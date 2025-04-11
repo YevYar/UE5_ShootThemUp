@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+
+#include "STUCoreTypes.h"
+
 #include "STUGameHUD.generated.h"
 
 UCLASS() class SHOOTTHEMUP_API ASTUGameHUD : public AHUD
@@ -22,4 +25,5 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameHUD : public AHUD
 
     private:
         void DrawCrossline();
+        void OnMatchStateChanged(ESTUMatchState NewMatchState);
 };

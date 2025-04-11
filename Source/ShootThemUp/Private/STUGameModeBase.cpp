@@ -44,6 +44,7 @@ void ASTUGameModeBase::StartPlay()
     SpawnBots();
     SubscribeOnBotsNotifiers();
     InitTeamsData();
+    SetMatchState(ESTUMatchState::InProgress);
     StartRound();
 }
 
@@ -106,6 +107,8 @@ void ASTUGameModeBase::GameOver()
             Pawn->DisableInput(nullptr);
         }
     }
+
+    SetMatchState(ESTUMatchState::GameOver);
 }
 
 FLinearColor ASTUGameModeBase::GetTeamColorByTeamID(int32 TeamID) const
@@ -187,6 +190,17 @@ void ASTUGameModeBase::RespawnOnePlayer(AController* Controller)
     }
     RestartPlayer(Controller);
     SetPlayerColor(Controller);
+}
+
+void ASTUGameModeBase::SetMatchState(ESTUMatchState NewMatchState)
+{
+    if (MatchState == NewMatchState)
+    {
+        return;
+    }
+
+    MatchState = NewMatchState;
+    MatchStateChanged.Broadcast(MatchState);
 }
 
 void ASTUGameModeBase::SetPlayerColor(AController* Controller) const

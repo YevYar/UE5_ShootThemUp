@@ -9,6 +9,18 @@ class AController;
 // ----- GAME MODE
 DECLARE_MULTICAST_DELEGATE_OneParam(FReadyToRespawnSignature, AController*);
 
+// clang-format off
+UENUM(BlueprintType)
+enum class ESTUMatchState : uint8
+{  // clang-format on
+    WaitingToStart = 0,
+    InProgress,
+    Paused,
+    GameOver
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FMatchStateChangedSignature, ESTUMatchState);
+
 USTRUCT(BlueprintType) struct FGameData
 {
         GENERATED_USTRUCT_BODY()

@@ -30,6 +30,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
 
         void Killed(const AController* KillerController, const AController* VictimController) const;
 
+        FMatchStateChangedSignature MatchStateChanged;
+
     private:
         void         GameOver();
         FLinearColor GetTeamColorByTeamID(int32 TeamID) const;
@@ -37,6 +39,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         void         LogPlayersStatistics() const;
         void         RespawnPlayers();
         void         RespawnOnePlayer(AController* Controller);
+        void         SetMatchState(ESTUMatchState NewMatchState);
         void         SetPlayerColor(AController* Controller) const;
         void         SpawnBots();
         void         StartPlayerRespawn(const AController* Controller) const;
@@ -53,7 +56,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         FGameData GameData;
 
     private:
-        int32        CurrentRound       = 0;
-        int32        RemainingRoundTime = 0;
-        FTimerHandle RoundTimerHandle;
+        int32          CurrentRound       = 0;
+        ESTUMatchState MatchState         = ESTUMatchState::WaitingToStart;
+        int32          RemainingRoundTime = 0;
+        FTimerHandle   RoundTimerHandle;
 };
