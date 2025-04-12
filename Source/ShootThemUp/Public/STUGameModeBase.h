@@ -18,7 +18,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
     public:
         ASTUGameModeBase();
 
+        bool    ClearPause() override;
         UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+        bool    SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
         void    StartPlay() override;
 
         UFUNCTION(BlueprintCallable, Category = "Development")

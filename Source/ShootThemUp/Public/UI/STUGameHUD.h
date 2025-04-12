@@ -21,9 +21,17 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameHUD : public AHUD
 
     protected:
         UPROPERTY(EditDefaultsOnly, Category = "UI")
+        TSubclassOf<UUserWidget> PauseWidget;
+        UPROPERTY(EditDefaultsOnly, Category = "UI")
         TSubclassOf<UUserWidget> PlayerHUDWidget;
 
     private:
         void DrawCrossline();
         void OnMatchStateChanged(ESTUMatchState NewMatchState);
+
+    private:
+        UPROPERTY()
+        UUserWidget* CurrentGameWidget = nullptr;
+        UPROPERTY()
+        TMap<ESTUMatchState, UUserWidget*> GameWidgets;
 };

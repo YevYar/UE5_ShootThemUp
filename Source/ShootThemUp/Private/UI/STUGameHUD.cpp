@@ -21,10 +21,17 @@ void ASTUGameHUD::BeginPlay()
 {
     Super::BeginPlay();
 
-    const auto PlayerWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidget);
-    if (PlayerWidget)
+    GameWidgets.Add(ESTUMatchState::InProgress, CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidget));
+    GameWidgets.Add(ESTUMatchState::Paused, CreateWidget<UUserWidget>(GetWorld(), PauseWidget));
+
+    for (const auto& GameWidgetPair : GameWidgets)
     {
-        PlayerWidget->AddToViewport();
+        const auto GameWidget = GameWidgetPair.Value;
+        if (GameWidget)
+        {
+            GameWidget->AddToViewport();
+            GameWidget->SetVisibility(ESlateVisibility::Hidden);
+        }
     }
 
     if (GetWorld())
@@ -52,4 +59,23 @@ void ASTUGameHUD::DrawCrossline()
 void ASTUGameHUD::OnMatchStateChanged(ESTUMatchState NewMatchState)
 {
     UE_LOG(LogGameHUD, Display, TEXT("Match state changed: %s"), *UEnum::GetValueAsString(NewMatchState));
+
+    if (GameWidgets.Contains(NewMatchState))
+    {
+        if (CurrentGameWidget)
+        {
+            CurrentGameWidget->SetVisibility(ESlateVisibility::Hidden);
+        }
+
+        const auto NewGameWidget = GameWidgets[NewMatchState];
+        if (NewGameWidget)
+        {
+            CurrentGameWidget = NewGameWidget;
+        }
+
+        if (CurrentGameWidget)
+        {
+            CurrentGameWidget->SetVisibility(ESlateVisibility::Visible);
+        }
+    }
 }

@@ -28,6 +28,18 @@ ASTUGameModeBase::ASTUGameModeBase()
     HUDClass              = ASTUGameHUD::StaticClass();
 }
 
+bool ASTUGameModeBase::ClearPause()
+{
+    const auto IsPauseCleared = Super::ClearPause();
+
+    if (IsPauseCleared)
+    {
+        MatchStateChanged.Broadcast(ESTUMatchState::InProgress);
+    }
+
+    return IsPauseCleared;
+}
+
 UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
     if (InController && InController->IsA<AAIController>())
@@ -35,6 +47,18 @@ UClass* ASTUGameModeBase::GetDefaultPawnClassForController_Implementation(AContr
         return AIPawnClass;
     }
     return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+
+bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate)
+{
+    const auto IsPaused = Super::SetPause(PC, CanUnpauseDelegate);
+
+    if (IsPaused)
+    {
+        MatchStateChanged.Broadcast(ESTUMatchState::Paused);
+    }
+
+    return IsPaused;
 }
 
 void ASTUGameModeBase::StartPlay()
