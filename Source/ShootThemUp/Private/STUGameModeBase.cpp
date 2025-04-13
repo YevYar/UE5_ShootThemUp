@@ -155,6 +155,7 @@ void ASTUGameModeBase::InitTeamsData() const
         return;
     }
 
+    auto BotsCounter = 0;
     auto TeamIDIndex = int32{0};
 
     for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
@@ -170,6 +171,8 @@ void ASTUGameModeBase::InitTeamsData() const
         const auto TeamID = int32{TeamIDIndex + 1};
         PlayerState->SetTeamID(TeamID);
         PlayerState->SetTeamColor(GetTeamColorByTeamID(TeamID));
+        PlayerState->SetPlayerName(Controller->IsPlayerController() ? "Player"
+                                                                    : FString::Printf(TEXT("Bot %d"), ++BotsCounter));
         SetPlayerColor(Controller);
 
         TeamIDIndex = ++TeamIDIndex % GameData.TeamsNumber;
