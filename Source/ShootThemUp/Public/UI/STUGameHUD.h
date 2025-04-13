@@ -21,6 +21,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameHUD : public AHUD
 
     protected:
         UPROPERTY(EditDefaultsOnly, Category = "UI")
+        TSubclassOf<UUserWidget> GameOverWidget;
+        UPROPERTY(EditDefaultsOnly, Category = "UI")
         TSubclassOf<UUserWidget> PauseWidget;
         UPROPERTY(EditDefaultsOnly, Category = "UI")
         TSubclassOf<UUserWidget> PlayerHUDWidget;

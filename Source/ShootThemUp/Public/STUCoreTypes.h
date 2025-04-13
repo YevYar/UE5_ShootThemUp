@@ -42,6 +42,14 @@ USTRUCT(BlueprintType) struct FGameData
         int32 TeamsNumber = 2;
 };
 
+struct FPlayerStatisticsData
+{
+        int32 Deaths = 0;
+        int32 Kills  = 0;
+        FText Name;
+        int32 Team = 0;
+};
+
 // ----- HEALTH
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDiedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthChangedSignature, float, Health, bool, IsCausedByDamage, float,

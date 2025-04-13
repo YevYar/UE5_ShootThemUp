@@ -67,3 +67,8 @@ ASTUPlayerState* STUUtils::GetSTUPlayerState(const AController* Controller)
 {
     return Controller ? Cast<ASTUPlayerState>(Controller->PlayerState) : nullptr;
 }
+
+FText STUUtils::TextFromInt32(int32 Value)
+{
+    return FText::FromString(FString::FromInt(Value));
+}

@@ -44,4 +44,6 @@ ComponentType* GetSTUPlayerComponent(APawn* PlayerPawn)
 }
 
 ASTUPlayerState* GetSTUPlayerState(const AController* Controller);
+
+FText TextFromInt32(int32 Value);
 }  // namespace STUUtils

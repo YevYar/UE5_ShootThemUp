@@ -35,7 +35,7 @@ void ASTUPlayerController::SetupInputComponent()
 
 void ASTUPlayerController::OnMatchStateChanged(ESTUMatchState NewMatchState)
 {
-    bShowMouseCursor = NewMatchState == ESTUMatchState::Paused;
+    bShowMouseCursor = NewMatchState == ESTUMatchState::Paused || NewMatchState == ESTUMatchState::GameOver;
 
     if (bShowMouseCursor)
     {
