@@ -9,6 +9,7 @@
 
 #include "STUGameOverWidget.generated.h"
 
+class UButton;
 class UVerticalBox;
 
 UCLASS() class SHOOTTHEMUP_API USTUGameOverWidget : public UUserWidget
@@ -19,12 +20,17 @@ UCLASS() class SHOOTTHEMUP_API USTUGameOverWidget : public UUserWidget
         void NativeOnInitialized() override;
 
     private:
+        UFUNCTION()
+        void OnRestartGame();
+
         void BuildPlayersStatistics();
         void OnMatchStateChanged(ESTUMatchState NewMatchState);
 
     protected:
         UPROPERTY(meta = (BindWidget))
         UVerticalBox* PlayerStatBox;
+        UPROPERTY(meta = (BindWidget))
+        UButton* RestartGameButton;
 
         UPROPERTY(EditDefaultsOnly, Category = "UI")
         TSubclassOf<UUserWidget> PlayerStatRowWidget;

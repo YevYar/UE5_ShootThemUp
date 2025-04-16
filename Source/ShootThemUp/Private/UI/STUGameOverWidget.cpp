@@ -3,7 +3,9 @@
 
 #include "UI/STUGameOverWidget.h"
 
+#include "Components/Button.h"
 #include "Components/VerticalBox.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "Player/STUPlayerState.h"
 #include "STUCoreTypes.h"
@@ -23,6 +25,17 @@ void USTUGameOverWidget::NativeOnInitialized()
             GameMode->MatchStateChanged.AddUObject(this, &USTUGameOverWidget::OnMatchStateChanged);
         }
     }
+
+    if (RestartGameButton)
+    {
+        RestartGameButton->OnClicked.AddDynamic(this, &USTUGameOverWidget::OnRestartGame);
+    }
+}
+
+void USTUGameOverWidget::OnRestartGame()
+{
+    const auto CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+    UGameplayStatics::OpenLevel(GetWorld(), FName{CurrentLevelName});
 }
 
 void USTUGameOverWidget::BuildPlayersStatistics()
