@@ -6,16 +6,14 @@
 #include "Components/Button.h"
 #include "GameFramework/GameModeBase.h"
 
-bool USTUPauseWidget::Initialize()
+void USTUPauseWidget::NativeOnInitialized()
 {
-    const auto IsInitialized = Super::Initialize();
+    Super::NativeOnInitialized();
 
-    if (IsInitialized && ContinueGameButton)
+    if (ContinueGameButton)
     {
         ContinueGameButton->OnClicked.AddDynamic(this, &USTUPauseWidget::OnContinueGame);
     }
-
-    return IsInitialized;
 }
 
 void USTUPauseWidget::OnContinueGame()

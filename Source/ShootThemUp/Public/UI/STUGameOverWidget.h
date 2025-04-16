@@ -15,8 +15,8 @@ UCLASS() class SHOOTTHEMUP_API USTUGameOverWidget : public UUserWidget
 {
         GENERATED_BODY()
 
-    public:
-        bool Initialize() override;
+    protected:
+        void NativeOnInitialized() override;
 
     private:
         void BuildPlayersStatistics();

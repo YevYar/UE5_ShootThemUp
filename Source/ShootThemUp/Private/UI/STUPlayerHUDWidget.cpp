@@ -7,17 +7,6 @@
 #include "STUUtilities.h"
 #include "Weapons/Components/STUWeaponComponent.h"
 
-bool USTUPlayerHUDWidget::Initialize()
-{
-    if (GetOwningPlayer())
-    {
-        GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &USTUPlayerHUDWidget::OnNewPawn);
-        OnNewPawn(GetOwningPlayerPawn());
-    }
-
-    return Super::Initialize();
-}
-
 float USTUPlayerHUDWidget::GetHealthPercent() const
 {
     const auto HealthComponent = STUUtils::GetSTUPlayerComponent<USTUHealthComponent>(GetOwningPlayerPawn());
@@ -46,6 +35,17 @@ bool USTUPlayerHUDWidget::GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) co
 {
     const auto WeaponComponent = STUUtils::GetSTUPlayerComponent<USTUWeaponComponent>(GetOwningPlayerPawn());
     return WeaponComponent && WeaponComponent->GetCurrentWeaponUIData(WeaponUIData);
+}
+
+void USTUPlayerHUDWidget::NativeOnInitialized()
+{
+    Super::NativeOnInitialized();
+
+    if (GetOwningPlayer())
+    {
+        GetOwningPlayer()->GetOnNewPawnNotifier().AddUObject(this, &USTUPlayerHUDWidget::OnNewPawn);
+        OnNewPawn(GetOwningPlayerPawn());
+    }
 }
 
 void USTUPlayerHUDWidget::OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage)

@@ -11,8 +11,6 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
         GENERATED_BODY()
 
     public:
-        bool Initialize() override;
-
         UFUNCTION(BlueprintCallable, Category = "Health")
         float GetHealthPercent() const;
         UFUNCTION(BlueprintImplementableEvent, Category = "Health")
@@ -27,6 +25,9 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
         bool GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const;
         UFUNCTION(BlueprintCallable, Category = "Weapon")
         bool GetCurrentWeaponUIData(FWeaponUIData& WeaponUIData) const;
+
+    protected:
+        void NativeOnInitialized() override;
 
     private:
         UFUNCTION()

@@ -11,8 +11,10 @@
 #include "STUUtilities.h"
 #include "UI/STUPlayerStatRowWidget.h"
 
-bool USTUGameOverWidget::Initialize()
+void USTUGameOverWidget::NativeOnInitialized()
 {
+    Super::NativeOnInitialized();
+
     if (GetWorld())
     {
         const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
@@ -21,8 +23,6 @@ bool USTUGameOverWidget::Initialize()
             GameMode->MatchStateChanged.AddUObject(this, &USTUGameOverWidget::OnMatchStateChanged);
         }
     }
-
-    return Super::Initialize();
 }
 
 void USTUGameOverWidget::BuildPlayersStatistics()
