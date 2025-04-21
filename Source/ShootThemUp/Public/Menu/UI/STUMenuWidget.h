@@ -18,8 +18,6 @@ UCLASS() class SHOOTTHEMUP_API USTUMenuWidget : public UUserWidget
     protected:
         UPROPERTY(meta = (BindWidget))
         UButton* StartGameButton;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Menu")
-        FName StartLevelName = "TestLevel";
 
     private:
         UFUNCTION()
