@@ -5,6 +5,7 @@
 
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include "STUGameInstance.h"
 
@@ -14,10 +15,20 @@ void USTUMenuWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
+    if (QuitGameButton)
+    {
+        QuitGameButton->OnClicked.AddDynamic(this, &USTUMenuWidget::OnQuitGame);
+    }
+
     if (StartGameButton)
     {
         StartGameButton->OnClicked.AddDynamic(this, &USTUMenuWidget::OnStartGame);
     }
+}
+
+void USTUMenuWidget::OnQuitGame()
+{
+    UKismetSystemLibrary::QuitGame(GetWorld(), GetOwningPlayer(), EQuitPreference::Quit, true);
 }
 
 void USTUMenuWidget::OnStartGame()
