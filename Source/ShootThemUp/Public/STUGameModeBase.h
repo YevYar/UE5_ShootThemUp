@@ -32,8 +32,6 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
 
         void Killed(const AController* KillerController, const AController* VictimController) const;
 
-        FMatchStateChangedSignature MatchStateChanged;
-
     private:
         void         GameOver();
         FLinearColor GetTeamColorByTeamID(int32 TeamID) const;
@@ -48,6 +46,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         void         StartRound();
         void         SubscribeOnBotsNotifiers();
         void         UpdateRoundTimer();
+
+    public:
+        FMatchStateChangedSignature MatchStateChanged;
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")

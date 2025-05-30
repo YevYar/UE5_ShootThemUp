@@ -55,6 +55,25 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDiedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthChangedSignature, float, Health, bool, IsCausedByDamage, float,
                                                LastDamage);
 
+// ----- MAIN MENU
+constexpr inline auto INVALID_LEVEL_ID = int8{-1};
+
+USTRUCT(BlueprintType) struct FLevelData
+{
+        GENERATED_USTRUCT_BODY()
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Menu")
+        FName LevelDisplayName = NAME_None;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Menu")
+        FName LevelName = NAME_None;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Menu")
+        UTexture2D* LevelThumb;
+
+        int8 LevelId = INVALID_LEVEL_ID;
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FLevelSelectedSignature, int8);
+
 // ----- WEAPON
 class ASTUBaseWeapon;
 
