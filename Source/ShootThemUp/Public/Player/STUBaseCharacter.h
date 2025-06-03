@@ -39,7 +39,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
         UFUNCTION()
         virtual void OnDeath();
         UFUNCTION()
-        void OnHealthChanged(float NewHealth, bool IsCausedByDamage = false, float LastDamage = 0.0f);
+        virtual void OnHealthChanged(float NewHealth, bool IsCausedByDamage = false, float LastDamage = 0.0f);
         UFUNCTION()
         void OnLanding(const FHitResult& LandingHit);
 
