@@ -18,6 +18,14 @@ void USTUPlayerStatRowWidget::SetPlayerStatistics(const FPlayerStatisticsData& P
     PlayerIndicatorImage->SetVisibility(IsGamerStatistics ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 }
 
+void USTUPlayerStatRowWidget::SetTeamColor(const FLinearColor& TeamColor)
+{
+    if (TeamColorImage)
+    {
+        TeamColorImage->SetColorAndOpacity(TeamColor);
+    }
+}
+
 void USTUPlayerStatRowWidget::SetTextBlockText(UTextBlock* TextBlock, const FText& Text)
 {
     if (TextBlock)

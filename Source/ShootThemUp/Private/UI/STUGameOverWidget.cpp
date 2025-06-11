@@ -68,6 +68,7 @@ void USTUGameOverWidget::BuildPlayersStatistics()
                                                             .Name   = FText::FromString(PlayerState->GetPlayerName()),
                                                             .Team   = PlayerState->GetTeamID()};
         PlayerStatRow->SetPlayerStatistics(PlayerStatistics, Controller->IsPlayerController());
+        PlayerStatRow->SetTeamColor(PlayerState->GetTeamColor());
 
         PlayerStatBox->AddChild(PlayerStatRow);
     }
