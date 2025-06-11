@@ -29,6 +29,10 @@ UCLASS() class SHOOTTHEMUP_API USTULevelItemWidget : public UUserWidget
 
     private:
         UFUNCTION()
+        void OnLevelHovered();
+        UFUNCTION()
+        void OnLevelUnovered();
+        UFUNCTION()
         void OnSelectButtonClick();
 
     public:
