@@ -6,11 +6,15 @@
 #include "CoreMinimal.h"
 #include "STUPlayerHUDWidget.generated.h"
 
+class UProgressBar;
+
 UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
 {
         GENERATED_BODY()
 
     public:
+        UFUNCTION(BlueprintCallable, Category = "Weapon")
+        FString GetFormattedBulletsText(int32 BulletsAmount) const;
         UFUNCTION(BlueprintCallable, Category = "Health")
         float GetHealthPercent() const;
         UFUNCTION(BlueprintImplementableEvent, Category = "Health")
@@ -34,4 +38,16 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
         void OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage);
 
         void OnNewPawn(APawn* NewPawn);
+        void UpdateHealthBar();
+
+    protected:
+        UPROPERTY(meta = (BindWidget))
+        UProgressBar* HealthProgressBar;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+        FLinearColor HealthBadColor = FLinearColor::Red;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+        FLinearColor HealthGoodColor = FLinearColor::Green;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+        float PercentHealthColorThreshold = 0.3;
 };

@@ -3,9 +3,22 @@
 
 #include "UI/STUPlayerHUDWidget.h"
 
+#include "Components/ProgressBar.h"
+
 #include "Player/Components/STUHealthComponent.h"
 #include "STUUtilities.h"
 #include "Weapons/Components/STUWeaponComponent.h"
+
+FString USTUPlayerHUDWidget::GetFormattedBulletsText(int32 BulletsAmount) const
+{
+    const auto MaxLen       = int32{2};
+    const auto PrefixSymbol = '0';
+
+    const auto BulletsStr      = FString::FromInt(BulletsAmount);
+    const auto SymbolsNumToAdd = MaxLen - BulletsStr.Len();
+
+    return SymbolsNumToAdd > 0 ? FString::ChrN(SymbolsNumToAdd, PrefixSymbol).Append(BulletsStr) : BulletsStr;
+}
 
 float USTUPlayerHUDWidget::GetHealthPercent() const
 {
@@ -54,6 +67,8 @@ void USTUPlayerHUDWidget::OnHealthChanged(float NewHealth, bool IsCausedByDamage
     {
         OnTakeDamage();
     }
+
+    UpdateHealthBar();
 }
 
 void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
@@ -62,5 +77,16 @@ void USTUPlayerHUDWidget::OnNewPawn(APawn* NewPawn)
     if (HealthComponent && !HealthComponent->HealthChanged.Contains(this, "OnHealthChanged"))
     {
         HealthComponent->HealthChanged.AddDynamic(this, &USTUPlayerHUDWidget::OnHealthChanged);
+    }
+
+    UpdateHealthBar();
+}
+
+void USTUPlayerHUDWidget::UpdateHealthBar()
+{
+    if (HealthProgressBar)
+    {
+        HealthProgressBar->SetFillColorAndOpacity(GetHealthPercent() > PercentHealthColorThreshold ? HealthGoodColor
+                                                                                                   : HealthBadColor);
     }
 }
