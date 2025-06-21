@@ -9,6 +9,8 @@
 
 #include "STUGameHUD.generated.h"
 
+class USTUBaseWidget;
+
 UCLASS() class SHOOTTHEMUP_API ASTUGameHUD : public AHUD
 {
         GENERATED_BODY()
@@ -21,11 +23,11 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameHUD : public AHUD
 
     protected:
         UPROPERTY(EditDefaultsOnly, Category = "UI")
-        TSubclassOf<UUserWidget> GameOverWidget;
+        TSubclassOf<USTUBaseWidget> GameOverWidget;
         UPROPERTY(EditDefaultsOnly, Category = "UI")
-        TSubclassOf<UUserWidget> PauseWidget;
+        TSubclassOf<USTUBaseWidget> PauseWidget;
         UPROPERTY(EditDefaultsOnly, Category = "UI")
-        TSubclassOf<UUserWidget> PlayerHUDWidget;
+        TSubclassOf<USTUBaseWidget> PlayerHUDWidget;
 
     private:
         void DrawCrossline();
@@ -33,7 +35,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameHUD : public AHUD
 
     private:
         UPROPERTY()
-        UUserWidget* CurrentGameWidget = nullptr;
+        USTUBaseWidget* CurrentGameWidget = nullptr;
         UPROPERTY()
-        TMap<ESTUMatchState, UUserWidget*> GameWidgets;
+        TMap<ESTUMatchState, USTUBaseWidget*> GameWidgets;
 };

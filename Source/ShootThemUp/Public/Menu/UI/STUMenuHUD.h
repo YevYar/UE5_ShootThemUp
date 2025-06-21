@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "STUMenuHUD.generated.h"
 
+class USTUBaseWidget;
+
 UCLASS() class SHOOTTHEMUP_API ASTUMenuHUD : public AHUD
 {
         GENERATED_BODY()
@@ -15,5 +17,5 @@ UCLASS() class SHOOTTHEMUP_API ASTUMenuHUD : public AHUD
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
-        TSubclassOf<UUserWidget> MenuWidgetClass;
+        TSubclassOf<USTUBaseWidget> MenuWidgetClass;
 };

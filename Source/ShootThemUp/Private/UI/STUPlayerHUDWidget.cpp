@@ -66,6 +66,11 @@ void USTUPlayerHUDWidget::OnHealthChanged(float NewHealth, bool IsCausedByDamage
     if (IsCausedByDamage)
     {
         OnTakeDamage();
+
+        if (DamageAnimation && !IsAnimationPlaying(DamageAnimation))
+        {
+            PlayAnimation(DamageAnimation);
+        }
     }
 
     UpdateHealthBar();

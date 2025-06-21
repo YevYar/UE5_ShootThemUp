@@ -2,13 +2,15 @@
 
 #pragma once
 
-#include "Blueprint/UserWidget.h"
 #include "CoreMinimal.h"
+
+#include "UI/STUBaseWidget.h"
+
 #include "STUMenuWidget.generated.h"
 
 class UButton;
 
-UCLASS() class SHOOTTHEMUP_API USTUMenuWidget : public UUserWidget
+UCLASS() class SHOOTTHEMUP_API USTUMenuWidget : public USTUBaseWidget
 {
         GENERATED_BODY()
 

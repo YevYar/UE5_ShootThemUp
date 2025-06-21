@@ -2,13 +2,15 @@
 
 #pragma once
 
-#include "Blueprint/UserWidget.h"
 #include "CoreMinimal.h"
+
+#include "UI/STUBaseWidget.h"
+
 #include "STUPlayerHUDWidget.generated.h"
 
 class UProgressBar;
 
-UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
+UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public USTUBaseWidget
 {
         GENERATED_BODY()
 
@@ -41,6 +43,8 @@ UCLASS() class SHOOTTHEMUP_API USTUPlayerHUDWidget : public UUserWidget
         void UpdateHealthBar();
 
     protected:
+        UPROPERTY(meta = (BindWidgetAnim), Transient)
+        UWidgetAnimation* DamageAnimation;
         UPROPERTY(meta = (BindWidget))
         UProgressBar* HealthProgressBar;
 

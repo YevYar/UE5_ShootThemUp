@@ -2,17 +2,17 @@
 
 #pragma once
 
-#include "Blueprint/UserWidget.h"
 #include "CoreMinimal.h"
 
 #include "STUCoreTypes.h"
+#include "UI/STUBaseWidget.h"
 
 #include "STUGameOverWidget.generated.h"
 
 class UButton;
 class UVerticalBox;
 
-UCLASS() class SHOOTTHEMUP_API USTUGameOverWidget : public UUserWidget
+UCLASS() class SHOOTTHEMUP_API USTUGameOverWidget : public USTUBaseWidget
 {
         GENERATED_BODY()
 
