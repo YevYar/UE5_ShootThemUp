@@ -26,6 +26,16 @@ void USTUMenuWidget::NativeOnInitialized()
     }
 }
 
+void USTUMenuWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
+{
+    if (Animation == LoadAnimation)
+    {
+        OpenLevel();
+    }
+
+    Super::OnAnimationFinished_Implementation(Animation);
+}
+
 void USTUMenuWidget::OnQuitGame()
 {
     UKismetSystemLibrary::QuitGame(GetWorld(), GetOwningPlayer(), EQuitPreference::Quit, true);
@@ -38,6 +48,14 @@ void USTUMenuWidget::OnStartGame()
         return;
     }
 
+    if (LoadAnimation && !IsAnimationPlaying(LoadAnimation))
+    {
+        PlayAnimation(LoadAnimation);
+    }
+}
+
+void USTUMenuWidget::OpenLevel()
+{
     const auto STUGameInstance = GetWorld()->GetGameInstance<USTUGameInstance>();
     if (STUGameInstance)
     {

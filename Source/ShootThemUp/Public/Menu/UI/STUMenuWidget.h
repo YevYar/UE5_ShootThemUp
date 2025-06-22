@@ -18,14 +18,21 @@ UCLASS() class SHOOTTHEMUP_API USTUMenuWidget : public USTUBaseWidget
         void NativeOnInitialized() override;
 
     protected:
-        UPROPERTY(meta = (BindWidget))
-        UButton* QuitGameButton;
-        UPROPERTY(meta = (BindWidget))
-        UButton* StartGameButton;
+        void OnAnimationFinished_Implementation(const UWidgetAnimation* Animation) override;
 
     private:
         UFUNCTION()
         void OnQuitGame();
         UFUNCTION()
         void OnStartGame();
+        UFUNCTION()
+        void OpenLevel();
+
+    protected:
+        UPROPERTY(meta = (BindWidgetAnim), Transient)
+        UWidgetAnimation* LoadAnimation;
+        UPROPERTY(meta = (BindWidget))
+        UButton* QuitGameButton;
+        UPROPERTY(meta = (BindWidget))
+        UButton* StartGameButton;
 };
