@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Sound/SoundCue.h"
 
 #include "STUGameInstance.h"
 
@@ -52,6 +53,8 @@ void USTUMenuWidget::OnStartGame()
     {
         PlayAnimation(LoadAnimation);
     }
+
+    UGameplayStatics::PlaySound2D(GetWorld(), StartGameSound);
 }
 
 void USTUMenuWidget::OpenLevel()

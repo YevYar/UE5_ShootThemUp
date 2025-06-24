@@ -9,6 +9,7 @@
 #include "STUMenuWidget.generated.h"
 
 class UButton;
+class USoundCue;
 
 UCLASS() class SHOOTTHEMUP_API USTUMenuWidget : public USTUBaseWidget
 {
@@ -35,4 +36,7 @@ UCLASS() class SHOOTTHEMUP_API USTUMenuWidget : public USTUBaseWidget
         UButton* QuitGameButton;
         UPROPERTY(meta = (BindWidget))
         UButton* StartGameButton;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundCue* StartGameSound;
 };
