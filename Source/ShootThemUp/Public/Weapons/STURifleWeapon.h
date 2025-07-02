@@ -38,6 +38,10 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         void SetMuzzleEffectsActive(bool IsActive);
         void SpawnTraceEffect(const FVector& TraceStart, const FVector& TraceEnd);
 
+    private:
+        void AttachMuzzleSoundComponentToMuzzle();
+        void ReattachMuzzleSound();
+
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings", meta = (ClampMin = "0.0"))
         float MaxDamage = 30.0f;

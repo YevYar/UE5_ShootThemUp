@@ -125,6 +125,7 @@ bool ASTURifleWeapon::MakeShot()
     }*/
 
     SpawnTraceEffect(MuzzleTransform.GetLocation(), TraceEndLocation);
+    ReattachMuzzleSound();
 
     TimeFromFireStart += ShootingInterval;
 
@@ -163,7 +164,15 @@ void ASTURifleWeapon::SetMuzzleEffectsActive(bool IsActive)
 
     if (FireAudioComponent)
     {
-        IsActive ? FireAudioComponent->Play() : FireAudioComponent->Stop();
+        if (IsActive)
+        {
+            AttachMuzzleSoundComponentToMuzzle();
+            FireAudioComponent->Play();
+        }
+        else
+        {
+            FireAudioComponent->Stop();
+        }
     }
 }
 
@@ -174,5 +183,28 @@ void ASTURifleWeapon::SpawnTraceEffect(const FVector& TraceStart, const FVector&
     if (TraceEffectComponent)
     {
         TraceEffectComponent->SetVariableVec3(TraceTargetName, TraceEnd);
+    }
+}
+
+void ASTURifleWeapon::AttachMuzzleSoundComponentToMuzzle()
+{
+    if (FireAudioComponent)
+    {
+        FireAudioComponent->AttachToComponent(WeaponMesh, FAttachmentTransformRules::SnapToTargetIncludingScale,
+                                              MuzzleSocketName);
+    }
+}
+
+void ASTURifleWeapon::ReattachMuzzleSound()
+{
+    const auto IsQuarterClipFiredWithoutStop = TimeFromFireStart >= ShootingInterval * (DefaultAmmo.BulletsAmount / 4);
+
+    if (FireAudioComponent && IsQuarterClipFiredWithoutStop)
+    {
+        FireAudioComponent->Stop();
+        AttachMuzzleSoundComponentToMuzzle();
+        FireAudioComponent->SetWorldLocation(WeaponMesh->GetSocketLocation(MuzzleSocketName));
+        FireAudioComponent->UpdateComponentToWorld();
+        FireAudioComponent->Play(0.0f);
     }
 }
