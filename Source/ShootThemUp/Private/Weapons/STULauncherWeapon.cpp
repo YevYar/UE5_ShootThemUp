@@ -27,6 +27,7 @@ void ASTULauncherWeapon::MakeShot()
 {
     if (IsAmmoEmpty())
     {
+        PlayNoAmmoSound();
         return;
     }
 
@@ -63,6 +64,7 @@ void ASTULauncherWeapon::MakeShot()
 
     DecreaseBullets();
     SpawnMuzzleEffect();
+    SpawnMuzzleSound();
 }
 
 FVector ASTULauncherWeapon::GetTraceDirection(const FVector& ViewPointForwardVector) const

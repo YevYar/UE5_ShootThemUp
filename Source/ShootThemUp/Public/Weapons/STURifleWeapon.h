@@ -8,6 +8,7 @@
 
 #include "STURifleWeapon.generated.h"
 
+class UAudioComponent;
 class UNiagaraComponent;
 class UNiagaraSystem;
 class USTUWeaponVFXComponent;
@@ -32,9 +33,9 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
 
         virtual bool MakeShot();
 
-        void InitMuzzleEffect();
+        void InitMuzzleEffects();
         void MakeShotTimerSlot();
-        void SetMuzzleEffectVisibility(bool Visibility);
+        void SetMuzzleEffectsActive(bool IsActive);
         void SpawnTraceEffect(const FVector& TraceStart, const FVector& TraceEnd);
 
     protected:
@@ -56,6 +57,9 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         FName TraceTargetName = "TraceTarget";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
         USTUWeaponVFXComponent* VFXComponent;
+
+        UPROPERTY()
+        UAudioComponent* FireAudioComponent;
 
         FTimerHandle BurstShootingTimer;
         float        TimeFromFireStart = 0.0f;

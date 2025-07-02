@@ -6,8 +6,10 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Sound/SoundCue.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All);
 
@@ -137,6 +139,11 @@ bool ASTUBaseWeapon::IsAmmoFull() const
            && CurrentAmmo.BulletsAmount == DefaultAmmo.BulletsAmount;
 }
 
+void ASTUBaseWeapon::PlayNoAmmoSound() const
+{
+    UGameplayStatics::PlaySoundAtLocation(GetWorld(), NoAmmoSound, GetMuzzleLocation());
+}
+
 FVector ASTUBaseWeapon::GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation)
 {
     return (ImpactPoint - MuzzleLocation).GetSafeNormal();
@@ -164,6 +171,13 @@ bool ASTUBaseWeapon::GetPlayerAndController(ACharacter*& OutPlayer, AController*
     OutPlayer     = Player;
     OutController = Controller;
     return true;
+}
+
+UAudioComponent* ASTUBaseWeapon::SpawnMuzzleSound()
+{
+    return UGameplayStatics::SpawnSoundAttached(FireSound, WeaponMesh, MuzzleSocketName, FVector::ZeroVector,
+                                                FRotator::ZeroRotator, EAttachLocation::SnapToTargetIncludingScale,
+                                                true);
 }
 
 UNiagaraComponent* ASTUBaseWeapon::SpawnMuzzleEffect()

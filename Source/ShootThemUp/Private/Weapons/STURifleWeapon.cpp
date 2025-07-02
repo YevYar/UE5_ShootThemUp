@@ -3,6 +3,7 @@
 
 #include "Weapons/STURifleWeapon.h"
 
+#include "Components/AudioComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 #include "NiagaraComponent.h"
@@ -22,13 +23,13 @@ void ASTURifleWeapon::StartFire()
                                     true);
     if (MakeShot() && !IsClipEmpty())
     {
-        InitMuzzleEffect();
+        InitMuzzleEffects();
     }
 }
 
 void ASTURifleWeapon::StopFire()
 {
-    SetMuzzleEffectVisibility(false);
+    SetMuzzleEffectsActive(false);
 
     TimeFromFireStart = 0.0f;
     GetWorldTimerManager().ClearTimer(BurstShootingTimer);
@@ -63,6 +64,7 @@ bool ASTURifleWeapon::MakeShot()
     if (IsAmmoEmpty())
     {
         StopFire();
+        PlayNoAmmoSound();
         return false;
     }
 
@@ -131,13 +133,19 @@ bool ASTURifleWeapon::MakeShot()
     return true;
 }
 
-void ASTURifleWeapon::InitMuzzleEffect()
+void ASTURifleWeapon::InitMuzzleEffects()
 {
     if (!MuzzleEffectComponent)
     {
         MuzzleEffectComponent = SpawnMuzzleEffect();
     }
-    SetMuzzleEffectVisibility(true);
+
+    if (!FireAudioComponent)
+    {
+        FireAudioComponent = SpawnMuzzleSound();
+    }
+
+    SetMuzzleEffectsActive(true);
 }
 
 void ASTURifleWeapon::MakeShotTimerSlot()
@@ -145,12 +153,17 @@ void ASTURifleWeapon::MakeShotTimerSlot()
     MakeShot();
 }
 
-void ASTURifleWeapon::SetMuzzleEffectVisibility(bool Visibility)
+void ASTURifleWeapon::SetMuzzleEffectsActive(bool IsActive)
 {
     if (MuzzleEffectComponent)
     {
-        MuzzleEffectComponent->SetPaused(!Visibility);
-        MuzzleEffectComponent->SetVisibility(Visibility, true);
+        MuzzleEffectComponent->SetPaused(!IsActive);
+        MuzzleEffectComponent->SetVisibility(IsActive, true);
+    }
+
+    if (FireAudioComponent)
+    {
+        IsActive ? FireAudioComponent->Play() : FireAudioComponent->Stop();
     }
 }
 

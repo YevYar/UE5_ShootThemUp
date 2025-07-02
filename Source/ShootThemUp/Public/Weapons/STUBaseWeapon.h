@@ -12,6 +12,7 @@
 class UNiagaraComponent;
 class UNiagaraSystem;
 class USkeletalMeshComponent;
+class USoundCue;
 
 UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 {
@@ -41,6 +42,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         FWeaponUIData       GetWeaponUIData() const noexcept;
         bool                IsAmmoEmpty() const;
         bool                IsAmmoFull() const;
+        void                PlayNoAmmoSound() const;
 
     protected:
         static FVector GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation);
@@ -48,6 +50,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 
         bool               GetPlayerAndController(ACharacter*& OutPlayer, AController*& OutController) const;
         UNiagaraComponent* SpawnMuzzleEffect();
+        UAudioComponent*   SpawnMuzzleSound();
 
         // --------------- AMMO METHODS ---------------
         void DecreaseBullets();
@@ -69,6 +72,11 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USkeletalMeshComponent* WeaponMesh;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundCue* FireSound;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundCue* NoAmmoSound;
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
         UNiagaraSystem* MuzzleEffect;

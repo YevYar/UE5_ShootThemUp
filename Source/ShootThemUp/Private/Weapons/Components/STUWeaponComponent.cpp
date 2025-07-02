@@ -70,6 +70,10 @@ void USTUWeaponComponent::StartFire()
     {
         CurrentWeapon->StartFire();
     }
+    else
+    {
+        CurrentWeapon->PlayNoAmmoSound();
+    }
 }
 
 void USTUWeaponComponent::StopFire()
