@@ -7,6 +7,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/DamageEvents.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 #include "Dev/STULandingDamageType.h"
 #include "Player/Components/STUCharacterMovementComponent.h"
@@ -130,6 +132,8 @@ void ASTUBaseCharacter::OnDeath()
         GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
         GetMesh()->SetSimulatePhysics(true);
     }
+
+    UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeathSound, GetActorLocation());
 }
 
 void ASTUBaseCharacter::OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage)

@@ -9,6 +9,7 @@
 class UAnimMontage;
 class USTUHealthComponent;
 class USTUWeaponComponent;
+class USoundCue;
 class UTextRenderComponent;
 
 UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
@@ -68,6 +69,9 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Material")
         FName MaterialColorName = "Paint Color";
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundCue* DeathSound;
 
     private:
         FTimerHandle DamageDisplayTimer;
