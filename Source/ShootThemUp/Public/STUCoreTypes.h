@@ -122,6 +122,7 @@ enum class EWeaponType
 // ----- VFX
 class UMaterialInterface;
 class UNiagaraSystem;
+class USoundCue;
 
 USTRUCT(BlueprintType) struct FDecalData
 {
@@ -141,6 +142,8 @@ USTRUCT(BlueprintType) struct FImpactData
 {
         GENERATED_USTRUCT_BODY()
 
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundCue* Sound = nullptr;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
         UNiagaraSystem* Effect = nullptr;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")

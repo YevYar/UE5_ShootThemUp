@@ -7,6 +7,7 @@
 #include "STUBasePickup.generated.h"
 
 class USphereComponent;
+class USoundCue;
 
 UCLASS() class SHOOTTHEMUP_API ASTUBasePickup : public AActor
 {
@@ -34,11 +35,12 @@ UCLASS() class SHOOTTHEMUP_API ASTUBasePickup : public AActor
         void GenerateRotationYaw();
 
     protected:
-        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
-        float RespawnInterval = 5.0f;
-
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Components")
         USphereComponent* SphereComponent;
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
+        float RespawnInterval = 5.0f;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundCue* PickupSound;
 
     private:
         FTimerHandle RespawnTimer;
