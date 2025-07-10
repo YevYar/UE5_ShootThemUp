@@ -25,6 +25,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUPlayerController : public APlayerController
     private:
         void OnMatchStateChanged(ESTUMatchState NewMatchState);
         void PauseGame();
+        void ToggleVolume();
 
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

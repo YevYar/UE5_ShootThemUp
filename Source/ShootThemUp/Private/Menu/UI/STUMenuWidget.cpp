@@ -59,7 +59,7 @@ void USTUMenuWidget::OnStartGame()
 
 void USTUMenuWidget::OpenLevel()
 {
-    const auto STUGameInstance = GetWorld()->GetGameInstance<USTUGameInstance>();
+    const auto STUGameInstance = GetWorld() ? GetWorld()->GetGameInstance<USTUGameInstance>() : nullptr;
     if (STUGameInstance)
     {
         UGameplayStatics::OpenLevel(GetWorld(), STUGameInstance->GetStartupLevelName());

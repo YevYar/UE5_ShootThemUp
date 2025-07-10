@@ -4,6 +4,7 @@
 #include "Player/STUPlayerController.h"
 
 #include "Player/Components/STURespawnComponent.h"
+#include "STUGameInstance.h"
 #include "STUGameModeBase.h"
 
 ASTUPlayerController::ASTUPlayerController()
@@ -30,6 +31,7 @@ void ASTUPlayerController::SetupInputComponent()
     if (InputComponent)
     {
         InputComponent->BindAction("PauseGame", EInputEvent::IE_Pressed, this, &ASTUPlayerController::PauseGame);
+        InputComponent->BindAction("ToggleVolume", EInputEvent::IE_Pressed, this, &ASTUPlayerController::ToggleVolume);
     }
 }
 
@@ -54,5 +56,14 @@ void ASTUPlayerController::PauseGame()
     if (GameMode)
     {
         GameMode->SetPause(this);
+    }
+}
+
+void ASTUPlayerController::ToggleVolume()
+{
+    const auto STUGameInstance = GetWorld() ? GetWorld()->GetGameInstance<USTUGameInstance>() : nullptr;
+    if (STUGameInstance)
+    {
+        STUGameInstance->ToggleVolume();
     }
 }

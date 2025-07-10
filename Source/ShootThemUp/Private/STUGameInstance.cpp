@@ -3,6 +3,8 @@
 
 #include "STUGameInstance.h"
 
+#include "Sound/STUSoundFuncLib.h"
+
 void USTUGameInstance::Init()
 {
     Super::Init();
@@ -67,4 +69,9 @@ void USTUGameInstance::SetStartupLevel(int8 LevelId)
     {
         checkf(false, TEXT("Invalid level ID was passed!"));
     }
+}
+
+void USTUGameInstance::ToggleVolume()
+{
+    USTUSoundFuncLib::ToggleSoundClassMute(MasterSoundClass);
 }

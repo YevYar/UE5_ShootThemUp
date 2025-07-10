@@ -9,6 +9,8 @@
 
 #include "STUGameInstance.generated.h"
 
+class USoundClass;
+
 UCLASS() class SHOOTTHEMUP_API USTUGameInstance : public UGameInstance
 {
         GENERATED_BODY()
@@ -23,12 +25,16 @@ UCLASS() class SHOOTTHEMUP_API USTUGameInstance : public UGameInstance
         FName                     GetStartupLevelName() const;
 
         void SetStartupLevel(int8 LevelId);
+        void ToggleVolume();
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
         TArray<FLevelData> LevelsData;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
         FName MainMenuLevelName = NAME_None;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundClass* MasterSoundClass;
 
     private:
         int8 StartupLevelId = INVALID_LEVEL_ID;
