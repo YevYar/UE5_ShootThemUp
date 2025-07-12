@@ -32,6 +32,10 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         virtual void StartFire();
         UFUNCTION(BlueprintCallable, Category = "Actions")
         virtual void StopFire();
+        UFUNCTION(BlueprintCallable, Category = "Actions")
+        virtual void StopFireAndZoom();
+        UFUNCTION(BlueprintCallable, Category = "Actions")
+        virtual void Zoom(bool Enabled);
 
         virtual bool TryToAddAmmo(int32 ClipsAmount);
 

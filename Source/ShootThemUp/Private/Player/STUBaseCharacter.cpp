@@ -177,7 +177,7 @@ void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
 
 void ASTUBaseCharacter::ResetFields()
 {
-    WeaponComponent->StopFire();
+    WeaponComponent->StopFireAndZoom();
 
     if (DamageDisplayTimer.IsValid())
     {

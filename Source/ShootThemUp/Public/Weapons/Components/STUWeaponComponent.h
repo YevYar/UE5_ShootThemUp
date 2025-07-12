@@ -27,11 +27,15 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
         void ReloadCurrentWeapon();
         UFUNCTION(BlueprintCallable, Category = "Actions")
         void ReloadWeapon(ASTUBaseWeapon* WeaponToReload);
+        UFUNCTION(BlueprintCallable, Category = "Actions")
+        void ZoomWeapon(bool Enabled);
 
         UFUNCTION(BlueprintCallable, Category = "Damage")
         virtual void StartFire();
         UFUNCTION(BlueprintCallable, Category = "Damage")
         virtual void StopFire();
+        UFUNCTION(BlueprintCallable, Category = "Damage")
+        virtual void StopFireAndZoom();
 
         UFUNCTION(BlueprintCallable, Category = "UI")
         bool GetCurrentWeaponAmmoData(FAmmoData& WeaponAmmoData) const noexcept;

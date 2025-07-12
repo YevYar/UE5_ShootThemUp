@@ -56,11 +56,19 @@ void USTUWeaponComponent::ReloadWeapon(ASTUBaseWeapon* WeaponToReload)
         return;
     }
 
-    StopFire();
+    StopFireAndZoom();
 
     if (CanReloadWeapon() && PlayAnimMontage(CurrentReloadAnimMontage))
     {
         bIsReloadAnimationInProgress = true;
+    }
+}
+
+void USTUWeaponComponent::ZoomWeapon(bool Enabled)
+{
+    if (CurrentWeapon)
+    {
+        CurrentWeapon->Zoom(Enabled && CanFire());
     }
 }
 
@@ -81,6 +89,14 @@ void USTUWeaponComponent::StopFire()
     if (CurrentWeapon)
     {
         CurrentWeapon->StopFire();
+    }
+}
+
+void USTUWeaponComponent::StopFireAndZoom()
+{
+    if (CurrentWeapon)
+    {
+        CurrentWeapon->StopFireAndZoom();
     }
 }
 
@@ -151,7 +167,7 @@ void USTUWeaponComponent::BeginPlay()
 
 void USTUWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    StopFire();
+    StopFireAndZoom();
 
     CurrentWeapon = nullptr;
 
@@ -241,7 +257,7 @@ void USTUWeaponComponent::EquipTheWeapon(int32 WeaponIndex)
         return;
     }
 
-    StopFire();
+    StopFireAndZoom();
 
     NextWeaponIndex = WeaponIndex;
 
@@ -274,7 +290,7 @@ bool USTUWeaponComponent::IsAnimMontageInProgress() const
 
 bool USTUWeaponComponent::PlayAnimMontage(UAnimMontage* AnimMontage)
 {
-    StopFire();
+    StopFireAndZoom();
 
     auto Character = GetCharacter();
     if (Character)

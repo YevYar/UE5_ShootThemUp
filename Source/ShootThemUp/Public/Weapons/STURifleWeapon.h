@@ -22,6 +22,7 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
 
         void StartFire() override;
         void StopFire() override;
+        void Zoom(bool Enabled) override;
 
         EWeaponType GetWeaponType() const noexcept override;
 
@@ -52,6 +53,8 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings",
                   meta = (ClampMin = "0.0", ToolTip = "In Degrees."))
         float ShootingSpreadConeAngle = 9.0f;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
+        float ZoomFOVAngle = 50.0f;
 
         UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "VFX")
         UNiagaraComponent* MuzzleEffectComponent;
@@ -67,4 +70,7 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
 
         FTimerHandle BurstShootingTimer;
         float        TimeFromFireStart = 0.0f;
+
+    private:
+        float DefaultFOVAngle = 90.0f;
 };

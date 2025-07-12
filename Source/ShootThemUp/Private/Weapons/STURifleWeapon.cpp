@@ -35,6 +35,28 @@ void ASTURifleWeapon::StopFire()
     GetWorldTimerManager().ClearTimer(BurstShootingTimer);
 }
 
+void ASTURifleWeapon::Zoom(bool Enabled)
+{
+    ACharacter*  Character;
+    AController* Controller;
+
+    if (GetPlayerAndController(Character, Controller))
+    {
+        const auto PlayerController = Cast<APlayerController>(Controller);
+        if (!PlayerController)
+        {
+            return;
+        }
+
+        if (Enabled)
+        {
+            DefaultFOVAngle = PlayerController->PlayerCameraManager->GetFOVAngle();
+        }
+
+        PlayerController->PlayerCameraManager->SetFOV(Enabled ? ZoomFOVAngle : DefaultFOVAngle);
+    }
+}
+
 EWeaponType ASTURifleWeapon::GetWeaponType() const noexcept
 {
     return EWeaponType::EWT_Rifle;
@@ -63,7 +85,7 @@ bool ASTURifleWeapon::MakeShot()
 {
     if (IsAmmoEmpty())
     {
-        StopFire();
+        StopFireAndZoom();
         PlayNoAmmoSound();
         return false;
     }
@@ -72,7 +94,7 @@ bool ASTURifleWeapon::MakeShot()
     AController* Controller = nullptr;
     if (!GetPlayerAndController(Player, Controller))
     {
-        StopFire();
+        StopFireAndZoom();
         return false;
     }
 
@@ -80,7 +102,7 @@ bool ASTURifleWeapon::MakeShot()
     auto TraceEndLocation   = FVector{};
     if (!GetTraceData(TraceStartLocation, TraceEndLocation))
     {
-        StopFire();
+        StopFireAndZoom();
         return false;
     }
 
@@ -111,7 +133,7 @@ bool ASTURifleWeapon::MakeShot()
         }
         else
         {
-            StopFire();
+            StopFireAndZoom();
             return false;
         }
     }

@@ -4,8 +4,10 @@
 #include "Player/STUPlayerController.h"
 
 #include "Player/Components/STURespawnComponent.h"
+#include "Player/STUBaseCharacter.h"
 #include "STUGameInstance.h"
 #include "STUGameModeBase.h"
+#include "Weapons/Components/STUWeaponComponent.h"
 
 ASTUPlayerController::ASTUPlayerController()
 {
@@ -56,6 +58,16 @@ void ASTUPlayerController::PauseGame()
     if (GameMode)
     {
         GameMode->SetPause(this);
+
+        const auto STUCharacter = Cast<ASTUBaseCharacter>(GetPawn());
+        if (STUCharacter)
+        {
+            const auto WeaponComponent = STUCharacter->GetComponentByClass<USTUWeaponComponent>();
+            if (WeaponComponent)
+            {
+                WeaponComponent->StopFireAndZoom();
+            }
+        }
     }
 }
 

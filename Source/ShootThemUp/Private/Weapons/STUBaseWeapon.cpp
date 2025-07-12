@@ -29,7 +29,7 @@ bool ASTUBaseWeapon::CanReload() const
 
 bool ASTUBaseWeapon::ChangeClip()
 {
-    StopFire();
+    StopFireAndZoom();
 
     if (!CanReload())
     {
@@ -56,6 +56,16 @@ void ASTUBaseWeapon::StartFire()
 void ASTUBaseWeapon::StopFire()
 {
     UE_LOG(LogBaseWeapon, All, TEXT("Stop Fire!"));
+}
+
+void ASTUBaseWeapon::StopFireAndZoom()
+{
+    StopFire();
+    Zoom(false);
+}
+
+void ASTUBaseWeapon::Zoom(bool Enabled)
+{
 }
 
 bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
@@ -194,7 +204,7 @@ void ASTUBaseWeapon::DecreaseBullets()
 
     if (IsClipEmpty())
     {
-        StopFire();
+        StopFireAndZoom();
         ReloadRequired.Broadcast(this);
     }
 }
