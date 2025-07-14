@@ -6,9 +6,9 @@
 #include "Engine/TimerHandle.h"
 #include "GameFramework/Controller.h"
 
-#include "Dev/STUFireDamageType.h"
-#include "Dev/STUIceDamageType.h"
-#include "Dev/STULandingDamageType.h"
+#include "Damage/STUFireDamageType.h"
+#include "Damage/STUIceDamageType.h"
+#include "Damage/STULandingDamageType.h"
 #include "Player/STUBaseCharacter.h"
 #include "STUGameModeBase.h"
 

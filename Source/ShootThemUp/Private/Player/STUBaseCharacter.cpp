@@ -10,7 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
 
-#include "Dev/STULandingDamageType.h"
+#include "Damage/STULandingDamageType.h"
 #include "Player/Components/STUCharacterMovementComponent.h"
 #include "Player/Components/STUHealthComponent.h"
 #include "Weapons/Components/STUWeaponComponent.h"

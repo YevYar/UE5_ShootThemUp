@@ -1,7 +1,7 @@
 // "Shoot Them Up" Game by YevYar, All rights reserved
 
 
-#include "Dev/STUDevDamageActor.h"
+#include "Damage/STUDevDamageActor.h"
 
 #include "Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
