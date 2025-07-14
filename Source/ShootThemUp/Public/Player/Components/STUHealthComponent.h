@@ -6,10 +6,10 @@
 #include "CoreMinimal.h"
 
 #include "STUCoreTypes.h"
-
 #include "STUHealthComponent.generated.h"
 
 class UCameraShakeBase;
+class UPhysicalMaterial;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
@@ -38,10 +38,19 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         UFUNCTION()
         void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType,
                              class AController* InstigatedBy, AActor* DamageCauser);
+        UFUNCTION()
+        void OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation,
+                               class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
+                               const class UDamageType* DamageType, AActor* DamageCauser);
+        UFUNCTION()
+        void OnTakeRadialDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin,
+                                const FHitResult& HitInfo, class AController* InstigatedBy, AActor* DamageCauser);
 
-        void Killed(const AController* KillerController) const;
-        void PlayCameraShakeEffect(TSubclassOf<UCameraShakeBase> CameraShakeEffect);
-        void StopHealing();
+        void  ApplyDamage(float Damage, AController* InstigatedBy);
+        float GetPointDamageModifier(const AActor* DamagedActor, const FName& BoneName);
+        void  Killed(const AController* KillerController) const;
+        void  PlayCameraShakeEffect(TSubclassOf<UCameraShakeBase> CameraShakeEffect);
+        void  StopHealing();
 
     public:
         UPROPERTY(BlueprintAssignable, Category = "Health")
@@ -50,6 +59,8 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         FHealthChangedSignature HealthChanged;
 
     protected:
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+        TMap<UPhysicalMaterial*, float> DamageModifiersMap;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
         float RequiredLandingDamageToShowLandingEffect = 20.0f;
 

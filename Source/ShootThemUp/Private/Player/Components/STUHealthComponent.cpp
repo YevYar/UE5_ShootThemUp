@@ -4,6 +4,7 @@
 #include "Player/Components/STUHealthComponent.h"
 
 #include "Engine/TimerHandle.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 
 #include "Damage/STUFireDamageType.h"
@@ -101,6 +102,8 @@ void USTUHealthComponent::BeginPlay()
     if (Owner)
     {
         Owner->OnTakeAnyDamage.AddDynamic(this, &USTUHealthComponent::OnTakeAnyDamage);
+        Owner->OnTakePointDamage.AddDynamic(this, &USTUHealthComponent::OnTakePointDamage);
+        Owner->OnTakeRadialDamage.AddDynamic(this, &USTUHealthComponent::OnTakeRadialDamage);
     }
 }
 
@@ -117,15 +120,6 @@ void USTUHealthComponent::AutoHeal()
 void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                           AController* InstigatedBy, AActor* DamageCauser)
 {
-    UE_LOG(LogHealth, Display, TEXT("Received damage: %f"), Damage);
-
-    if (Damage <= 0.0f || IsDead())
-    {
-        return;
-    }
-
-    SetHealth(Health - Damage, true, InstigatedBy, Damage);
-
     if (!DamageType)
     {
         return;
@@ -155,8 +149,49 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
     {
         UE_LOG(LogHealth, Display, TEXT("Wow, unknown damage type!"));
     }
+}
 
+void USTUHealthComponent::OnTakePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy,
+                                            FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName,
+                                            FVector ShotFromDirection, const UDamageType* DamageType,
+                                            AActor* DamageCauser)
+{
+    const auto FinalDamage = Damage * GetPointDamageModifier(DamagedActor, BoneName);
+    ApplyDamage(FinalDamage, InstigatedBy);
     PlayCameraShakeEffect(CameraShakeOnDamageEffect);
+}
+
+void USTUHealthComponent::OnTakeRadialDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+                                             FVector Origin, const FHitResult& HitInfo, AController* InstigatedBy,
+                                             AActor* DamageCauser)
+{
+    ApplyDamage(Damage, InstigatedBy);
+    PlayCameraShakeEffect(CameraShakeOnDamageEffect);
+}
+
+void USTUHealthComponent::ApplyDamage(float Damage, AController* InstigatedBy)
+{
+    UE_LOG(LogHealth, Display, TEXT("Received damage: %f"), Damage);
+
+    if (Damage <= 0.0f || IsDead())
+    {
+        return;
+    }
+
+    SetHealth(Health - Damage, true, InstigatedBy, Damage);
+}
+
+float USTUHealthComponent::GetPointDamageModifier(const AActor* DamagedActor, const FName& BoneName)
+{
+    const auto DamagedCharacter = Cast<ACharacter>(DamagedActor);
+    if (!DamagedCharacter || !DamagedCharacter->GetMesh() || !DamagedCharacter->GetMesh()->GetBodyInstance(BoneName))
+    {
+        return 1.0f;
+    }
+
+    const auto PhysicalMaterial = DamagedCharacter->GetMesh()->GetBodyInstance(BoneName)->GetSimplePhysicalMaterial();
+    return PhysicalMaterial && DamageModifiersMap.Contains(PhysicalMaterial) ? DamageModifiersMap[PhysicalMaterial]
+                                                                             : 1.0f;
 }
 
 void USTUHealthComponent::Killed(const AController* KillerController) const
