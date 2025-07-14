@@ -172,7 +172,7 @@ void ASTUBaseCharacter::OnLanding(const FHitResult& LandingHit)
     const auto ReceivedLandingDamage =
       FMath::GetMappedRangeValueClamped(LandingDamageVelocity, LandingDamage, LandingVelocityZ);
 
-    TakeDamage(ReceivedLandingDamage, FDamageEvent{USTULandingDamageType::StaticClass()}, Controller, this);
+    TakeDamage(ReceivedLandingDamage, FSTULandingDamageEvent{}, Controller, this);
 }
 
 void ASTUBaseCharacter::ResetFields()

@@ -3,17 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/DamageEvents.h"
-
 #include "Kismet/BlueprintFunctionLibrary.h"
-
 #include "STUUtilities.generated.h"
 
 class ASTUPlayerState;
-
-class FSTURadialDamageEvent : public FDamageEvent
-{
-};
 
 UCLASS() class SHOOTTHEMUP_API USTUUtilities : public UBlueprintFunctionLibrary
 {

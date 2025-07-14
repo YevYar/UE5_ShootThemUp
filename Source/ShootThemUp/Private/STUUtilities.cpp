@@ -3,9 +3,9 @@
 
 #include "STUUtilities.h"
 
-#include "Engine/DamageEvents.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "Damage/STURadialDamageType.h"
 #include "Player/STUPlayerState.h"
 
 bool USTUUtilities::ApplyRadialDamage(UWorld* World, float MinDamage, float MaxDamage, const FVector& Origin,

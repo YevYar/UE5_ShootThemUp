@@ -10,6 +10,7 @@
 #include "Damage/STUFireDamageType.h"
 #include "Damage/STUIceDamageType.h"
 #include "Damage/STULandingDamageType.h"
+#include "Damage/STURadialDamageType.h"
 #include "Player/STUBaseCharacter.h"
 #include "STUGameModeBase.h"
 
@@ -125,8 +126,16 @@ void USTUHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, co
         return;
     }
 
+    if (DamageType->IsA<USTURadialDamageType>())
+    {
+        ApplyDamage(Damage, InstigatedBy);
+        PlayCameraShakeEffect(CameraShakeOnDamageEffect);
+        return;
+    }
     if (DamageType->IsA<USTULandingDamageType>())
     {
+        ApplyDamage(Damage, InstigatedBy);
+
         if (Damage >= RequiredLandingDamageToShowLandingEffect)
         {
             UE_LOG(LogHealth, Display, TEXT("Hard landing!"));

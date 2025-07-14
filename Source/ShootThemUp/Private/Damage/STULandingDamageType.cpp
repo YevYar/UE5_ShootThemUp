@@ -2,3 +2,7 @@
 
 
 #include "Damage/STULandingDamageType.h"
+
+FSTULandingDamageEvent::FSTULandingDamageEvent() : FDamageEvent{USTULandingDamageType::StaticClass()}
+{
+}

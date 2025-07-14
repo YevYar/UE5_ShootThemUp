@@ -5,15 +5,15 @@
 #include "CoreMinimal.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/DamageType.h"
-#include "STULandingDamageType.generated.h"
+#include "STURadialDamageType.generated.h"
 
-UCLASS() class SHOOTTHEMUP_API USTULandingDamageType : public UDamageType
+UCLASS() class USTURadialDamageType : public UDamageType
 {
         GENERATED_BODY()
 };
 
-class FSTULandingDamageEvent : public FDamageEvent
+class FSTURadialDamageEvent : public FDamageEvent
 {
     public:
-        FSTULandingDamageEvent();
+        FSTURadialDamageEvent();
 };
