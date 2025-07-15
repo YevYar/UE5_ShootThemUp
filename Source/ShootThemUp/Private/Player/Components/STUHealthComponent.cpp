@@ -205,7 +205,7 @@ float USTUHealthComponent::GetPointDamageModifier(const AActor* DamagedActor, co
 
 void USTUHealthComponent::Killed(const AController* KillerController) const
 {
-    if (!KillerController || !GetWorld())
+    if (!GetWorld())
     {
         return;
     }
