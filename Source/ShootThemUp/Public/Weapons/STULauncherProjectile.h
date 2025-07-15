@@ -8,6 +8,7 @@
 
 #include "STULauncherProjectile.generated.h"
 
+class UAudioComponent;
 class UNiagaraComponent;
 class UNiagaraSystem;
 class UProjectileMovementComponent;
@@ -55,6 +56,9 @@ UCLASS() class SHOOTTHEMUP_API ASTULauncherProjectile : public AActor
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "ProjectileSettings",
                   meta = (ClampMin = "0.0", ToolTip = "In Seconds."))
         float LifeSpanAfterHit = 1.5f;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        UAudioComponent* FlyingAudioComponent;
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
         UNiagaraSystem* TraceSmokeEffect;

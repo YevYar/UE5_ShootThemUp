@@ -3,6 +3,7 @@
 
 #include "Weapons/STULauncherProjectile.h"
 
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "NiagaraComponent.h"
@@ -16,9 +17,10 @@ ASTULauncherProjectile::ASTULauncherProjectile()
 {
     PrimaryActorTick.bCanEverTick = false;
 
-    MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
-    SphereComponent   = CreateDefaultSubobject<USphereComponent>("SphereComponent");
-    VFXComponent      = CreateDefaultSubobject<USTUWeaponVFXComponent>("VFXComponent");
+    FlyingAudioComponent = CreateDefaultSubobject<UAudioComponent>("FlyingAudioComponent");
+    MovementComponent    = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComponent");
+    SphereComponent      = CreateDefaultSubobject<USphereComponent>("SphereComponent");
+    VFXComponent         = CreateDefaultSubobject<USTUWeaponVFXComponent>("VFXComponent");
 
     if (MovementComponent)
     {
@@ -36,6 +38,11 @@ ASTULauncherProjectile::ASTULauncherProjectile()
         SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
         SphereComponent->bReturnMaterialOnMove = true;
     }
+
+    if (FlyingAudioComponent)
+    {
+        FlyingAudioComponent->SetupAttachment(GetRootComponent());
+    }
 }
 
 void ASTULauncherProjectile::SetShotDirection(const FVector& Direction)
@@ -47,10 +54,12 @@ void ASTULauncherProjectile::BeginPlay()
 {
     Super::BeginPlay();
 
+    check(FlyingAudioComponent);
     check(MovementComponent);
     check(SphereComponent);
     check(VFXComponent);
 
+    FlyingAudioComponent->Play();
     MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
 
     SphereComponent->IgnoreActorWhenMoving(GetOwner(), true);
@@ -71,6 +80,7 @@ void ASTULauncherProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
     }
 
     MovementComponent->StopMovementImmediately();
+    FlyingAudioComponent->Stop();
 
     auto IgnoreActors = TArray<AActor*>{};
     IgnoreActors.Add(this);
