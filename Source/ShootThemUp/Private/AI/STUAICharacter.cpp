@@ -48,6 +48,16 @@ void ASTUAICharacter::BeginPlay()
     check(HealthWidgetComponent);
 }
 
+void ASTUAICharacter::OnDeath()
+{
+    Super::OnDeath();
+
+    if (HealthWidgetComponent)
+    {
+        HealthWidgetComponent->SetVisibility(false, true);
+    }
+}
+
 void ASTUAICharacter::OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage)
 {
     Super::OnHealthChanged(NewHealth, IsCausedByDamage, LastDamage);
@@ -61,7 +71,7 @@ void ASTUAICharacter::OnHealthChanged(float NewHealth, bool IsCausedByDamage, fl
 
 void ASTUAICharacter::UpdateHealthBarVisibility()
 {
-    if (HealthWidgetComponent && GetWorld() && GetWorld()->GetFirstPlayerController()
+    if (!HealthComponent->IsDead() && HealthWidgetComponent && GetWorld() && GetWorld()->GetFirstPlayerController()
         && GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator())
     {
         const auto DistanceToPlayer =

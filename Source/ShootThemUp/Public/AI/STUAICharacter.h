@@ -20,6 +20,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUAICharacter : public ASTUBaseCharacter
 
     protected:
         void BeginPlay() override;
+        void OnDeath() override;
         void OnHealthChanged(float NewHealth, bool IsCausedByDamage, float LastDamage) override;
 
     private:
