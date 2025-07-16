@@ -6,6 +6,7 @@
 #include "Engine/TimerHandle.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
+#include "Perception/AISense_Damage.h"
 
 #include "Damage/STUFireDamageType.h"
 #include "Damage/STUIceDamageType.h"
@@ -188,6 +189,7 @@ void USTUHealthComponent::ApplyDamage(float Damage, AController* InstigatedBy)
     }
 
     SetHealth(Health - Damage, true, InstigatedBy, Damage);
+    ReportDamageEvent(Damage, InstigatedBy);
 }
 
 float USTUHealthComponent::GetPointDamageModifier(const AActor* DamagedActor, const FName& BoneName)
@@ -240,6 +242,15 @@ void USTUHealthComponent::PlayCameraShakeEffect(TSubclassOf<UCameraShakeBase> Ca
     }
 
     Controller->PlayerCameraManager->StartCameraShake(CameraShakeEffect);
+}
+
+void USTUHealthComponent::ReportDamageEvent(float DamageAmount, AController* InstigatedBy)
+{
+    if (GetOwner() && InstigatedBy && InstigatedBy->GetPawn())
+    {
+        UAISense_Damage::ReportDamageEvent(GetWorld(), GetOwner(), InstigatedBy->GetPawn(), DamageAmount,
+                                           InstigatedBy->GetPawn()->GetActorLocation(), GetOwner()->GetActorLocation());
+    }
 }
 
 void USTUHealthComponent::StopHealing()

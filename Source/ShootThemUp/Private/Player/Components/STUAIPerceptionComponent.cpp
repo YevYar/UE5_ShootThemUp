@@ -4,6 +4,7 @@
 #include "Player/Components/STUAIPerceptionComponent.h"
 
 #include "AIController.h"
+#include "Perception/AISense_Damage.h"
 #include "Perception/AISense_Sight.h"
 
 #include "Player/Components/STUHealthComponent.h"
@@ -11,16 +12,40 @@
 
 AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
 {
-    auto PerceivedActors = TArray<AActor*>{};
-    GetCurrentlyPerceivedActors(UAISense_Sight::StaticClass(), PerceivedActors);
-
-    if (PerceivedActors.Num() == 0)
+    const auto Controller = Cast<AAIController>(GetOwner());
+    if (!Controller)
     {
         return nullptr;
     }
 
-    const auto Controller = Cast<AAIController>(GetOwner());
-    if (!Controller)
+    auto PerceivedActors = TArray<AActor*>{};
+    GetCurrentlyPerceivedActors(UAISense_Sight::StaticClass(), PerceivedActors);
+
+    const auto IsAnyEnemySeen = [&PerceivedActors, &Controller]()
+    {
+        for (const auto& PerceivedActor : PerceivedActors)
+        {
+            if (!PerceivedActor)
+            {
+                continue;
+            }
+
+            const auto PerceivedPawn = Cast<APawn>(PerceivedActor);
+            if (PerceivedPawn && STUUtils::AreEnemies(Controller, PerceivedPawn->Controller))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }();
+
+    if (!IsAnyEnemySeen)
+    {
+        GetCurrentlyPerceivedActors(UAISense_Damage::StaticClass(), PerceivedActors);
+    }
+
+    if (PerceivedActors.Num() == 0)
     {
         return nullptr;
     }

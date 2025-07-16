@@ -50,6 +50,7 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         float GetPointDamageModifier(const AActor* DamagedActor, const FName& BoneName);
         void  Killed(const AController* KillerController) const;
         void  PlayCameraShakeEffect(TSubclassOf<UCameraShakeBase> CameraShakeEffect);
+        void  ReportDamageEvent(float DamageAmount, AController* InstigatedBy);
         void  StopHealing();
 
     public:
