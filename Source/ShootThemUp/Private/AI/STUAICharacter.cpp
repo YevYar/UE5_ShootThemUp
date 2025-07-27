@@ -74,10 +74,23 @@ void ASTUAICharacter::UpdateHealthBarVisibility()
     if (!HealthComponent->IsDead() && HealthWidgetComponent && GetWorld() && GetWorld()->GetFirstPlayerController()
         && GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator())
     {
-        const auto DistanceToPlayer =
-          FVector::Distance(GetActorLocation(),
-                            GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator()->GetActorLocation());
+        const auto AICharacterLocation = GetActorLocation();
+        const auto PlayerLocation   = GetWorld()->GetFirstPlayerController()->GetPawnOrSpectator()->GetActorLocation();
+        const auto DistanceToPlayer = FVector::Distance(AICharacterLocation, PlayerLocation);
 
-        HealthWidgetComponent->SetVisibility(DistanceToPlayer <= HealthBarVisibilityMaxDistance, true);
+        if (DistanceToPlayer > HealthBarVisibilityMaxDistance)
+        {
+            HealthWidgetComponent->SetVisibility(false, true);
+            return;
+        }
+
+        auto HitResult       = FHitResult{};
+        auto CollisionParams = FCollisionQueryParams{};
+        CollisionParams.AddIgnoredActor(this);
+
+        const auto IsAnyObstacle = GetWorld()->LineTraceSingleByChannel(HitResult, AICharacterLocation, PlayerLocation,
+                                                                        ECC_Visibility, CollisionParams);
+
+        HealthWidgetComponent->SetVisibility(!IsAnyObstacle, true);
     }
 }
