@@ -85,8 +85,8 @@ void ASTULauncherProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
     auto IgnoreActors = TArray<AActor*>{};
     IgnoreActors.Add(this);
 
-    USTUUtilities::ApplyRadialDamage(GetWorld(), MinDamage, MaxDamage, Hit.ImpactPoint, DamageRadius, IgnoreActors,
-                                     GetOwner(), GetController(), DoFullDamage);
+    USTUUtilities::ApplyRadialDamage(GetWorld(), MinDamage, MaxDamage, Hit.ImpactPoint + (2 * Hit.ImpactNormal),
+                                     DamageRadius, IgnoreActors, GetOwner(), GetController(), DoFullDamage);
 
     // DrawDebugSphere(GetWorld(), Hit.ImpactPoint, DamageRadius, 20, FColor::Red, false, 1.0f, 0.0f, 3.0f);
     VFXComponent->PlayImpactVFX(Hit);

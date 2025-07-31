@@ -34,6 +34,19 @@ bool USTUUtilities::ApplyRadialDamage(UWorld* World, float MinDamage, float MaxD
 
         for (auto& Actor : OutActors)
         {
+            auto HitResult       = FHitResult{};
+            auto CollisionParams = FCollisionQueryParams{};
+            CollisionParams.AddIgnoredActor(Actor);
+            CollisionParams.AddIgnoredActors(IgnoreActors);
+
+            const auto IsAnyObstacle = World->LineTraceSingleByChannel(HitResult, Origin, Actor->GetActorLocation(),
+                                                                       ECC_Visibility, CollisionParams);
+
+            if (IsAnyObstacle)
+            {
+                continue;
+            }
+
             const auto DamageAmount =
               DoFullDamage
                 ? MaxDamage
