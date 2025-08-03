@@ -9,6 +9,7 @@
 
 #include "STUBaseWeapon.generated.h"
 
+class UCapsuleComponent;
 class UNiagaraComponent;
 class UNiagaraSystem;
 class USkeletalMeshComponent;
@@ -52,6 +53,14 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         static FVector GetShotDirection(const FVector_NetQuantize& ImpactPoint, const FVector& MuzzleLocation);
         static bool    IsTargetAhead(const FVector& MuzzleForwardVector, const FVector& Target);
 
+        UFUNCTION()
+        void OnMuzzleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                  const FHitResult& SweepResult);
+        UFUNCTION()
+        void OnMuzzleEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
         bool               GetPlayerAndController(ACharacter*& OutPlayer, AController*& OutController) const;
         UNiagaraComponent* SpawnMuzzleEffect();
         UAudioComponent*   SpawnMuzzleSound();
@@ -75,6 +84,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 
     protected:
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+        UCapsuleComponent* MuzzleCollisionComponent;
+        UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USkeletalMeshComponent* WeaponMesh;
 
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
@@ -93,6 +104,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
         float ShootingDistance = 1500.0f;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "WeaponSettings")
         FWeaponUIData WeaponUIData;
+
+        bool bIsMuzzleOverlaped = false;
 
     private:
         FAmmoData CurrentAmmo = FAmmoData{20, 5, false};

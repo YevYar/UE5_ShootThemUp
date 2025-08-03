@@ -35,6 +35,8 @@ UCLASS() class SHOOTTHEMUP_API ASTURifleWeapon : public ASTUBaseWeapon
         virtual bool MakeShot();
 
         void InitMuzzleEffects();
+        bool IsAnyObstacleBetweenMuzzleAndTarget(const FVector& MuzzleLocation, const FVector& TargetLocation,
+                                                 FHitResult& OutObstacleHit);
         void MakeShotTimerSlot();
         void SetMuzzleEffectsActive(bool IsActive);
         void SpawnTraceEffect(const FVector& TraceStart, const FVector& TraceEnd);

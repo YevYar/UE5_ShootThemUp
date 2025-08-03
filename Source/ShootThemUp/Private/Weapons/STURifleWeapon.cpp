@@ -4,6 +4,7 @@
 #include "Weapons/STURifleWeapon.h"
 
 #include "Components/AudioComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 #include "NiagaraComponent.h"
@@ -14,6 +15,11 @@
 ASTURifleWeapon::ASTURifleWeapon()
 {
     VFXComponent = CreateDefaultSubobject<USTUWeaponVFXComponent>("VFXComponent");
+
+    if (MuzzleCollisionComponent)
+    {
+        MuzzleCollisionComponent->SetRelativeLocation(FVector{0.0f, 77.0f, 10.0f});
+    }
 }
 
 void ASTURifleWeapon::StartFire()
@@ -83,6 +89,12 @@ FVector ASTURifleWeapon::GetTraceDirection(const FVector& ViewPointForwardVector
 
 bool ASTURifleWeapon::MakeShot()
 {
+    if (bIsMuzzleOverlaped)
+    {
+        StopFire();
+        return false;
+    }
+
     if (IsAmmoEmpty())
     {
         StopFireAndZoom();
@@ -110,6 +122,7 @@ bool ASTURifleWeapon::MakeShot()
 
     const auto MuzzleTransform     = WeaponMesh->GetSocketTransform(MuzzleSocketName);
     const auto MuzzleForwardVector = MuzzleTransform.GetRotation().GetForwardVector();
+    const auto MuzzleLocation      = MuzzleTransform.GetLocation();
 
     auto HitResult       = FHitResult{};
     auto CollisionParams = FCollisionQueryParams{};
@@ -119,16 +132,32 @@ bool ASTURifleWeapon::MakeShot()
     if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStartLocation, TraceEndLocation, ECC_Visibility,
                                              CollisionParams))
     {
-        if (IsTargetAhead(MuzzleForwardVector, HitResult.ImpactPoint - MuzzleTransform.GetLocation()))
+        if (IsTargetAhead(MuzzleForwardVector, HitResult.ImpactPoint - MuzzleLocation))
         {
             TraceEndLocation = HitResult.ImpactPoint;
             /*DrawDebugLine(GetWorld(), MuzzleTransform.GetLocation(), HitResult.ImpactPoint, FColor::Red, false, 2.0f,
                           0.0f, 3.0f);*/
-            VFXComponent->PlayImpactVFX(HitResult);
 
-            if (HitResult.GetActor())
+
+            auto       ObstacleHit = FHitResult{};
+            const auto IsAnyObstacleInFrontOfMuzzle =
+              IsAnyObstacleBetweenMuzzleAndTarget(MuzzleLocation, TraceEndLocation, ObstacleHit);
+
+            if (HitResult.GetActor() && !IsAnyObstacleInFrontOfMuzzle)
             {
-                ApplyDamageToTheHitActor(HitResult, MuzzleTransform.GetLocation());
+                ApplyDamageToTheHitActor(HitResult, MuzzleLocation);
+                VFXComponent->PlayImpactVFX(HitResult);
+            }
+
+            if (IsAnyObstacleInFrontOfMuzzle)
+            {
+                VFXComponent->PlayImpactVFX(ObstacleHit);
+                TraceEndLocation = ObstacleHit.ImpactPoint;
+
+                if (ObstacleHit.GetActor())
+                {
+                    ApplyDamageToTheHitActor(ObstacleHit, MuzzleLocation);
+                }
             }
         }
         else
@@ -146,7 +175,7 @@ bool ASTURifleWeapon::MakeShot()
         }
     }*/
 
-    SpawnTraceEffect(MuzzleTransform.GetLocation(), TraceEndLocation);
+    SpawnTraceEffect(MuzzleLocation, TraceEndLocation);
     ReattachMuzzleSound();
 
     TimeFromFireStart += ShootingInterval;
@@ -169,6 +198,17 @@ void ASTURifleWeapon::InitMuzzleEffects()
     }
 
     SetMuzzleEffectsActive(true);
+}
+
+bool ASTURifleWeapon::IsAnyObstacleBetweenMuzzleAndTarget(const FVector& MuzzleLocation, const FVector& TargetLocation,
+                                                          FHitResult& OutObstacleHit)
+{
+    if (!GetWorld())
+    {
+        return false;
+    }
+
+    return GetWorld()->LineTraceSingleByChannel(OutObstacleHit, MuzzleLocation, TargetLocation, ECC_Visibility);
 }
 
 void ASTURifleWeapon::MakeShotTimerSlot()

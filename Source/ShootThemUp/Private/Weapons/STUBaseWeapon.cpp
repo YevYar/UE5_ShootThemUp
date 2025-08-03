@@ -3,6 +3,7 @@
 
 #include "Weapons/STUBaseWeapon.h"
 
+#include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/Character.h"
@@ -19,6 +20,20 @@ ASTUBaseWeapon::ASTUBaseWeapon()
 
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
     SetRootComponent(WeaponMesh);
+
+    MuzzleCollisionComponent = CreateDefaultSubobject<UCapsuleComponent>("MuzzleCollisionComponent");
+    if (MuzzleCollisionComponent)
+    {
+        MuzzleCollisionComponent->InitCapsuleSize(15.0f, 20.0f);
+        MuzzleCollisionComponent->SetRelativeRotation(FRotator{0.0f, 0.0f, 90.0f});
+        MuzzleCollisionComponent->SetupAttachment(GetRootComponent());
+        MuzzleCollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+        MuzzleCollisionComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+        MuzzleCollisionComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
+        MuzzleCollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+        MuzzleCollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+        MuzzleCollisionComponent->SetGenerateOverlapEvents(true);
+    }
 }
 
 bool ASTUBaseWeapon::CanReload() const
@@ -164,6 +179,19 @@ bool ASTUBaseWeapon::IsTargetAhead(const FVector& MuzzleForwardVector, const FVe
     return FVector::DotProduct(MuzzleForwardVector, Target) > 0.0f;
 }
 
+void ASTUBaseWeapon::OnMuzzleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                          const FHitResult& SweepResult)
+{
+    bIsMuzzleOverlaped = true;
+}
+
+void ASTUBaseWeapon::OnMuzzleEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    bIsMuzzleOverlaped = false;
+}
+
 bool ASTUBaseWeapon::GetPlayerAndController(ACharacter*& OutPlayer, AController*& OutController) const
 {
     const auto Player = Cast<ACharacter>(GetOwner());
@@ -227,11 +255,15 @@ void ASTUBaseWeapon::BeginPlay()
     Super::BeginPlay();
 
     check(WeaponMesh);
+    check(MuzzleCollisionComponent);
     checkf(DefaultAmmo.BulletsAmount > 0, TEXT("The bullets amount must be above 0!"));
     checkf(DefaultAmmo.ClipsAmount > 0, TEXT("The clips amount must be above 0!"));
     checkf(ShootingDistance > 0, TEXT("The shooting distance must be above 0!"));
 
     CurrentAmmo = DefaultAmmo;
+
+    MuzzleCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ASTUBaseWeapon::OnMuzzleBeginOverlap);
+    MuzzleCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ASTUBaseWeapon::OnMuzzleEndOverlap);
 }
 
 void ASTUBaseWeapon::ApplyDamageToTheHitActor(const FHitResult& HitResult, const FVector& MuzzleLocation) const

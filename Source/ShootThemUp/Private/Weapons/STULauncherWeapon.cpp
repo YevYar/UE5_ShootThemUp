@@ -3,11 +3,20 @@
 
 #include "Weapons/STULauncherWeapon.h"
 
+#include "Components/CapsuleComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFramework/Character.h"
 
 #include "Player/STUBaseCharacter.h"
 #include "Weapons/STULauncherProjectile.h"
+
+ASTULauncherWeapon::ASTULauncherWeapon()
+{
+    if (MuzzleCollisionComponent)
+    {
+        MuzzleCollisionComponent->SetRelativeLocation(FVector{0.0f, 67.0f, 15.0f});
+    }
+}
 
 void ASTULauncherWeapon::StartFire()
 {
@@ -25,6 +34,11 @@ EWeaponType ASTULauncherWeapon::GetWeaponType() const noexcept
 
 void ASTULauncherWeapon::MakeShot()
 {
+    if (bIsMuzzleOverlaped)
+    {
+        return;
+    }
+
     if (IsAmmoEmpty())
     {
         PlayNoAmmoSound();
