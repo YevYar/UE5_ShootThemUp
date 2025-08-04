@@ -30,6 +30,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         int32 GetCurrentRound() const;
         int32 GetNumberOfRounds() const;
         int32 GetRoundRemainingTime() const;
+        int32 GetTeamsNumber() const;
 
         void Killed(const AController* KillerController, const AController* VictimController) const;
 

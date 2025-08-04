@@ -96,6 +96,11 @@ int32 ASTUGameModeBase::GetRoundRemainingTime() const
     return RemainingRoundTime;
 }
 
+int32 ASTUGameModeBase::GetTeamsNumber() const
+{
+    return GameData.TeamsNumber;
+}
+
 void ASTUGameModeBase::Killed(const AController* KillerController, const AController* VictimController) const
 {
     auto VictimPlayerState = STUUtils::GetSTUPlayerState(VictimController);

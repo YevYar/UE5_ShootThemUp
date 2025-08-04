@@ -8,10 +8,19 @@
 #include "Perception/AISense_Sight.h"
 
 #include "Player/Components/STUHealthComponent.h"
+#include "STUGameModeBase.h"
 #include "STUUtilities.h"
 
 AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
 {
+    const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
+    if (!GameMode)
+    {
+        return nullptr;
+    }
+
+    const auto TeamsNumber = GameMode->GetTeamsNumber();
+
     const auto Controller = Cast<AAIController>(GetOwner());
     if (!Controller)
     {
@@ -21,7 +30,7 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
     auto PerceivedActors = TArray<AActor*>{};
     GetCurrentlyPerceivedActors(UAISense_Sight::StaticClass(), PerceivedActors);
 
-    const auto IsAnyEnemySeen = [&PerceivedActors, &Controller]()
+    const auto IsAnyEnemySeen = [&TeamsNumber, &PerceivedActors, &Controller]()
     {
         for (const auto& PerceivedActor : PerceivedActors)
         {
@@ -31,7 +40,7 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
             }
 
             const auto PerceivedPawn = Cast<APawn>(PerceivedActor);
-            if (PerceivedPawn && STUUtils::AreEnemies(Controller, PerceivedPawn->Controller))
+            if (PerceivedPawn && STUUtils::AreEnemies(TeamsNumber, Controller, PerceivedPawn->Controller))
             {
                 return true;
             }
@@ -68,7 +77,8 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
         }
 
         const auto PerceivedPawn = Cast<APawn>(PerceivedActor);
-        const auto AreEnemies    = PerceivedPawn && STUUtils::AreEnemies(Controller, PerceivedPawn->Controller);
+        const auto AreEnemies    = PerceivedPawn
+                                && STUUtils::AreEnemies(TeamsNumber, Controller, PerceivedPawn->Controller);
 
         const auto HealthComponent = PerceivedActor->FindComponentByClass<USTUHealthComponent>();
         if (HealthComponent && !HealthComponent->IsDead() && AreEnemies)

@@ -38,7 +38,7 @@ USTRUCT(BlueprintType) struct FGameData
         TArray<FLinearColor> TeamColors;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
         FLinearColor TeamDefaultColor = FLinearColor::Red;
-        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "2", ClampMax = "10"))
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "1", ClampMax = "10"))
         int32 TeamsNumber = 2;
 };
 

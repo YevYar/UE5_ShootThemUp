@@ -22,7 +22,7 @@ UCLASS() class SHOOTTHEMUP_API USTUUtilities : public UBlueprintFunctionLibrary
 
 namespace STUUtils
 {
-bool AreEnemies(const AController* Controller1, const AController* Controller2);
+bool AreEnemies(int32 TeamsNumber, const AController* Controller1, const AController* Controller2);
 
 template<typename ComponentType>
 requires std::is_base_of_v<UActorComponent, ComponentType>
