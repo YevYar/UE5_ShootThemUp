@@ -112,9 +112,43 @@ void ASTUGameModeBase::Killed(const AController* KillerController, const AContro
     }
 
     auto KillerPlayerState = STUUtils::GetSTUPlayerState(KillerController);
-    if (KillerPlayerState)
+    if (KillerPlayerState && ShouldAddKill(KillerController, KillerPlayerState, VictimController, VictimPlayerState))
     {
         KillerPlayerState->AddKill();
+    }
+}
+
+void ASTUGameModeBase::RespawnOnePlayer(AController* Controller)
+{
+    if (Controller && Controller->GetPawn())
+    {
+        Controller->GetPawn()->Reset();
+    }
+    RestartPlayer(Controller);
+    SetPlayerColor(Controller);
+}
+
+bool ASTUGameModeBase::ShouldAddKill(const AController* KillerController, const ASTUPlayerState* KillerPlayerState,
+                                     const AController*     VictimController,
+                                     const ASTUPlayerState* VictimPlayerState) const
+{
+    return true;
+}
+
+void ASTUGameModeBase::SpawnBots()
+{
+    if (!GetWorld())
+    {
+        return;
+    }
+
+    for (auto i = int32{0}; i < GameData.PlayersAmount - 1; ++i)
+    {
+        auto SpawnParameters                           = FActorSpawnParameters{};
+        SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+        const auto AIController = GetWorld()->SpawnActor<AAIController>(AIControllerClass, SpawnParameters);
+        RestartPlayer(AIController);
     }
 }
 
@@ -209,16 +243,6 @@ void ASTUGameModeBase::RespawnPlayers()
     }
 }
 
-void ASTUGameModeBase::RespawnOnePlayer(AController* Controller)
-{
-    if (Controller && Controller->GetPawn())
-    {
-        Controller->GetPawn()->Reset();
-    }
-    RestartPlayer(Controller);
-    SetPlayerColor(Controller);
-}
-
 void ASTUGameModeBase::SetMatchState(ESTUMatchState NewMatchState)
 {
     if (MatchState == NewMatchState)
@@ -242,23 +266,6 @@ void ASTUGameModeBase::SetPlayerColor(AController* Controller) const
     if (Character)
     {
         Character->SetPlayerColor(PlayerState->GetTeamColor());
-    }
-}
-
-void ASTUGameModeBase::SpawnBots()
-{
-    if (!GetWorld())
-    {
-        return;
-    }
-
-    for (auto i = int32{0}; i < GameData.PlayersAmount - 1; ++i)
-    {
-        auto SpawnParameters                           = FActorSpawnParameters{};
-        SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-        const auto AIController = GetWorld()->SpawnActor<AAIController>(AIControllerClass, SpawnParameters);
-        RestartPlayer(AIController);
     }
 }
 

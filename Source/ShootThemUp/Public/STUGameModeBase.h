@@ -10,6 +10,7 @@
 #include "STUGameModeBase.generated.h"
 
 class AAIController;
+class ASTUPlayerState;
 
 UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
 {
@@ -33,15 +34,18 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         void Killed(const AController* KillerController, const AController* VictimController) const;
 
     private:
+        virtual void RespawnOnePlayer(AController* Controller);
+        virtual bool ShouldAddKill(const AController* KillerController, const ASTUPlayerState* KillerPlayerState,
+                                   const AController* VictimController, const ASTUPlayerState* VictimPlayerState) const;
+        virtual void SpawnBots();
+
         void         GameOver();
         FLinearColor GetTeamColorByTeamID(int32 TeamID) const;
         void         InitTeamsData() const;
         void         LogPlayersStatistics() const;
         void         RespawnPlayers();
-        void         RespawnOnePlayer(AController* Controller);
         void         SetMatchState(ESTUMatchState NewMatchState);
         void         SetPlayerColor(AController* Controller) const;
-        void         SpawnBots();
         void         StartPlayerRespawn(const AController* Controller) const;
         void         StartRound();
         void         SubscribeOnBotsNotifiers();
