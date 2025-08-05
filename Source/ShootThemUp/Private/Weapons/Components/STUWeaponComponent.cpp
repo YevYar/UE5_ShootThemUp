@@ -130,6 +130,11 @@ FVector USTUWeaponComponent::GetCurrentWeaponMuzzleLocation() const
     return CurrentWeapon ? CurrentWeapon->GetMuzzleLocation() : FVector{};
 }
 
+FTransform USTUWeaponComponent::GetCurrentWeaponMuzzleTransform() const
+{
+    return CurrentWeapon ? CurrentWeapon->GetMuzzleTransform() : FTransform{};
+}
+
 EWeaponType USTUWeaponComponent::GetCurrentWeaponType() const noexcept
 {
     return CurrentWeapon ? CurrentWeapon->GetWeaponType() : EWeaponType::EWT_Unknown;

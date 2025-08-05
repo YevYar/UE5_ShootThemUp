@@ -138,6 +138,11 @@ FRotator ASTUBaseWeapon::GetMuzzleRotation() const
     return WeaponMesh->GetSocketRotation(MuzzleSocketName);
 }
 
+FTransform ASTUBaseWeapon::GetMuzzleTransform() const
+{
+    return WeaponMesh->GetSocketTransform(MuzzleSocketName);
+}
+
 FAmmoData ASTUBaseWeapon::GetWeaponAmmoData() const noexcept
 {
     return CurrentAmmo;

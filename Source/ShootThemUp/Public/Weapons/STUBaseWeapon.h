@@ -42,6 +42,7 @@ UCLASS() class SHOOTTHEMUP_API ASTUBaseWeapon : public AActor
 
         FVector             GetMuzzleLocation() const;
         FRotator            GetMuzzleRotation() const;
+        FTransform          GetMuzzleTransform() const;
         FAmmoData           GetWeaponAmmoData() const noexcept;
         virtual EWeaponType GetWeaponType() const noexcept;
         FWeaponUIData       GetWeaponUIData() const noexcept;

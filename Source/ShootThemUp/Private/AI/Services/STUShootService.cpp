@@ -37,7 +37,16 @@ void USTUShootService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
                 SetRequiredRotationToShootFromLauncher(BlackboardComponent, Pawn, EnemyActor, WeaponComponent);
             }
 
-            WeaponComponent->StartFire();
+            const auto MuzzleForwardVector =
+              WeaponComponent->GetCurrentWeaponMuzzleTransform().GetRotation().GetForwardVector();
+            const auto EnemyVectorToPawn = (Pawn->GetActorLocation() - EnemyActor->GetActorLocation()).GetSafeNormal();
+            const auto AngleBetween =
+              FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(MuzzleForwardVector, EnemyVectorToPawn)));
+
+            if (AngleBetween >= 165.0f && AngleBetween <= 200.0f)
+            {
+                WeaponComponent->StartFire();
+            }
         }
         else if (WeaponComponent)
         {
