@@ -35,9 +35,9 @@ void ASTUAIController::Tick(float DeltaTime)
         return;
     }
 
-    if (BlackboardComponent->GetValueAsBool(IsCurrentWeaponLauncherKeyName))
+    if (BlackboardComponent->GetValueAsBool(UseRotationToTargetKeyName))
     {
-        SetRotationIfLauncher(DeltaTime);
+        SmoothRotateWithMovementSpeed(BlackboardComponent->GetValueAsRotator(RotationToTargetKeyName), DeltaTime);
     }
     else
     {
@@ -79,18 +79,6 @@ AActor* ASTUAIController::GetFocusOnActor() const
     }
 
     return nullptr;
-}
-
-void ASTUAIController::SetRotationIfLauncher(float DeltaTime)
-{
-    const auto BlackboardComponent = GetBlackboardComponent();
-    if (!BlackboardComponent)
-    {
-        return;
-    }
-
-    const auto ProjectileLaunchRotation = BlackboardComponent->GetValueAsRotator(ProjectileLaunchRotationKeyName);
-    SmoothRotateWithMovementSpeed(ProjectileLaunchRotation, DeltaTime);
 }
 
 void ASTUAIController::SmoothRotateWithMovementSpeed(const FRotator& TargetRotation, float DeltaTime)

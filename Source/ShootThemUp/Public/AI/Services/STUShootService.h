@@ -20,6 +20,9 @@ UCLASS() class SHOOTTHEMUP_API USTUShootService : public UBTService
         void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
     private:
+        void    AimAtTheHead(UBlackboardComponent* BlackboardComponent, const FVector& MuzzleLocation,
+                             const FVector& EnemyActorLocation);
+        bool    CanStartFire(const FVector& MuzzleForwardVector, const APawn* Pawn, const AActor* EnemyActor) const;
         FVector GetRandomLocationInTheRadiusOfTarget(const FVector& TargetLocation) const;
         void    SetRequiredRotationToShootFromLauncher(UBlackboardComponent* BlackboardComponent, const APawn* Pawn,
                                                        const AActor*              EnemyActor,
@@ -28,10 +31,12 @@ UCLASS() class SHOOTTHEMUP_API USTUShootService : public UBTService
     protected:
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
         FBlackboardKeySelector EnemyActorKey;
-        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-        FBlackboardKeySelector IsCurrentWeaponLauncherKey;
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (ClampMin = "0.0001", ClampMax = "1.0"))
+        float HeadshotProbability = 0.4f;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
         float MaximumDeviationFromTheTarget = 450.0f;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-        FBlackboardKeySelector ProjectileLaunchRotationKey;
+        FBlackboardKeySelector RotationToTargetKey;
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+        FBlackboardKeySelector UseRotationToTargetKey;
 };

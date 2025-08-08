@@ -22,6 +22,8 @@ void USTUShootService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 
     if (BlackboardComponent && Controller)
     {
+        BlackboardComponent->SetValueAsBool(UseRotationToTargetKey.SelectedKeyName, false);
+
         const auto EnemyActor      = Cast<AActor>(BlackboardComponent->GetValueAsObject(EnemyActorKey.SelectedKeyName));
         const auto Pawn            = Controller->GetPawn();
         const auto WeaponComponent = Pawn ? Pawn->FindComponentByClass<USTUWeaponComponent>() : nullptr;
@@ -30,7 +32,7 @@ void USTUShootService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
         {
             const auto IsCurrentWeaponLauncher = WeaponComponent->GetCurrentWeaponType() == EWeaponType::EWT_Launcher
                                                  && WeaponComponent->CanFire();
-            BlackboardComponent->SetValueAsBool(IsCurrentWeaponLauncherKey.SelectedKeyName, IsCurrentWeaponLauncher);
+            BlackboardComponent->SetValueAsBool(UseRotationToTargetKey.SelectedKeyName, IsCurrentWeaponLauncher);
 
             if (IsCurrentWeaponLauncher)
             {
@@ -39,12 +41,15 @@ void USTUShootService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 
             const auto MuzzleForwardVector =
               WeaponComponent->GetCurrentWeaponMuzzleTransform().GetRotation().GetForwardVector();
-            const auto EnemyVectorToPawn = (Pawn->GetActorLocation() - EnemyActor->GetActorLocation()).GetSafeNormal();
-            const auto AngleBetween =
-              FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(MuzzleForwardVector, EnemyVectorToPawn)));
 
-            if (AngleBetween >= 165.0f && AngleBetween <= 200.0f)
+            if (CanStartFire(MuzzleForwardVector, Pawn, EnemyActor))
             {
+                if (!IsCurrentWeaponLauncher)
+                {
+                    AimAtTheHead(BlackboardComponent, WeaponComponent->GetCurrentWeaponMuzzleLocation(),
+                                 EnemyActor->GetActorLocation());
+                }
+
                 WeaponComponent->StartFire();
             }
         }
@@ -55,6 +60,40 @@ void USTUShootService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
     }
 
     Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+}
+
+void USTUShootService::AimAtTheHead(UBlackboardComponent* BlackboardComponent, const FVector& MuzzleLocation,
+                                    const FVector& EnemyActorLocation)
+{
+    auto UseRotationToTarget = false;
+
+    if (FMath::FRand() <= HeadshotProbability)
+    {
+        UseRotationToTarget = true;
+
+        const auto EnemyHeadLocation = [&EnemyActorLocation]()
+        {
+            auto HeadLocationTemp  = EnemyActorLocation;
+            HeadLocationTemp.Z    += 63;
+            return HeadLocationTemp;
+        }();
+
+        const auto MuzzleVectorToEnemyHead = (EnemyHeadLocation - MuzzleLocation).GetSafeNormal();
+        BlackboardComponent->SetValueAsRotator(RotationToTargetKey.SelectedKeyName,
+                                               MuzzleVectorToEnemyHead.ToOrientationRotator());
+    }
+
+    BlackboardComponent->SetValueAsBool(UseRotationToTargetKey.SelectedKeyName, UseRotationToTarget);
+}
+
+bool USTUShootService::CanStartFire(const FVector& MuzzleForwardVector, const APawn* Pawn,
+                                    const AActor* EnemyActor) const
+{
+    const auto EnemyVectorToPawn = (Pawn->GetActorLocation() - EnemyActor->GetActorLocation()).GetSafeNormal();
+    const auto AngleBetween =
+      FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(MuzzleForwardVector, EnemyVectorToPawn)));
+
+    return AngleBetween >= 165.0f && AngleBetween <= 200.0f;
 }
 
 FVector USTUShootService::GetRandomLocationInTheRadiusOfTarget(const FVector& TargetLocation) const
@@ -85,7 +124,7 @@ void USTUShootService::SetRequiredRotationToShootFromLauncher(UBlackboardCompone
                                                     ESuggestProjVelocityTraceOption::DoNotTrace,
                                                     FCollisionResponseParams::DefaultResponseParam, {}, false))
     {
-        BlackboardComponent->SetValueAsRotator(ProjectileLaunchRotationKey.SelectedKeyName,
+        BlackboardComponent->SetValueAsRotator(RotationToTargetKey.SelectedKeyName,
                                                LaunchVelocity.ToOrientationRotator());
     }
 }

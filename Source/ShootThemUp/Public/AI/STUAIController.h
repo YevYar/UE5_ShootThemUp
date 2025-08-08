@@ -26,16 +26,15 @@ UCLASS() class SHOOTTHEMUP_API ASTUAIController : public AAIController
 
     private:
         AActor* GetFocusOnActor() const;
-        void    SetRotationIfLauncher(float DeltaTime);
         void    SmoothRotateWithMovementSpeed(const FRotator& TargetRotation, float DeltaTime);
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
         FName FocusOnKeyName = "EnemyActor";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
-        FName IsCurrentWeaponLauncherKeyName = "IsCurrentWeaponLauncher";
+        FName RotationToTargetKeyName = "RotationToTarget";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
-        FName ProjectileLaunchRotationKeyName = "ProjectileLaunchRotation";
+        FName UseRotationToTargetKeyName = "UseRotationToTarget";
 
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USTURespawnComponent* RespawnComponent;
