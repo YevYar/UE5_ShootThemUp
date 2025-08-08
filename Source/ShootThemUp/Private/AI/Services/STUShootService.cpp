@@ -74,7 +74,8 @@ void USTUShootService::AimAtTheHead(UBlackboardComponent* BlackboardComponent, c
         const auto EnemyHeadLocation = [&EnemyActorLocation]()
         {
             auto HeadLocationTemp  = EnemyActorLocation;
-            HeadLocationTemp.Z    += 63;
+            HeadLocationTemp.Z    += 68;
+            HeadLocationTemp.Y    += 9;
             return HeadLocationTemp;
         }();
 
