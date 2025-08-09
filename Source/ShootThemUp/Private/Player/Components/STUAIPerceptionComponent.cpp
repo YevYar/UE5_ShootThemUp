@@ -11,7 +11,7 @@
 #include "STUGameModeBase.h"
 #include "STUUtilities.h"
 
-AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
+AActor* USTUAIPerceptionComponent::GetClosestEnemy(AActor* CurrentEnemyActor) const
 {
     const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
     if (!GameMode)
@@ -68,6 +68,18 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy() const
     auto       ClosestDistance = MAX_FLT;
     auto       ClosestActor    = static_cast<AActor*>(nullptr);
     const auto OwnLocation     = Pawn->GetActorLocation();
+
+    // We want to be sure that the current enemy is still visible
+    if (CurrentEnemyActor && PerceivedActors.Contains(CurrentEnemyActor))
+    {
+        const auto CurrentEnemyHealthComponent = CurrentEnemyActor->FindComponentByClass<USTUHealthComponent>();
+        if (CurrentEnemyHealthComponent && !CurrentEnemyHealthComponent->IsDead()
+            && CurrentEnemyHealthComponent->GetHealthPercent() <= 30.0f)
+        {
+            // Finish off the current enemy, as he is weak
+            return CurrentEnemyActor;
+        }
+    }
 
     for (const auto& PerceivedActor : PerceivedActors)
     {
