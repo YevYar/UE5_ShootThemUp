@@ -34,6 +34,10 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
 
         void Killed(const AController* KillerController, const AController* VictimController) const;
 
+    protected:
+        APawn* SpawnDefaultPawnAtTransform_Implementation(AController*      NewPlayer,
+                                                          const FTransform& SpawnTransform) override;
+
     private:
         virtual void RespawnOnePlayer(AController* Controller);
         virtual bool ShouldAddKill(const AController* KillerController, const ASTUPlayerState* KillerPlayerState,
