@@ -38,6 +38,58 @@ ASTUBaseCharacter::ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer
     WeaponComponent = CreateDefaultSubobject<USTUWeaponComponent>("WeaponComponent");
 }
 
+UAISense_Sight::EVisibilityResult
+  ASTUBaseCharacter::CanBeSeenFrom(const FCanBeSeenFromContext& Context, FVector& OutSeenLocation,
+                                   int32& OutNumberOfLoSChecksPerformed, int32& OutNumberOfAsyncLosCheckRequested,
+                                   float& OutSightStrength, int32* UserData,
+                                   const FOnPendingVisibilityQueryProcessedDelegate* Delegate)
+{
+    static const auto NAME_AILineOfSight = FName{TEXT("TestPawnLineOfSight")};
+
+    auto       HitResult   = FHitResult{};
+    const auto MeshSockets = GetMesh()->GetAllSocketNames();
+
+    for (const auto& Socket : MeshSockets)
+    {
+        const auto SocketLocation = GetMesh()->GetSocketLocation(Socket);
+        const auto bHitSocket =
+          GetWorld()->LineTraceSingleByObjectType(HitResult, Context.ObserverLocation, SocketLocation,
+                                                  FCollisionObjectQueryParams{ECC_TO_BITFIELD(ECC_WorldStatic)
+                                                                              | ECC_TO_BITFIELD(ECC_WorldDynamic)},
+                                                  FCollisionQueryParams{NAME_AILineOfSight, true, Context.IgnoreActor});
+
+        OutNumberOfLoSChecksPerformed++;
+
+        if (bHitSocket == false || (HitResult.GetActor() && HitResult.GetActor()->IsOwnedBy(this)))
+        {
+            OutSeenLocation  = SocketLocation;
+            OutSightStrength = 1;
+
+            return UAISense_Sight::EVisibilityResult::Visible;
+        }
+    }
+
+    const auto bHit =
+      GetWorld()->LineTraceSingleByObjectType(HitResult, Context.ObserverLocation, GetActorLocation(),
+                                              FCollisionObjectQueryParams{ECC_TO_BITFIELD(ECC_WorldStatic)
+                                                                          | ECC_TO_BITFIELD(ECC_WorldDynamic)},
+                                              FCollisionQueryParams{NAME_AILineOfSight, true, Context.IgnoreActor});
+
+    OutNumberOfLoSChecksPerformed++;
+
+    if (bHit == false || (HitResult.GetActor() && HitResult.GetActor()->IsOwnedBy(this)))
+    {
+        OutSeenLocation  = GetActorLocation();
+        OutSightStrength = 1;
+
+        return UAISense_Sight::EVisibilityResult::Visible;
+    }
+
+    OutSightStrength = 0;
+
+    return UAISense_Sight::EVisibilityResult::NotVisible;
+}
+
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);

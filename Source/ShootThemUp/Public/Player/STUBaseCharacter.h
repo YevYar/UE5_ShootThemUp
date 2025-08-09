@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Perception/AISightTargetInterface.h"
 #include "STUBaseCharacter.generated.h"
 
 class UAnimMontage;
@@ -12,13 +13,20 @@ class USTUWeaponComponent;
 class USoundCue;
 class UTextRenderComponent;
 
-UCLASS() class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter
+UCLASS()
+class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter,
+                                          public IAISightTargetInterface
 {
         GENERATED_BODY()
 
     public:
         ASTUBaseCharacter(const FObjectInitializer& ObjectInitializer);
 
+        UAISense_Sight::EVisibilityResult
+             CanBeSeenFrom(const FCanBeSeenFromContext& Context, FVector& OutSeenLocation,
+                           int32& OutNumberOfLoSChecksPerformed, int32& OutNumberOfAsyncLosCheckRequested,
+                           float& OutSightStrength, int32* UserData = nullptr,
+                           const FOnPendingVisibilityQueryProcessedDelegate* Delegate = nullptr) override;
         void Tick(float DeltaTime) override;
 
         UFUNCTION(BlueprintCallable, Category = "Life State")
