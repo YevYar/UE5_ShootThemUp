@@ -30,7 +30,7 @@ USTUHealthComponent::USTUHealthComponent()
 
 float USTUHealthComponent::GetHealthPercent() const noexcept
 {
-    return MaxHealth > 0.0 ? GetHealth() / MaxHealth : 0.0f;
+    return MaxHealth > 0.0f ? GetHealth() / MaxHealth : 0.0f;
 }
 
 float USTUHealthComponent::GetHealth() const noexcept
@@ -167,6 +167,11 @@ void USTUHealthComponent::OnTakePointDamage(AActor* DamagedActor, float Damage, 
                                             FVector ShotFromDirection, const UDamageType* DamageType,
                                             AActor* DamageCauser)
 {
+    if (IsDead())
+    {
+        return;
+    }
+
     const auto FinalDamage = Damage * GetPointDamageModifier(DamagedActor, BoneName);
     ApplyDamage(FinalDamage, InstigatedBy);
     PlayCameraShakeEffect(CameraShakeOnDamageEffect);
