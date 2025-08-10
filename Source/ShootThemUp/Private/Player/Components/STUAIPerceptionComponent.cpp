@@ -74,7 +74,7 @@ AActor* USTUAIPerceptionComponent::GetClosestEnemy(AActor* CurrentEnemyActor) co
     {
         const auto CurrentEnemyHealthComponent = CurrentEnemyActor->FindComponentByClass<USTUHealthComponent>();
         if (CurrentEnemyHealthComponent && !CurrentEnemyHealthComponent->IsDead()
-            && CurrentEnemyHealthComponent->GetHealthPercent() <= 30.0f)
+            && CurrentEnemyHealthComponent->GetHealthPercent() <= 0.3f)
         {
             // Finish off the current enemy, as he is weak
             return CurrentEnemyActor;

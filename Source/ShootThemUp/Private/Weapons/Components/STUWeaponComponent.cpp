@@ -78,7 +78,7 @@ void USTUWeaponComponent::StartFire()
     {
         CurrentWeapon->StartFire();
     }
-    else
+    else if (CurrentWeapon)
     {
         CurrentWeapon->PlayNoAmmoSound();
     }
