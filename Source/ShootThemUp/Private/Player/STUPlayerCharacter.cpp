@@ -7,7 +7,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
+#include "Player/Components/STUHealthComponent.h"
 #include "Weapons/Components/STUWeaponComponent.h"
 
 namespace
@@ -107,6 +110,11 @@ bool ASTUPlayerCharacter::IsMovingRight() const
     return !bIsIdleRight && bIsMovingRight && !GetVelocity().IsZero();
 }
 
+void ASTUPlayerCharacter::MadeHeadshot()
+{
+    UGameplayStatics::PlaySoundAtLocation(GetWorld(), HeadshotSoundEffect, GetActorLocation());
+}
+
 void ASTUPlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
@@ -120,6 +128,8 @@ void ASTUPlayerCharacter::BeginPlay()
     {
         InitialMeshRotation = GetMesh()->GetRelativeRotation();
     }
+
+    HealthComponent->GotHeadshot.AddDynamic(this, &ASTUPlayerCharacter::OnGotHeadshot);
 }
 
 void ASTUPlayerCharacter::ResetFields()
@@ -161,6 +171,11 @@ void ASTUPlayerCharacter::OnCameraEndOverlap(UPrimitiveComponent* OverlappedComp
     {
         SetCharacterVisibilityForPlayer(true);
     }
+}
+
+void ASTUPlayerCharacter::OnGotHeadshot()
+{
+    UGameplayStatics::PlaySoundAtLocation(GetWorld(), HeadshotImpactSound, GetActorLocation());
 }
 
 void ASTUPlayerCharacter::MoveForward(float Amount)

@@ -51,6 +51,7 @@ struct FPlayerStatisticsData
 };
 
 // ----- HEALTH
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHeadshotSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDiedSignature);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHealthChangedSignature, float, Health, bool, IsCausedByDamage, float,
                                                LastDamage);

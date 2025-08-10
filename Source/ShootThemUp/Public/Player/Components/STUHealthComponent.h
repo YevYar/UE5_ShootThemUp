@@ -57,11 +57,15 @@ class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
         UPROPERTY(BlueprintAssignable, Category = "Health")
         FDiedSignature Died;
         UPROPERTY(BlueprintAssignable, Category = "Health")
+        FHeadshotSignature GotHeadshot;
+        UPROPERTY(BlueprintAssignable, Category = "Health")
         FHealthChangedSignature HealthChanged;
 
     protected:
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
         TMap<UPhysicalMaterial*, float> DamageModifiersMap;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+        FName HeadBoneName = "b_head";
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
         float RequiredLandingDamageToShowLandingEffect = 20.0f;
 

@@ -7,6 +7,7 @@
 #include "STUPlayerCharacter.generated.h"
 
 class UCameraComponent;
+class USoundCue;
 class USphereComponent;
 class USpringArmComponent;
 
@@ -31,6 +32,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUPlayerCharacter : public ASTUBaseCharacter
         UFUNCTION(BlueprintCallable, Category = "Movement")
         bool IsMovingRight() const;
 
+        void MadeHeadshot();
+
     protected:
         void BeginPlay() override;
         void ResetFields() override;
@@ -43,6 +46,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUPlayerCharacter : public ASTUBaseCharacter
         UFUNCTION()
         void OnCameraEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+        UFUNCTION()
+        void OnGotHeadshot();
 
         void MoveForward(float Amount);
         void MoveRight(float Amount);
@@ -60,6 +65,11 @@ UCLASS() class SHOOTTHEMUP_API ASTUPlayerCharacter : public ASTUBaseCharacter
         UCameraComponent* CameraComponent;
         UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
         USpringArmComponent* SpringArmComponent;
+
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundCue* HeadshotImpactSound;
+        UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+        USoundCue* HeadshotSoundEffect;
 
     private:
         bool     bIsIdleForward   = true;

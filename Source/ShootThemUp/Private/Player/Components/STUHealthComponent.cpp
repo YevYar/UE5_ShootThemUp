@@ -13,6 +13,7 @@
 #include "Damage/STULandingDamageType.h"
 #include "Damage/STURadialDamageType.h"
 #include "Player/STUBaseCharacter.h"
+#include "Player/STUPlayerCharacter.h"
 #include "STUGameModeBase.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealth, All, All)
@@ -169,6 +170,17 @@ void USTUHealthComponent::OnTakePointDamage(AActor* DamagedActor, float Damage, 
     const auto FinalDamage = Damage * GetPointDamageModifier(DamagedActor, BoneName);
     ApplyDamage(FinalDamage, InstigatedBy);
     PlayCameraShakeEffect(CameraShakeOnDamageEffect);
+
+    if (BoneName == HeadBoneName)
+    {
+        GotHeadshot.Broadcast();
+
+        auto PlayerCharacter = Cast<ASTUPlayerCharacter>(DamageCauser);
+        if (PlayerCharacter)
+        {
+            PlayerCharacter->MadeHeadshot();
+        }
+    }
 }
 
 void USTUHealthComponent::OnTakeRadialDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
