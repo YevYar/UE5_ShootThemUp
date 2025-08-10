@@ -128,6 +128,19 @@ bool ASTUBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
     return true;
 }
 
+float ASTUBaseWeapon::GetAmmoPercent() const
+{
+    if (DefaultAmmo.IsClipsInfinite)
+    {
+        return 1.0f;
+    }
+
+    const auto MaxBulletsAmount = (DefaultAmmo.ClipsAmount + 1)
+                                  * DefaultAmmo.BulletsAmount;  // 1 extra clip is in the weapon from the beginning
+    const auto CurrentBulletsAmount = CurrentAmmo.ClipsAmount * DefaultAmmo.BulletsAmount + CurrentAmmo.BulletsAmount;
+    return MaxBulletsAmount > 0.0f ? static_cast<float>(CurrentBulletsAmount) / MaxBulletsAmount : 0.0f;
+}
+
 FVector ASTUBaseWeapon::GetMuzzleLocation() const
 {
     return WeaponMesh->GetSocketLocation(MuzzleSocketName);

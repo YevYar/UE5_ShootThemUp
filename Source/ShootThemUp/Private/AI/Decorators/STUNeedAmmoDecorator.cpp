@@ -23,5 +23,5 @@ bool USTUNeedAmmoDecorator::CalculateRawConditionValue(UBehaviorTreeComponent& O
     const auto WeaponComponent =
       Controller->GetPawn() ? Controller->GetPawn()->FindComponentByClass<USTUAIWeaponComponent>() : nullptr;
 
-    return WeaponComponent && WeaponComponent->DoesCurrentWeaponNeedAmmo();
+    return WeaponComponent && WeaponComponent->GetCurrentWeaponAmmoPercent() <= AmmoPercentToLookForPickup;
 }

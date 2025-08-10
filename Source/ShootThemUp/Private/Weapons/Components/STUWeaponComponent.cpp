@@ -125,6 +125,11 @@ bool USTUWeaponComponent::CanFire() const
     return CurrentWeapon && !CurrentWeapon->IsAmmoEmpty() && !IsAnimMontageInProgress();
 }
 
+float USTUWeaponComponent::GetCurrentWeaponAmmoPercent() const
+{
+    return CurrentWeapon ? CurrentWeapon->GetAmmoPercent() : 0.0f;
+}
+
 FVector USTUWeaponComponent::GetCurrentWeaponMuzzleLocation() const
 {
     return CurrentWeapon ? CurrentWeapon->GetMuzzleLocation() : FVector{};
@@ -138,11 +143,6 @@ FTransform USTUWeaponComponent::GetCurrentWeaponMuzzleTransform() const
 EWeaponType USTUWeaponComponent::GetCurrentWeaponType() const noexcept
 {
     return CurrentWeapon ? CurrentWeapon->GetWeaponType() : EWeaponType::EWT_Unknown;
-}
-
-bool USTUWeaponComponent::DoesCurrentWeaponNeedAmmo() const
-{
-    return CurrentWeapon && !CurrentWeapon->IsAmmoFull();
 }
 
 bool USTUWeaponComponent::TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponClass, int32 ClipsAmount)

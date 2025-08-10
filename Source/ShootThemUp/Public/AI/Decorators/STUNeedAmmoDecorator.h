@@ -15,4 +15,8 @@ UCLASS() class SHOOTTHEMUP_API USTUNeedAmmoDecorator : public UBTDecorator
 
     protected:
         bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
+
+    protected:
+        UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (ClampMin = "0.0001", ClampMax = "1.0"))
+        float AmmoPercentToLookForPickup = 0.4f;
 };
