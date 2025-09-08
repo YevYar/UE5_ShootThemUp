@@ -19,10 +19,11 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
     public:
         ASTUGameModeBase();
 
-        bool    ClearPause() override;
-        UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
-        bool    SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
-        void    StartPlay() override;
+        bool               ClearPause() override;
+        UClass*            GetDefaultPawnClassForController_Implementation(AController* InController) override;
+        bool               SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
+        APlayerController* SpawnPlayerController(ENetRole InRemoteRole, const FString& Options) override;
+        void               StartPlay() override;
 
         UFUNCTION(BlueprintCallable, Category = "Development")
         bool IsDebug() const noexcept;
@@ -46,7 +47,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
 
         void         GameOver();
         FLinearColor GetTeamColorByTeamID(int32 TeamID) const;
-        void         InitTeamsData() const;
+        void         InitBotData(ASTUPlayerState* PlayerState, int32 BotIndex = 0);
+        void         InitPlayerData();
         void         LogPlayersStatistics() const;
         void         RespawnPlayers();
         void         SetMatchState(ESTUMatchState NewMatchState);
@@ -66,6 +68,8 @@ UCLASS() class SHOOTTHEMUP_API ASTUGameModeBase : public AGameModeBase
         TSubclassOf<APawn> AIPawnClass;
         UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game")
         FGameData GameData;
+
+        int32 TeamIDIndex = 0;
 
     private:
         int32          CurrentRound       = 0;

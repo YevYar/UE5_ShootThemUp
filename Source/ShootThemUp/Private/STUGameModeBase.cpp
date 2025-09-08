@@ -61,13 +61,31 @@ bool ASTUGameModeBase::SetPause(APlayerController* PC, FCanUnpause CanUnpauseDel
     return IsPaused;
 }
 
+APlayerController* ASTUGameModeBase::SpawnPlayerController(ENetRole InRemoteRole, const FString& Options)
+{
+    auto PlayerController = Super::SpawnPlayerController(InRemoteRole, Options);
+
+    if (PlayerController)
+    {
+        auto PlayerState = STUUtils::GetSTUPlayerState(PlayerController);
+
+        if (PlayerState)
+        {
+            TeamIDIndex = FMath::RandRange(0, GameData.TeamsNumber - 1);
+            InitBotData(PlayerState);
+        }
+    }
+
+    return PlayerController;
+}
+
 void ASTUGameModeBase::StartPlay()
 {
     Super::StartPlay();
 
+    InitPlayerData();
     SpawnBots();
     SubscribeOnBotsNotifiers();
-    InitTeamsData();
     SetMatchState(ESTUMatchState::InProgress);
     StartRound();
 }
@@ -126,13 +144,13 @@ void ASTUGameModeBase::Killed(const AController* KillerController, const AContro
 APawn* ASTUGameModeBase::SpawnDefaultPawnAtTransform_Implementation(AController*      NewPlayer,
                                                                     const FTransform& SpawnTransform)
 {
-    FActorSpawnParameters SpawnInfo;
+    auto SpawnInfo                            = FActorSpawnParameters{};
     SpawnInfo.Instigator                      = GetInstigator();
     SpawnInfo.ObjectFlags                    |= RF_Transient;  // We never want to save default player pawns into a map
-    SpawnInfo.SpawnCollisionHandlingOverride  = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    SpawnInfo.SpawnCollisionHandlingOverride  = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-    UClass* PawnClass  = GetDefaultPawnClassForController(NewPlayer);
-    APawn*  ResultPawn = GetWorld()->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnInfo);
+    const auto PawnClass  = GetDefaultPawnClassForController(NewPlayer);
+    auto       ResultPawn = GetWorld()->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnInfo);
     if (!ResultPawn)
     {
         UE_LOG(LogGameMode, Warning, TEXT("SpawnDefaultPawnAtTransform: Couldn't spawn Pawn of type %s at %s"),
@@ -167,11 +185,22 @@ void ASTUGameModeBase::SpawnBots()
 
     for (auto i = int32{0}; i < GameData.PlayersAmount - 1; ++i)
     {
-        auto SpawnParameters                           = FActorSpawnParameters{};
-        SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+        auto SpawnParameters = FActorSpawnParameters{};
+        SpawnParameters.SpawnCollisionHandlingOverride =
+          ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
         const auto AIController = GetWorld()->SpawnActor<AAIController>(AIControllerClass, SpawnParameters);
+        auto       PlayerState  = STUUtils::GetSTUPlayerState(AIController);
+
+        if (!PlayerState)
+        {
+            RestartPlayer(AIController);
+            continue;
+        }
+
+        InitBotData(PlayerState, i + 1);
         RestartPlayer(AIController);
+        SetPlayerColor(AIController);
     }
 }
 
@@ -194,10 +223,10 @@ void ASTUGameModeBase::GameOver()
 
 FLinearColor ASTUGameModeBase::GetTeamColorByTeamID(int32 TeamID) const
 {
-    const auto TeamIDIndex = TeamID - 1;
-    if (TeamIDIndex >= 0 && TeamIDIndex < GameData.TeamColors.Num())
+    const auto TeamIDIdx = TeamID - 1;
+    if (TeamIDIdx >= 0 && TeamIDIdx < GameData.TeamColors.Num())
     {
-        return GameData.TeamColors[TeamIDIndex];
+        return GameData.TeamColors[TeamIDIdx];
     }
 
     UE_LOG(LogSTUGameModeBase, Warning, TEXT("No color for TeamID %i. Set to default %s"), TeamID,
@@ -205,34 +234,31 @@ FLinearColor ASTUGameModeBase::GetTeamColorByTeamID(int32 TeamID) const
     return GameData.TeamDefaultColor;
 }
 
-void ASTUGameModeBase::InitTeamsData() const
+void ASTUGameModeBase::InitBotData(ASTUPlayerState* PlayerState, int32 BotIndex)
 {
-    if (!GetWorld())
+    const auto TeamID = int32{TeamIDIndex + 1};
+    PlayerState->SetTeamID(TeamID);
+    PlayerState->SetTeamColor(GetTeamColorByTeamID(TeamID));
+    PlayerState->SetPlayerName(FString::Printf(TEXT("Bot %d"), BotIndex));
+
+    TeamIDIndex = ++TeamIDIndex % GameData.TeamsNumber;
+}
+
+void ASTUGameModeBase::InitPlayerData()
+{
+    if (GetWorld())
     {
-        return;
-    }
-
-    auto BotsCounter = 0;
-    auto TeamIDIndex = int32{0};
-
-    for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
-    {
-        const auto Controller  = It->Get();
-        auto       PlayerState = STUUtils::GetSTUPlayerState(Controller);
-
-        if (!PlayerState)
+        const auto PlayerController = GetWorld()->GetFirstPlayerController();
+        if (PlayerController)
         {
-            continue;
+            SetPlayerColor(PlayerController);
+
+            auto PlayerState = STUUtils::GetSTUPlayerState(PlayerController);
+            if (PlayerState)
+            {
+                PlayerState->SetPlayerName("Player");
+            }
         }
-
-        const auto TeamID = int32{TeamIDIndex + 1};
-        PlayerState->SetTeamID(TeamID);
-        PlayerState->SetTeamColor(GetTeamColorByTeamID(TeamID));
-        PlayerState->SetPlayerName(Controller->IsPlayerController() ? "Player"
-                                                                    : FString::Printf(TEXT("Bot %d"), ++BotsCounter));
-        SetPlayerColor(Controller);
-
-        TeamIDIndex = ++TeamIDIndex % GameData.TeamsNumber;
     }
 }
 
