@@ -54,6 +54,7 @@ void USTULevelSelectionWidget::InitLevelItems()
             LevelItemWidget->LevelSelected.AddUObject(this, &USTULevelSelectionWidget::OnLevelSelected);
 
             LevelsBox->AddChild(LevelItemWidget);
+            LevelItemWidget->SetPadding(FMargin{0.0f, 0.0f, 50.0f, 0.0f});
             LevelItemWidgets.Add(LevelItemWidget);
         }
     }
