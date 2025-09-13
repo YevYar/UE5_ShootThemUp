@@ -7,6 +7,8 @@
 
 #include "STUArenaGameMode.generated.h"
 
+class APlayerStart;
+
 USTRUCT() struct FPlayerStartArrayWrapper
 {
         GENERATED_BODY()
