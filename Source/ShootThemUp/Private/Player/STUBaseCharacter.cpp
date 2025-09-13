@@ -90,9 +90,21 @@ UAISense_Sight::EVisibilityResult
     return UAISense_Sight::EVisibilityResult::NotVisible;
 }
 
+void ASTUBaseCharacter::Reset()
+{
+    ResetFields();
+    Super::Reset();
+}
+
 void ASTUBaseCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+}
+
+void ASTUBaseCharacter::TurnOff()
+{
+    ResetFields();
+    Super::TurnOff();
 }
 
 bool ASTUBaseCharacter::IsDead() const

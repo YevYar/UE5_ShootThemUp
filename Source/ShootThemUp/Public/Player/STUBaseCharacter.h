@@ -27,7 +27,9 @@ class SHOOTTHEMUP_API ASTUBaseCharacter : public ACharacter,
                            int32& OutNumberOfLoSChecksPerformed, int32& OutNumberOfAsyncLosCheckRequested,
                            float& OutSightStrength, int32* UserData = nullptr,
                            const FOnPendingVisibilityQueryProcessedDelegate* Delegate = nullptr) override;
+        void Reset() override;
         void Tick(float DeltaTime) override;
+        void TurnOff() override;
 
         UFUNCTION(BlueprintCallable, Category = "Life State")
         bool IsDead() const;
